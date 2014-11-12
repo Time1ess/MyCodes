@@ -1,166 +1,203 @@
+
+/*
+采用A*算法
+*/
 #include <iostream>
-#include <cstring>
+#include <cstdlib>
 #include <cstdio>
+#include <vector>
+#include <cstring>
+#include <algorithm>
+#include <string>
 #pragma warning(disable:4996)
 using namespace std;
 #define N 3
-#define SIZE N*N
+#define MAXSIZE 200000
+const int direction[4]{-N, N, -1, 1};
 
-struct node
+struct Puzzle
 {
-	int data[N][N];
-	int zero_i;
-	int zero_j;
-	node *next;
+	string num;
+	short zeropos;
+	short dx;//当前结点在搜索树中深度
+	short fx;//估价函数值
+	int prev;//指向父节点
 };
 
-node *head;
-node *goal;
-node *last;
-int flag = 0;
+vector<pair<short, int>> openlist;
+vector<pair<string,int>> closelist;
+Puzzle puzzle[MAXSIZE];
+int p;  //数组位置指针
+string goal;
+string head;
 
-void process(node *);
-bool ablemove(node *, int direct);
-bool Swap(node *, int direct);
-void reachgoal();
+
+int process(string &start);
+int posofzero(Puzzle &p);
+int f(Puzzle &now, int index);
+bool ablemove(int, int);
+void Swap(int, Puzzle &);
+bool findcloselist(string &);
+bool sortmethod(pair<short, int>, pair<short, int>);
 
 int main()
 {
-	cout.setf(ios_base::left, ios_base::adjustfield);
 	freopen("data.txt", "r", stdin);
 	freopen("out.txt", "w", stdout);
-	head = new node;
-	goal = new node;
-	last = new node;
-	memset(last, 0, sizeof(node));
-	memset(head, 0, sizeof(node));
-	memset(goal, 0, sizeof(node));
-	int num;
-	//   cout<<"Enter 0-15 to fill the start puzzle,0 to represent blank"<<endl;
-	for (int i = 0; i<N; i++)
-	for (int j = 0; j<N; j++)
+	for (int i = 0; i < N*N; i++)
 	{
-		cin >> num;
-		if (num == 0)
-		{
-			head->zero_i = i;
-			head->zero_j = j;
-		}
-		head->data[i][j] = num;
+		head+= cin.get();
+		cin.get();
 	}
-	//   cout<<"Enter 0-15 to fill the start puzzle,0 to represent blank"<<endl;
-	for (int i = 0; i<N; i++)
-	for (int j = 0; j<N; j++)
+	for (int i = 0; i < N*N; i++)
 	{
-		cin >> num;
-		if (num == 0)
-		{
-			goal->zero_i = i;
-			goal->zero_j = j;
-		}
-		goal->data[i][j] = num;
+		goal+= cin.get();
+		cin.get();
 	}
-	process(head);
-	cout << endl << "reach final" << endl;
-	node *p = head;
-	for (; p != nullptr; p = p->next)
+	int target;
+	memset(puzzle, 0, sizeof(puzzle));
+	target=process(head);
+	while (1)
 	{
-		for (int i = 0; i<N; i++)
+		cout << target << endl;
+		for (int i = 0; i < N*N; i++)
 		{
-			for (int j = 0; j<N; j++)
-			{
-				cout.width(2);
-				cout << p->data[i][j] << " ";
-			}
-			cout << endl;
+			cout << puzzle[target].num[i] << " ";
+			if ((i + 1) % N == 0)cout << endl;
 		}
 		cout << endl;
+		target = puzzle[target].prev;
+		if (target == -1)break;
+
+
 	}
 	return 0;
 }
 
-void reachgoal(node *p)
+
+int posofzero(Puzzle &p)
 {
-	if (memcmp(p->data, goal->data, sizeof(int)*SIZE) == 0)flag = 1;
+	for (int i = 0; i < N*N;i++)
+	if (p.num[i] == '0')
+		return i;
 }
 
-
-bool Swap(node *p, int direct)
+int f(Puzzle &now, int index)
 {
-	int m;
+	int cnt(puzzle[index].dx);
+	for (int i = 0; i < N*N; i++)
+	if (now.num[i] != goal[i])cnt++;
+	return cnt;
+}
+
+bool ablemove(int direct, int index)
+{
 	switch (direct)
 	{
 		case 0:
-			m = p->data[p->zero_i - 1][p->zero_j];
-			p->data[p->zero_i - 1][p->zero_j] = p->data[p->zero_i][p->zero_j];
-			p->data[p->zero_i][p->zero_j] = m;
-			p->zero_i--;
+			if (puzzle[index].zeropos/N == 0)return false;
 			break;
 		case 1:
-			m = p->data[p->zero_i + 1][p->zero_j];
-			p->data[p->zero_i + 1][p->zero_j] = p->data[p->zero_i][p->zero_j];
-			p->data[p->zero_i][p->zero_j] = m;
-			p->zero_i++;
+			if (puzzle[index].zeropos/N == N-1)return false;
 			break;
 		case 2:
-			m = p->data[p->zero_i][p->zero_j - 1];
-			p->data[p->zero_i][p->zero_j - 1] = p->data[p->zero_i][p->zero_j];
-			p->data[p->zero_i][p->zero_j] = m;
-			p->zero_j--;
+			if (puzzle[index].zeropos%N == 0)return false;
 			break;
 		case 3:
-			m = p->data[p->zero_i][p->zero_j + 1];
-			p->data[p->zero_i][p->zero_j + 1] = p->data[p->zero_i][p->zero_j];
-			p->data[p->zero_i][p->zero_j] = m;
-			p->zero_j++;
+			if (puzzle[index].zeropos%N == N - 1)return false;
 			break;
-	}
-	node *tmp = head;
-	for (; tmp->next != p; tmp = tmp->next)
-	{
-		if (memcmp(tmp->data, p->data, sizeof(int)*SIZE) == 0)return false;
 	}
 	return true;
 }
 
 
-bool ablemove(node *now, int direct)
+void Swap(int direct, string &p,int pos)
 {
+	int tmp;
 	switch (direct)
 	{
 		case 0:
-			if (now->zero_i == 0)return false;
+			tmp = p[pos];
+			p[pos] = p[pos-N];
+			p[pos-N] = tmp;
 			break;
 		case 1:
-			if (now->zero_i == N - 1)return false;
+			tmp = p[pos];
+			p[pos] = p[pos + N];
+			p[pos + N] = tmp;
 			break;
 		case 2:
-			if (now->zero_j == 0)return false;
+			tmp = p[pos];
+			p[pos] = p[pos-1];
+			p[pos-1] = tmp;
 			break;
 		case 3:
-			if (now->zero_j == N - 1)return false;
+			tmp = p[pos];
+			p[pos] = p[pos+1];
+			p[pos+1] = tmp;
 			break;
 	}
-	if (!Swap(now, direct))return false;
-	if (memcmp(last->data, now->data, sizeof(int)*SIZE) == 0)return false;
-	return true;
 }
 
-void process(node *now)
+bool findcloselist(string &s)
 {
-	reachgoal(now);
-	if (flag == 1)return;
-	memcpy(last->data, now->data, sizeof(int)*SIZE);
-	for (int i = 0; i<4; i++)
-	{
-		node *next = new node;
-		memcpy(next, now, sizeof(node));
-		next->next = nullptr;
-		now->next = next;
-		if (ablemove(next, i))
-			process(next);
-		if (flag == 1)return;
-		delete next;
-		now->next = nullptr;
-	}
+	for (auto x = closelist.begin(); x != closelist.end();x++)
+	if (x->first == s)return true;
+	return false;
 }
+
+bool sortmethod(pair<short, int> a, pair<short, int> b)
+{
+	if (a.first != b.first)
+		return a.first > b.first;
+	else
+		return a.second > b.second;
+}
+
+
+int process(string &start)
+{
+	p = 0;
+//	int cnt = 0;
+	puzzle[p].num = start;
+	puzzle[p].dx = 0;
+	puzzle[p].zeropos = posofzero(puzzle[p]);
+	puzzle[p].fx = f(puzzle[p], 0);
+	puzzle[p].prev = -1;
+	openlist.push_back(make_pair(puzzle[0].fx, p));
+	while (!openlist.empty())
+	{
+		//cout << cnt++ << "T"<<endl;
+		int index = openlist.back().second;
+		openlist.pop_back();
+		closelist.push_back(make_pair(puzzle[index].num,p));
+		if (puzzle[index].num == goal)
+			return index;
+		for (int i = 0; i < 4; i++)
+		{
+			if (ablemove(i, index))
+			{
+				string s = puzzle[index].num;
+				int pos(puzzle[index].zeropos);
+				Swap(i, s, pos);
+
+				if (!findcloselist(s))
+				{
+					p++;
+					if (p == MAXSIZE)return -2;
+					puzzle[p].num = s;
+					puzzle[p].zeropos = pos + direction[i];
+					puzzle[p].dx = puzzle[index].dx + 1;
+					puzzle[p].prev = index;
+					puzzle[p].fx = f(puzzle[p], p);
+					openlist.push_back(make_pair(puzzle[p].fx, p));
+				}
+			}
+		}
+		//对openlist重新按照fx排序 从大到小，最后一个为最小的
+		sort(openlist.begin(), openlist.end(), sortmethod);
+
+	}
+	return -1;
+}
+
