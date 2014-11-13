@@ -9,6 +9,7 @@
 #pragma warning(disable:4996)
 
 
+
 #define N 3
 #define SIZE N*N
 #define ARRAYSIZE 100000
