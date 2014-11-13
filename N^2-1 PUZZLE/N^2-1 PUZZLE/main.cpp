@@ -96,7 +96,6 @@ bool abletomove(int zero, int direct)
 }
 
 
-
 int astar()
 {
 	start.g = 0;
