@@ -54,11 +54,9 @@ int main()
 	}
 	int index;
 	time_t start, end;
-
 	start = clock();
 	index= astar();
 	end = clock();
-
 	cout << index << endl;
 	cout << double(end - start) / CLOCKS_PER_SEC << endl;
 	return 0;
