@@ -1,0 +1,10 @@
+int main()
+{
+    int a,b=5;
+    int c;
+    a=3;
+    c=a+b;
+    double e=c/2.0;
+    char g='w';
+    return e;
+}
