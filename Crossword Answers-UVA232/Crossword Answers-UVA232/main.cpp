@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstdio>
 #include <cstring>
-//#pragma warning(disable:4996)
+#pragma warning(disable:4996)
 using namespace std;
 
 bool notyetout(int i,int j,int im[10][10],char pm[10][10])
