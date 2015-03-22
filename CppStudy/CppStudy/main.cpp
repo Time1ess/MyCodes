@@ -1,8 +1,6 @@
 #include <iostream>
 #include <cstdio>
 using namespace std;
-#pragma warning(disable:4996)
-
 int algo(char *s, int len)
 {
 	int sum = 0;
