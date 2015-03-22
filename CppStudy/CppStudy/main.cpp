@@ -1,21 +1,46 @@
 #include <iostream>
+#include <cstdio>
 using namespace std;
+#pragma warning(disable:4996)
+
+int algo(char *s, int len)
+{
+	int sum = 0;
+	int c[4] = { 0 };
+	for (int i = 0; i < len; i++)
+	{
+		switch (s[i])
+		{
+		case 'A':
+			sum += c[1] + c[2] + c[3];
+			c[0]++;
+			break;
+		case 'C':
+			sum += c[2] + c[3];
+			c[1]++;
+			break;
+		case 'G':
+			sum += c[3];
+			c[2]++;
+			break;
+		case 'T':
+			c[3]++;
+			break;
+		default:
+			break;
+		}
+	}
+	return sum;
+}
 
 
 int main()
 {
-	int x = 0, y = 0;
-	for (int i = 0; i < 3; i++)
-	{
-		int m;
-		cin >> m;
-		x = (m + x) / (x == 0 ? 1 : 2);
-		cin >> m;
-		y = (m + y) / (y == 0 ? 1 : 2);
-		cout << x << "   " << y << endl;
-	}
-	
-	cin.get();
+	char s[13]= "ACGGGCTACGTC";
+	s[12] = '\0';
+	cout << s << endl;
+	int ans = algo(s, 12);
+	cout << ans;
 	cin.get();
 	return 0;
 }
