@@ -21,8 +21,8 @@ public:
 		if (k == 1)
 			return min(A[0], B[0]);
 
-		int i = min(m, k / 2); //
-		int j = k / 2;//
+		int i = min(m, k / 2); 
+		int j = k / 2;
 
 		if (A[i - 1] > B[j - 1])
 			return getkth(A, m, B + j, n - j, k - j);

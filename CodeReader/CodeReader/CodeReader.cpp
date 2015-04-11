@@ -282,10 +282,12 @@ int main()
 		puts("目录不存在。");
 		return -1;
 	}
-
 	//开始遍历
 
 	vector<string>file_vec = statdir.BeginBrowseFilenames("*.cpp");
+	vector<string>file_vec1 = statdir.BeginBrowseFilenames("*.c");
+	vector<string>file_vec2 = statdir.BeginBrowseFilenames("*.java");
+
 	for (vector<string>::const_iterator it = file_vec.begin(); it < file_vec.end(); ++it)
 		std::cout << *it << std::endl;
 
@@ -299,13 +301,48 @@ int main()
 		string s;
 		while (getline(fin, s))
 		{
-			cout << s << endl;
+//			cout << s << endl;
 			lines++;
 		}
 		fin.close();
 		Total += lines;
-		cout << endl <<"Current "<<lines<<" lines, "<< "Total " << Total << " lines.";
-		cin.get();
+		cout << endl <<"CPP Current "<<lines<<" lines, "<< "Total " << Total << " lines.";
 	}
+
+
+	for (vector<string>::const_iterator it = file_vec1.begin(); it < file_vec1.end(); ++it)
+		std::cout << *it << std::endl;
+	for (vector<string>::const_iterator it = file_vec1.begin(); it < file_vec1.end(); ++it)
+	{
+		fin.open(*it);
+		lines = 0;
+		string s;
+		while (getline(fin, s))
+		{
+//			cout << s << endl;
+			lines++;
+		}
+		fin.close();
+		Total += lines;
+		cout << endl << "C Current " << lines << " lines, " << "Total " << Total << " lines.";
+	}
+
+	for (vector<string>::const_iterator it = file_vec2.begin(); it < file_vec2.end(); ++it)
+		std::cout << *it << std::endl;
+	for (vector<string>::const_iterator it = file_vec2.begin(); it < file_vec2.end(); ++it)
+	{
+		fin.open(*it);
+		lines = 0;
+		string s;
+		while (getline(fin, s))
+		{
+//			cout << s << endl;
+			lines++;
+		}
+		fin.close();
+		Total += lines;
+		cout << endl << "JAVA Current " << lines << " lines, " << "Total " << Total << " lines.";
+	}
+	cin.get();
 	return 0;
 }
