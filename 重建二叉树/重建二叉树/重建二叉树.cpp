@@ -21,6 +21,7 @@ BTreeNode* ConstructCore(int *startPreorder, int *endPreorder,
 	root->value = rootValue;
 	root->leftC = root->rightC = NULL;
 
+	//当前序列只含有一个值
 	if (startPreorder == endPreorder)
 	{
 		if (startInorder == endInorder
@@ -40,11 +41,13 @@ BTreeNode* ConstructCore(int *startPreorder, int *endPreorder,
 
 	int leftLength = rootInorder - startInorder;
 	int *leftPreorderEnd = startPreorder + leftLength;
+	//左子树长度大于0，构建左子树
 	if (leftLength > 0)
 	{
 		root->leftC = ConstructCore(startPreorder + 1,
 			leftPreorderEnd, startInorder, rootInorder - 1);
 	}
+	//左子树长度不等于整个序列长度，构建右子树
 	if (leftLength < endPreorder - startPreorder)
 	{
 		root->rightC = ConstructCore(leftPreorderEnd + 1,
