@@ -1,57 +1,37 @@
 #include <iostream>
 #include <vector>
+#include <fstream>
 using namespace std;
 
-#define RT		//从右上开始扫描
-//#define LB		//从左下开始扫描
 
-bool finds(int *array, int rows,int columns, int key)
+double b(double n)
 {
-	int i=0, j=columns-1;
-	bool found = false;
-	if (array != nullptr&&rows > 0 && columns > 0)
-	{
-#ifdef RT
-		int row = 0;
-		int column = columns - 1;
-		while (row < rows&&column >= 0)
-		{
-			if (array[row*columns + column] == key)
-			{
-				found = true;
-				break;
-			}
-			else if (array[row*columns + column]>key)
-				--column;
-			else
-				++row;
-		}
-#endif
-#ifdef LB
-		int row = rows - 1;
-		int column = 0;
-		while (row >= 0 && column < columns)
-		{
-			if (array[row*columns + column] == key)
-			{
-				found = true;
-				break;
-			}
-			else if (array[row*columns + column]>key)
-				--row;
-			else
-				++column;
-		}
-#endif
-	}
-	return found;
+	if (n == 0)return 250000;
+	if (n == 361)return 0;
+
 }
 
 int main()
 {
-	int a[4][4] = { 1, 2, 8, 9, 2, 4, 9, 12, 4, 7, 10, 13, 6, 8, 11, 15 };
-	cout << finds((int*)a, 4,4, 7) << endl;
-	cout << finds((int*)a, 4,4, 5) << endl;
-	cin.get();
-}
+	double p = 1310.01;
+	ofstream fout("out.txt");
+	double sum = 250000;
+	do
+	{
+		sum = 250000;
+		p += 0.0001;
+		for (int i = 0; i < 361; i++)
+		{
+			sum = sum*1.004 - p;
+			fout << sum << endl;
+		}
+		//cout << "now p=" << p << endl;
+		cout << sum << endl;
 
+	}while (fabs(sum - 0) > 0.1);
+	cout.precision(14);
+	cout << "Final p="<<p << endl;
+	cout << pow(1.004, 12) << endl;
+	cin.get();
+	return 0;
+}
