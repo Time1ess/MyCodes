@@ -41,7 +41,7 @@ bool kmpsearch()
 				continue;
 			else
 			{
-				i += k - Next[k] + 1;
+				i += k - Next[k] - 1;
 				break;
 			}
 		}
