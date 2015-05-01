@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <winsock.h>
+#include <string.h>
 #pragma comment(lib,"Ws2_32")
 #pragma warning(disable:4996)
 #define MAXDATASIZE 100 
 #define MYPORT 6666  /*定义用户连接端口*/ 
-#define SENDPORT 7777
+#define SENDPORT 6667
 #define BACKLOG 10  /*多少等待连接控制*/ 
 int main()
 {
@@ -16,21 +17,23 @@ int main()
 	char msg[10], buf[MAXDATASIZE];
 	char *PATHS = "255.255.255.255";
 
-
+	
 	WSADATA ws;
 	WSAStartup(MAKEWORD(2, 2), &ws);           //初始化Windows Socket Dll
 	//建立socket
-	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+	if ((sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1)
 	{
 		//如果建立socket失败，退出程序
 		printf("socket error\n");
+		getchar();
 		exit(1);
 	}
 
-	if ((socktt = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+	if ((socktt = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
 	{
 		//如果建立socket失败，退出程序
 		printf("socket error\n");
+		getchar();
 		exit(1);
 	}
 	bool bbroadcast = true;
@@ -39,76 +42,80 @@ int main()
 	//bind本机的MYPORT端口
 	my_addr.sin_family = AF_INET;                     /* 协议类型是INET  */
 	my_addr.sin_port = htons(MYPORT);            /* 绑定MYPORT端口*/
-	my_addr.sin_addr.s_addr = INADDR_ANY;   /* 本机IP*/
+	my_addr.sin_addr.s_addr = htonl(INADDR_ANY);   /* 本机IP*/
 
 	if (bind(sockfd, (struct sockaddr *)&my_addr, sizeof(struct sockaddr)) == -1)
 	{
 		//bind失败，退出程序
 		printf("bind error\n");
 		closesocket(sockfd);
+		getchar();
 		exit(1);
 	}
 
-	terminal_addr.sin_family = AF_INET;                         
-	terminal_addr.sin_port = htons(SENDPORT);                       
-	terminal_addr.sin_addr.s_addr = INADDR_BROADCAST;       
 
-	//if (connect(socktt, (struct sockaddr *)&terminal_addr, sizeof(struct sockaddr)) == -1)
-	//{
-	//	//如果连接失败，退出程序
-	//	printf("connet error\n");
-	//	closesocket(sockfd);
-	//	exit(1);
-	//}
-
+	terminal_addr.sin_family = AF_INET;
+	terminal_addr.sin_port = htons(SENDPORT);
+	terminal_addr.sin_addr.s_addr = htonl(INADDR_BROADCAST);
+	if (bind(socktt, (struct sockaddr *)&my_addr, sizeof(struct sockaddr)) == -1)
+	{
+		//bind失败，退出程序
+		printf("terminal bind error\n");
+		closesocket(sockfd);
+		getchar();
+		exit(1);
+	}
+     
+	
 	//listen，监听端口
 	if (listen(sockfd, BACKLOG) == -1)
 	{
 		//listen失败，退出程序
 		printf("listen error\n");
 		closesocket(sockfd);
+		getchar();
 		exit(1);
 	}
-	printf("listen...");
+	printf("listen...\n");
 	//等待客户端连接
 	sin_size = sizeof(struct sockaddr_in);
-	if ((new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size)) == -1)
+
+	if ((new_fd = accept(sockfd, (sockaddr*)&their_addr, &sin_size)) == -1)
 	{
 		printf("accept error\n");
 		closesocket(sockfd);
+		getchar();
 		exit(1);
 	}
-	printf("\naccept!\n");
 
 	while (1) 
 	{
 		if ((numbytes = recv(new_fd, buf, MAXDATASIZE, 0)) == -1)  continue;
+
 		printf("%s %d", buf, strlen(buf));
 		printf("\n");
 		sprintf(msg, "%d", strlen(buf));
 
 		if (send(new_fd, msg, MAXDATASIZE, 0) == -1)
-
 		{
-			printf("send ERROR");
+			printf("send ERROR.\n");
 			closesocket(sockfd);
 			closesocket(new_fd);
+			getchar();
 			return 0;
 		}
-		//if (send(socktt, buf, MAXDATASIZE, 0) == -1)
 
-		//{
-		//	printf("send error");
-		//	closesocket(sockfd);
-		//	exit(1);
-		//}
-		if (sendto(socktt, buf, MAXDATASIZE, 0, (struct sockaddr*)&terminal_addr, sizeof(struct sockaddr*)) == -1)
+
+		if (sendto(socktt, buf, MAXDATASIZE, 0, (SOCKADDR*)&terminal_addr, sizeof(SOCKADDR)) == -1)
 		{
-			printf("send error");
+			printf("send error.\n");
 			closesocket(sockfd);
+			GetLastError();
+			getchar();
 			exit(1);
-
 		}
+		else
+			printf("send succeed.\n");
 
 		if (!strcmp(buf, "bye"))
 		{
@@ -117,6 +124,7 @@ int main()
 			closesocket(sockfd);
 			closesocket(new_fd);
 			closesocket(socktt);
+			getchar();
 			return 0;
 		}
 	}
