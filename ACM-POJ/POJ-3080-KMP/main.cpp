@@ -77,7 +77,7 @@ int main()
 					{
 						if (strcmp(tmp, ans)<0 && i == L)//如果当前子字符串的字典序更小而且长度与最近的结果一样长则替换
 							strcpy(ans, tmp);
-						if (i>L)  //如果当前结果更短，则替换
+						if (i>L)  //如果新结果更长，则替换
 							strcpy(ans, tmp);
 						L = strlen(ans);
 					}
