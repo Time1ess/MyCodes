@@ -25,7 +25,24 @@ void kmpgetNext()
 		if (m[i] == m[k])k++;
 		Next[i+1] = k;
 	}
+}
 
+void kmpGetNext()
+{
+	int len = strlen(m);
+	int i = 0, k = -1;
+	Next[0] = -1;
+	while (i < len)
+	{
+		if (k == -1|| m[i] == m[k])
+		{
+			i++;
+			k++;
+			Next[i] = k;
+		}
+		else
+			k = Next[k];
+	}
 }
 
 bool kmpsearch()
@@ -52,9 +69,19 @@ bool kmpsearch()
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	strcpy(m, "aaa");
+	strcpy(m, "abcd");
 	strcpy(n, "\0");
+	kmpGetNext();
+	for (int i = 0; i < strlen(m); i++)
+		cout << m[i] << " ";
+	cout << endl;
+	for (int i = 0; i < strlen(m)+1; i++)
+		cout << Next[i] << " ";
+	cout << endl;
 	kmpgetNext();
+	for (int i = 0; i < strlen(m) + 1; i++)
+		cout << Next[i] << " ";
+	cout << endl;
 	bool isfind = kmpsearch();
 	if (isfind)
 		cout << "Find" << endl;

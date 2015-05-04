@@ -1,94 +1,117 @@
-#include<iostream>
-#include<cstring>
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
 #pragma warning(disable:4996)
 using namespace std;
 
 char s[4010][210];
+int slen[4010];
 char tmp[210];
-int n, ma, length[4010], tmpLen;
+char ans[210];
 int Next[210];
+int anslen;
 
-void get_next()
+void kmpGetNext(char *s1, int len)
 {
-	int k = 0;
-	Next[1] = 0;
-	for (int i = 2; i <= tmpLen; i++)
+	int k = -1, i = 0;
+	Next[0] = -1;
+	while (i < len)
 	{
-		while (k > 0 && tmp[i] != tmp[k + 1])
-			k = Next[k];
-		if (tmp[i] == tmp[k + 1])
+		if (k == -1 || s1[k] == s1[i])
+		{
+			i++;
 			k++;
-		Next[i] = k;
+			Next[i] = k;
+		}
+		else
+			k = Next[k];
 	}
 }
 
-bool kmpMatch(char *source,char *target,int n,int m)//要求传入的字符串第一个字符为'\0',长度n,m为有效字符串长度
+bool KMP(char *s1,char *t1, int s1len,int t1len)
 {
-	int k = 0;
-	for (int i = 1; i <= n; i++)
+	int i = 0, j = 0;
+	while (i<s1len)
 	{
-		while (k > 0 && source[i] != target[k + 1])
-			k = Next[k];
-		if (source[i] == target[k+1])
-			k++;
-		if (k == m)
+		if (j==-1||s1[i] == t1[j])
+		{
+			i++;
+			j++;
+		}
+		else
+			j = Next[j];
+		if (j == t1len)
 			return true;
 	}
 	return false;
 }
 
-bool check(char *tmp)//待比较的字符串tmp
+bool check(char *t1,int t1len,int n)
 {
-	for (int i = 1; i <= n; i++)	
+	for (int i = 1; i < n; i++)
 	{
-		int length = strlen(tmp + 1);
-		int slength = strlen(s[i] + 1);
-		if (!kmpMatch(s[i], tmp, slength, length))
+		if (!KMP(s[i], t1, slen[i], t1len))
 			return false;
 	}
 	return true;
 }
 
-int main(){
-	int i;
+bool smaller(char *t1, char *ans1,int len)//ans and t1 are the same length
+{
+	for (int i = 0; i < len; i++)
+	{
+		if (ans1[i]>t1[i])
+			return true;
+		else if (ans1[i] < t1[i])
+			return false;
+	}
+	return false;
+}
 
-	freopen("D:\\MyCodes\\ACM-POJ\\Debug\\a.txt", "r", stdin);
-	freopen("D:\\MyCodes\\ACM-POJ\\Debug\\b.txt", "w", stdout);
+int main()
+{
+	int n;
+//	freopen("D:\\MyCodes\\ACM-POJ\\Debug\\a.txt", "r", stdin);
+//	freopen("D:\\MyCodes\\ACM-POJ\\Debug\\b.txt", "w", stdout);
 	while (scanf("%d", &n) && n)
 	{
-		char result[210] = { 0 };
-		int resultLen=0;
-		for (i = 1; i <= n; i++)
+		memset(ans, 0, sizeof(ans));
+		anslen = 0;
+		for (int i = 0; i < n; i++)
 		{
-			scanf("%s", s[i]+1);
-			length[i] = strlen(s[i]+1);
+			scanf("%s", s[i]);
+			slen[i] = strlen(s[i]);
 		}
 
-		for (i = 1; i <= length[1]; i++)
+		for (int j = 1; j <= slen[0] - 1; j++)	//take j chars to make a substring
 		{
-			for (int len = 1; len + i - 1 < length[1]; len++)
+			for (int i = 0; i <= slen[0] - j; i++)	//from the i-th char
 			{
-				//strcpy(tmp + 1, s[1] + i);
 				memset(tmp, 0, sizeof(tmp));
-				strncpy(tmp + 1, s[1] + i, len);
-				if (check(tmp))
+				strncpy(tmp, s[0] + i, j);
+				kmpGetNext(tmp, j);
+				if (check(tmp, j, n))
 				{
-					if (len == resultLen)
+					if (j > anslen)
 					{
-						if (strcmp(result, tmp + 1) > 0)
-							strcpy(result, tmp + 1);
+						strcpy(ans, tmp);
+						anslen = j;
 					}
-					else if (len > resultLen)
+					else if (j == anslen)
 					{
-						strcpy(result, tmp + 1);
-						resultLen = len;
+						if (smaller(tmp, ans, j))
+						{
+							strcpy(ans, tmp);
+						}
 					}
-
 				}
+
 			}
 		}
-		if (result[0]=='\0') printf("IDENTITY LOST\n");
-		else printf("%s\n", result);
+		if (anslen == 0)
+			printf("IDENTITY LOST\n");
+		else
+			printf("%s\n", ans);
 	}
 	return 0;
 }
