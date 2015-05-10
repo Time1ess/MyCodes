@@ -56,7 +56,7 @@ bool check(char *t1,int t1len,int n)
 	return true;
 }
 
-bool smaller(char *t1, char *ans1,int len)//
+bool smaller(char *t1, char *ans1,int len)
 {
 	for (int i = 0; i < len; i++)
 	{
