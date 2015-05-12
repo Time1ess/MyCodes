@@ -19,7 +19,7 @@ int CapturePhoto()
 	IplImage* LFrame = NULL;
 	IplImage* RFrame = NULL;
 	CvCapture *Capture2 = cvCreateCameraCapture(0);
-	CvCapture *Capture1 = cvCreateCameraCapture(2);
+	CvCapture *Capture1 = cvCreateCameraCapture(1);
 
 	cvNamedWindow("video-L", 1); 
 	cvNamedWindow("video-R", 1);
@@ -359,8 +359,8 @@ void calib(int LR)
 int main()
 {
 	CapturePhoto();
-	calib(L);
-	calib(R);
+//	calib(L);
+//	calib(R);
 	return 0;
 }
 
