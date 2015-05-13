@@ -14,7 +14,6 @@
 using namespace std;
 #define MAXSIZE 31
 int d[MAXSIZE][MAXSIZE];
-int R[MAXSIZE], L[MAXSIZE];
 int m, n;
 
 int max(int a, int b)
