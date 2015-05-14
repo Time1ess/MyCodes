@@ -6,7 +6,6 @@ value =3, 2, 4, 2
 W=5
 Êä³ö=7
 */
-
 #include <iostream>
 #include <vector>
 #pragma warning(disable:4996)
