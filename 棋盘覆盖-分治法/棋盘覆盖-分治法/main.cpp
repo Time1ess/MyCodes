@@ -12,7 +12,7 @@
 #include <iostream>
 using namespace std;
 
-#define MAXSIZE 16
+#define MAXSIZE 8
 int chess[MAXSIZE][MAXSIZE];
 int flag = 0;
 
