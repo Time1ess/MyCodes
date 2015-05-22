@@ -1,0 +1,14 @@
+image/gray/chess1.bmp
+image/gray/chess2.bmp
+image/gray/chess3.bmp
+image/gray/chess4.bmp
+image/gray/chess5.bmp
+image/gray/chess6.bmp
+image/gray/chess7.bmp
+image/gray/chess8.bmp
+image/gray/chess9.bmp
+image/gray/chess10.bmp
+image/gray/chess11.bmp
+image/gray/chess12.bmp
+image/gray/chess13.bmp
+image/gray/chess14.bmp

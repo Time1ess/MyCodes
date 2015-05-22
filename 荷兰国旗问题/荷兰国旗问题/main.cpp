@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
+#include <cstring>
 #include <ctime>
 using namespace std;
 #define MAXSIZE 100

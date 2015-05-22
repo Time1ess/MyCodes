@@ -3,14 +3,17 @@
 #pragma comment(lib,"Ws2_32")
 #pragma warning(disable:4996)
 #define SERVER_PORT 6666 //侦听端口
-
+#define SEND_PORT 6667
 int main()
 {
+	char addr[20];
+	printf("Please enter address:");
+	scanf("%s",addr);
 	WORD wVersionRequested;
 	WSADATA wsaData;
 	int ret, nLeft, length;
-	SOCKET sListen, sServer; //侦听套接字，连接套接字
-	struct sockaddr_in saServer, saClient; //地址信息   
+	SOCKET sListen, sServer,sClient; //侦听套接字，连接套接字
+	struct sockaddr_in saServer, saClient,saSend; //地址信息   
 	char *ptr;//用于遍历信息的指针   
 	//WinSock初始化
 	wVersionRequested = MAKEWORD(2, 2); //希望使用的WinSock DLL 的版本
@@ -22,6 +25,13 @@ int main()
 	}
 	//创建Socket,使用TCP协议
 	sListen = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	sClient = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (sClient == INVALID_SOCKET)
+	{
+		WSACleanup();
+		printf("socket() failed!\n");
+		return -1;
+	}
 	if (sListen == INVALID_SOCKET)
 	{
 		WSACleanup();
@@ -32,6 +42,11 @@ int main()
 	saServer.sin_family = AF_INET; //地址家族
 	saServer.sin_port = htons(SERVER_PORT); //注意转化为网络字节序
 	saServer.sin_addr.S_un.S_addr = htonl(INADDR_ANY); //使用INADDR_ANY 指示任意地址
+
+	saSend.sin_family = AF_INET; //地址家族
+	saSend.sin_port = htons(SEND_PORT); //注意转化为网络节序
+	saSend.sin_addr.S_un.S_addr = inet_addr(addr);
+
 
 	//绑定
 	ret = bind(sListen, (struct sockaddr *)&saServer, sizeof(saServer));
@@ -63,6 +78,18 @@ int main()
 		WSACleanup();
 		return -1;
 	}
+
+
+
+	ret = connect(sClient, (struct sockaddr *)&saSend, sizeof(saClient));
+	if (ret == SOCKET_ERROR)
+	{
+		printf("connect() failed!\n");
+		closesocket(sClient); //关闭套接字
+		WSACleanup();
+		return -1;
+	}
+
 	//阻塞等待接受客户端连接
 	while (1)//循环监听客户端，永远不停止，所以，在本项目中，我们没有心跳包。
 	{
@@ -77,7 +104,10 @@ int main()
 			return -1;
 		}
 		printf("%s\n", receiveMessage);
-		//printf("receive message:%s\n", receiveMessage);//打印我们接收到的消息。
+		gets(receiveMessage);
+		ret = send(sClient,receiveMessage, sizeof(receiveMessage), 0);
+		if(ret==SOCKET_ERROR)
+			printf("send error");
 	}
 	closesocket(sListen);
 	closesocket(sServer);
