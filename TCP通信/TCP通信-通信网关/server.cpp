@@ -92,7 +92,7 @@ int main()
 	{
 		if ((numbytes = recv(new_fd, buf, MAXDATASIZE, 0)) == -1)  continue;
 
-		printf("%s %d", buf, strlen(buf));
+		printf("%s", buf);
 		printf("\n");
 		sprintf(msg, "%d", strlen(buf));
 

@@ -10,7 +10,7 @@ int main()
 	int sockfd, numbytes;
 	char buf[MAXDATASIZE];
 	char msg[MAXDATASIZE];
-	char *argv = "111.117.104.77";
+	char *argv = "127.0.0.1";
 	struct sockaddr_in their_addr;        /* 对方的地址端口信息 */
 
 	WSADATA ws; 
@@ -36,7 +36,7 @@ int main()
 	printf("connet succeed\n");
 	//strcpy(msg,"hellodavid");
 	while (1){
-		scanf("%s", msg);
+		gets(msg);
 		//发送数据
 			if (send(sockfd,msg,MAXDATASIZE,0) == -1)
 			{

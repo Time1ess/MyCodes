@@ -71,6 +71,7 @@ void DP2()	//dp[i][j]表示在选择了前i个物品且重量在j之内的最大价值
 
 int main()
 {
+	freopen("in.txt", "r", stdin);
 	cin >> n;
 	memset(dp, 0, sizeof(dp));
 	int weight, value;

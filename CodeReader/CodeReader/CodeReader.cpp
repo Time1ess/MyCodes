@@ -270,7 +270,7 @@ int main()
 {
 	//获取目录名
 	char buf[256];
-	strcpy(buf, "d:\\mycodes\\");
+	strcpy(buf, "d:\\学习");
 //	gets(buf);
 
 	//构造类对象
@@ -293,22 +293,29 @@ int main()
 
 	ifstream fin;
 	int lines = 0;
+	int chars = 0;
+	int totchars = 0;
 	int Total = 0;
 	for (vector<string>::const_iterator it = file_vec.begin(); it < file_vec.end(); ++it)
 	{
 		fin.open(*it);
 		lines = 0;
+		chars = 0;
 		string s;
 		while (getline(fin, s))
 		{
 //			cout << s << endl;
+			if (s.length()==0)continue;
+			chars += s.length();
 			lines++;
 		}
 		fin.close();
 		Total += lines;
+		totchars += chars;
 		cout << endl <<"CPP Current "<<lines<<" lines, "<< "Total " << Total << " lines.";
+		cout << endl << "CHARS: " << totchars;
 	}
-
+	cin.get();
 
 	for (vector<string>::const_iterator it = file_vec1.begin(); it < file_vec1.end(); ++it)
 		std::cout << *it << std::endl;
@@ -316,32 +323,42 @@ int main()
 	{
 		fin.open(*it);
 		lines = 0;
+		chars = 0;
 		string s;
 		while (getline(fin, s))
 		{
 //			cout << s << endl;
+			if (s.length() == 0)continue;
 			lines++;
+			chars += s.length();
 		}
 		fin.close();
 		Total += lines;
+		totchars += chars;
 		cout << endl << "C Current " << lines << " lines, " << "Total " << Total << " lines.";
+		cout << endl << "CHARS: " << totchars;
 	}
-
+	cin.get();
 	for (vector<string>::const_iterator it = file_vec2.begin(); it < file_vec2.end(); ++it)
 		std::cout << *it << std::endl;
 	for (vector<string>::const_iterator it = file_vec2.begin(); it < file_vec2.end(); ++it)
 	{
 		fin.open(*it);
 		lines = 0;
+		chars = 0;
 		string s;
 		while (getline(fin, s))
 		{
 //			cout << s << endl;
+			if (s.length() == 0)continue;
 			lines++;
+			chars += s.length();
 		}
 		fin.close();
 		Total += lines;
+		totchars += chars;
 		cout << endl << "JAVA Current " << lines << " lines, " << "Total " << Total << " lines.";
+		cout << endl << "CHARS: " << totchars;
 	}
 	cin.get();
 	return 0;
