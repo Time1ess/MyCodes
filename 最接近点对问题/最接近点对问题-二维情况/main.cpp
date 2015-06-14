@@ -79,7 +79,7 @@ double Closest_Pair(int left, int right,int &p1,int &p2)
 		if (fabs(point[mid].x - point[i].x) <= d)
 			tmpt[k++] = i;
 	}
-	//°´yÉýÐòÅÅÐò
+	//½«tmpt°´yÉýÐòÅÅÐò
 	sort(tmpt, tmpt + k, cmpy);
 
 	//ÏßÐÔÉ¨Ãè
