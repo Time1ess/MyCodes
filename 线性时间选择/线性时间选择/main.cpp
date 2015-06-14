@@ -11,7 +11,7 @@ int s[MAX];
 
 //给定排序后的数组，在线性时间内寻找第k小的元素
 
-int quicksort(int *a, int s, int e)
+int quicksort(int *a, int s, int e)	//s,e为有效访问范围
 {
 	int i = s, j = e;
 	int key = a[s];
@@ -26,16 +26,16 @@ int quicksort(int *a, int s, int e)
 	return i;
 }
 
-int LinearTimeSelect(int *a, int s,int e, int k)
+int LinearTimeSelect(int *a, int s,int e, int k)//s,e为有效访问范围
 {
 	if (s==e)
 		return a[s];
 	int kth=quicksort(a, s, e);
-	int j = kth - s + 1;
+	int j = kth - s + 1;		//j为从s到e的第j小的元素，位置为kth
 	if (k<=j)
-		LinearTimeSelect(a, s, kth,k);
+		LinearTimeSelect(a, s, kth,k);	//从前一部分找到第k小的
 	else
-		LinearTimeSelect(a, kth+1, e, k - j);
+		LinearTimeSelect(a, kth+1, e, k - j);	//从后一部分找到第k-j小的
 }	
 
 int main()

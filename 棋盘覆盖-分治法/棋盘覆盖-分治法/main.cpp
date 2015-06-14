@@ -19,7 +19,7 @@ int flag = 0;
 void chessBoard(int tr, int tc, int dr, int dc, int size)
 {
 	if (size == 1)return;
-	int s = size / 2;
+	int s = size>>1;
 	int f = ++flag;
 
 	if (dr < tr + s&&dc < tc + s)
