@@ -1,27 +1,24 @@
 //凸多边形最优三角剖分
-#include <iostream> 
 #include <stack>
-#include <map>
+#include <iostream>
+#include <cstdlib>
+#include <cstdio>
+#include <ctime>
+#include <cstring>
+
 using namespace std;
 
 const int N = 7;//凸多边形边数+1
+int s[N][N], t[N][N];
 int weight[][N] = { { 0, 2, 2, 3, 1, 4 }, { 2, 0, 1, 5, 2, 3 }, { 2, 1, 0, 2, 1, 4 }, { 3, 5, 2, 0, 6, 2 }, { 1, 2, 1, 6, 0, 1 }, { 4, 3, 4, 2, 1, 0 } };//凸多边形的权
 
-int MinWeightTriangulation(int n, int **t, int **s);
-void Traceback(int i, int j, int **s);//构造最优解
+int MinWeightTriangulation(int n, int t[][N], int s[][N]);
+void Traceback(int i, int j, int s[][N]);//构造最优解
 int Weight(int a, int b, int c);//权函数
-void Traceback_norecursively(int i, int j, int **s);
+void Traceback_norecursively(int i, int j, int s[][N]);
 
 int main()
 {
-	int **s = new int *[N];
-	int **t = new int *[N];
-	for (int i = 0; i < N; i++)
-	{
-		s[i] = new int[N];
-		t[i] = new int[N];
-	}
-
 	cout << "此多边形的最优三角剖分值为：" << MinWeightTriangulation(N - 1, t, s) << endl;
 	cout << "最优三角剖分结构为：" << endl;
 	Traceback(1, 5, s); //s[i][j]记录了Vi-1和Vj构成三角形的第3个顶点的位置
@@ -31,29 +28,32 @@ int main()
 	return 0;
 }
 
-int MinWeightTriangulation(int n, int **t, int **s)
+int MinWeightTriangulation(int n, int t[][N], int s[][N])
 {
 	for (int i = 1; i <= n; i++)
 	{
 		t[i][i] = 0;
 	}
-	for (int r = 2; r <= n; r++) //r为当前计算的链长（子问题规模）  
+
+	for (int r = 2; r <= n; r++)//r为当前计算的链长（子问题规模）
 	{
-		for (int i = 1; i <= n - r + 1; i++)//n-r+1为最后一个r链的前边界  
+		for (int i = 1; i <= n - r + 1; i++)//n-r+1为最后一个r链的前边界
 		{
-			int j = i + r - 1;//计算前边界为r，链长为r的链的后边界  
+			int j = i + r - 1;//计算前边界为i，链长为r的链的后边界
 
-			t[i][j] = t[i + 1][j] + Weight(i - 1, i, j);//将链ij划分为A(i) * ( A[i+1:j] )这里实际上就是k=i
-
+			//尝试Vi-1ViVj构成三角剖分，初始化
+			t[i][j] = t[i][i] + t[i + 1][j] + Weight(i - 1, i, j);//将链ij划分为A(i) * ( A[i+1:j] )这里实际上就是k=i  
+					//t[i][i]=0;
 			s[i][j] = i;
 
-			for (int k = i + 1; k<j; k++)
+			//计算在i~j中最优剖分t[i][j];
+			for (int k = i + 1; k < j; k++)
 			{
-				//将链ij划分为( A[i:k] )* (A[k+1:j])   
-				int u = t[i][k] + t[k + 1][j] + Weight(i - 1, k, j);
-				if (u<t[i][j])
+				int min = t[i][k] + t[k + 1][j] + Weight(i - 1, k, j);//尝试Vi-1VkVj剖分，并与当前值进行比较
+
+				if (min < t[i][j])
 				{
-					t[i][j] = u;
+					t[i][j] = min;
 					s[i][j] = k;
 				}
 			}
@@ -63,7 +63,7 @@ int MinWeightTriangulation(int n, int **t, int **s)
 }
 
 
-void Traceback_norecursively(int i, int j, int **s)
+void Traceback_norecursively(int i, int j, int s[][N])
 {
 	struct POS
 	{
@@ -94,7 +94,7 @@ void Traceback_norecursively(int i, int j, int **s)
 	}
 }
 
-void Traceback(int i, int j, int **s)
+void Traceback(int i, int j, int s[][N])
 {
 	if (i == j) return;
 	Traceback(i, s[i][j], s);
