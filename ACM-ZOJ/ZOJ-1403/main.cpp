@@ -43,7 +43,6 @@ void process(int len)
 										double ans=values[v]-pow(values[w],2.0)+pow(values[x],3.0)-pow(values[y],4.0)+pow(values[z],5.0);
 										if(abs(ans-target)<1e-5)
 										{
-											//printf("ans:%lf\tans1:%lf\ttar:%d\n",ans,ans1,target);
 											printf("%c%c%c%c%c\n",values[v]-1+'A',values[w]-1+'A',
 													values[x]-1+'A',values[y]-1+'A',values[z]-1+'A');
 											return;
