@@ -46,7 +46,7 @@ void statement();
 void entrance();
 void declare();
 void compoundstatement();
-void ifstatement();
+int ifstatement();
 void booleanstatement();
 string lower(string &s);
 string getachar();
@@ -55,8 +55,8 @@ double getdouble();
 int getint();
 string getword();
 char getsym();
-void whilestatement();
-void forstatement();
+int whilestatement();
+int forstatement();
 double calculation();
 bool isnum(string);
 double strtodoub(string &s);
@@ -1009,7 +1009,7 @@ void booleanstatement()
 
 //ifstatement goes here
 //do if-statement,and if there exists a "else",do else,otherwise another statement
-void ifstatement()
+int ifstatement()
 {
 #ifdef syntaxtree
 	for (int i = 1; i <= depth; i++)
@@ -1055,7 +1055,7 @@ void ifstatement()
 
 //forstatement goes here
 //do for-statement
-void forstatement()
+int forstatement()
 {
 #ifdef syntaxtree
 	for (int i = 1; i <= depth; i++)
@@ -1132,7 +1132,7 @@ void forstatement()
 
 //whilestatement goes here
 //do while-statement
-void whilestatement()
+int whilestatement()
 {
 #ifdef syntaxtree
 	for (int i = 1; i <= depth; i++)
@@ -1209,6 +1209,7 @@ void compoundstatement()
 
 void statement()
 {
+	char oldsym=0;
 	if (word.length() == 0)
 	{
 		sym = getsym();
@@ -1219,9 +1220,9 @@ void statement()
 		}
 
 		compoundstatement();
-
+		oldsym = sym;
 		sym = getsym();
-		if (sym != '}')
+		if (sym != '}'&&oldsym!='}')
 		{
 			errorlist.push_back(6);//missing },error 6
 			throw exception();
@@ -1273,6 +1274,7 @@ void statement()
 		{
 			forstatement();
 		}
+
 		else	//equation such as a=6;b=3;c=b;
 		{
 #ifdef syntaxtree

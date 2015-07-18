@@ -1,0 +1,56 @@
+##BEGIN##
+  2main
+2m      3declare
+3d    Pushi 5
+    Sto    1
+    Pushi 1
+    Sto    2
+      3while-statement
+3w        4boolean-statement
+4blabel 0:
+    Push   2
+    Pushi  5
+    Ls     
+    jmpz  1
+          5statement
+5s    Pushi  1
+    Push   2
+    Add    
+d	2
+    jmp    0
+label 1:
+      3statement
+3sc	2
+  3f  4d    Pushi 1
+    Sto    3
+  4blabel 2:
+    Push   3
+    Pushi  10
+    Ls     
+    jnz  4
+    jmp   5
+label 3:
+        4statement
+4s    Push   3
+    Pushi  1
+    Add   
+    Sto    3
+i	2
+    jmp   2
+label 4:
+          5statement
+5s    Push   1
+    Push   2
+    Add    
+d	4
+          5statement
+5s    Push   1
+    Pushi  1
+    Sub   
+    Sto    1
+c	1
+    jmp   3
+label 5:
+  2end
+2x
+##SUCCESS##

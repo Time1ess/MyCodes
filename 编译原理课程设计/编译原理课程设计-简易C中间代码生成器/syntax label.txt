@@ -1,0 +1,28 @@
+for
+	declare
+label	bool
+	jmp
+label	statement
+	jmp
+label	content
+	jmp
+label	other
+
+
+if
+bool
+	jmp
+	content
+	jmp	  
+[
+else
+label	content
+]
+label
+	other
+
+while
+label	bool
+	jmp
+	content
+label	other

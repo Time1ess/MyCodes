@@ -1,5 +1,13 @@
 main()
 {
 	int d=1,c=2;
-	c=d*2-1/c+12;
+	for(int i=1;i<=3;i++)
+	{
+		if(d>c)
+			while(d>c)
+				d++;
+		else
+			while(c<d)
+				c++;
+	}
 }

@@ -6,4 +6,10 @@ main()
 		d=d+1;
 	}
 	c=2;
+	read d;
+	for(int i=1;i<10;i++)
+	{
+		d=d+c;
+		c--;
+	}
 }

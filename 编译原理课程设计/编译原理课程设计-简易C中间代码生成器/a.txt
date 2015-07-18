@@ -1,7 +1,7 @@
 main()
 {
 	int a,c=5,b=c;int bb=6;
-	double f=6.6,e=f;
+	double f=6.6,e=f
 	char d='c',m=d,kk=5;
 	if(c==5&&bb==10&&c>2)
 	{
@@ -12,7 +12,7 @@ main()
 	}
 	else
 	{
-		b=(b+6)/3+c*8.2-11*(11-d);
+		b=3+2*b;
 		c=1;
 	}
 	while(bb<6&&b>0)

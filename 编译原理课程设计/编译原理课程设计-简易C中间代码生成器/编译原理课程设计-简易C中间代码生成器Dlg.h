@@ -3,21 +3,30 @@
 //
 
 #pragma once
-
-
+struct status
+{
+	bool init;
+	int num;
+	double value;
+	status(int n = 0, double val = 0, bool in = false)
+	{
+		init = in;
+		num = n;
+		value = val;
+	}
+};
 // C编译原理课程设计简易C中间代码生成器Dlg 对话框
 class C编译原理课程设计简易C中间代码生成器Dlg : public CDialogEx
 {
 // 构造
 public:
 	C编译原理课程设计简易C中间代码生成器Dlg(CWnd* pParent = NULL);	// 标准构造函数
-	CString midcodes, tmpcs;
+	CString midcodes, tmpcs, totalcodes;
 // 对话框数据
 	enum { IDD = IDD_C_DIALOG };
 
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 支持
-
 
 // 实现
 protected:
@@ -36,14 +45,25 @@ public:
 	afx_msg void OnStnClickedMiddlecodes();
 	afx_msg void OnStnClickedCodes();
 	void AppendText(int controlId, CString strAdd);
-	double C编译原理课程设计简易C中间代码生成器Dlg::calculation();
-	void C编译原理课程设计简易C中间代码生成器Dlg::booleanstatement();
-	void C编译原理课程设计简易C中间代码生成器Dlg::ifstatement();
-	void C编译原理课程设计简易C中间代码生成器Dlg::statement();
-	void C编译原理课程设计简易C中间代码生成器Dlg::whilestatement();
-	void C编译原理课程设计简易C中间代码生成器Dlg::forstatement();
-	void C编译原理课程设计简易C中间代码生成器Dlg::declare();
-	void C编译原理课程设计简易C中间代码生成器Dlg::entrance();
-	void C编译原理课程设计简易C中间代码生成器Dlg::compoundstatement();
+	void ShowCodes(int controlId, CString strAdd);
+	double calculation();
+	void booleanstatement();
+	void ifstatement();
+	void statement();
+	void whilestatement();
+	void forstatement();
+	void declare();
+	void entrance();
+	void compoundstatement();
+	int replacelabel(int,int);
+	void findallsharps();
 	CFont font;
+	afx_msg void OnBnClickedReplace();
+	
+
+	afx_msg void OnBnClickedButton1();
+	afx_msg void OnBnClickedButton2();
+	afx_msg void OnBnClickedConpile();
+	afx_msg void OnBnClickedConfirm();
+	afx_msg void OnBnClickedTest();
 };

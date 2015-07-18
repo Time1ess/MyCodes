@@ -1,0 +1,12 @@
+##BEGIN##
+  2main
+      3declare
+      3for-statement
+        4declare
+        4boolean-statement
+        4statement
+          5statement
+          5statement
+  2end
+
+##SUCCESS##

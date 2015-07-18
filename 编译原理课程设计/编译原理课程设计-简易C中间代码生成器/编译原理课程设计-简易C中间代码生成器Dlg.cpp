@@ -16,11 +16,13 @@
 #include <exception>
 #include <cctype>
 #include <algorithm>
+#include <queue>
 #include <stack>
 #include <map>
 #pragma warning(disable:4996)
-//#define syntaxtree
+#define syntaxtree
 #define middlecode
+#define synlabel
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -29,29 +31,22 @@ using namespace std;
 char sym;
 string word;
 vector<int> errorlist;
-
-
+vector<int> allsharps;
+vector<int> alldollars;
+bool inputconfirm = false;
 #ifdef syntaxtree
 int depth = 2;
 #endif
+
 #ifdef middlecode
-struct status
-{
-	bool init;
-	int num;
-	double value;
-	status(int n = 0, double val = 0, bool in = false)
-	{
-		init = in;
-		num = n;
-		value = val;
-	}
-};
+int CodeMaxLength = 0;
 int varnum = 1;
 bool ifmatch = false;
 bool hasif = false;
 map<string, status> vars;
+map<int, string>errors;
 int label = 0;
+string syns;
 #endif
 
 void statement();
@@ -74,11 +69,227 @@ bool isnum(string);
 double strtodoub(string &s);
 
 
+void seterrors()
+{
+#ifdef middlecode
+	errors[0] = "main函数缺失";
+	errors[1] = "’(‘缺失";
+	errors[2] = "’)‘缺失";
+	errors[3] = "类型错误";
+	errors[4] = "声明错误";
+	errors[5] = "’{ ‘缺失";
+	errors[6] = "’ }’缺失";
+	errors[7] = "赋值错误";
+	errors[8] = "’; ’缺失";
+	errors[9] = "布尔表达式错误";
+	errors[10] = "未定义运算";
+	errors[11] = "运算符错误";
+	errors[12] = "变量名重复";
+	errors[13] = "变量未定义";
+	errors[14] = "变量未初始化";
+	errors[15] = "除0运算";
+#endif
+
+}
+
+
+
+/*
+void C编译原理课程设计简易C中间代码生成器Dlg::ShowCodes(int controlId, CString strAdd)
+{
+	((CEdit*)GetDlgItem(controlId))->SetSel(GetDlgItem(controlId)->GetWindowTextLength(), GetDlgItem(controlId)->GetWindowTextLength());
+	((CEdit*)GetDlgItem(controlId))->ReplaceSel(totalcodes);
+}*/
+
+
+void C编译原理课程设计简易C中间代码生成器Dlg::findallsharps()
+{
+	int k = 0;
+	int i;
+	do
+	{
+		if (k >= totalcodes.GetLength())break;
+		i = totalcodes.Find('#', k);
+		if (i != -1)
+			allsharps.push_back(i);
+		k = i+1;
+	} while (i != -1);
+
+	k = 0;
+	do
+	{
+		if (k >= totalcodes.GetLength())break;
+		i = totalcodes.Find('$', k);
+		if (i != -1)
+			alldollars.push_back(i);
+		k = i + 1;
+	} while (i != -1);
+	/*
+	i = 0;
+	for (auto x : allsharps)
+	{
+		totalcodes.Insert(x,'1');
+		totalcodes.Remove('#');
+	}
+	*/
+}
+
+//replace # in totalcodes to make right label
+//synindex defines the current index in syntax string
+//strindex defines the current index in totalcodes CString
+//tot defines how many # in totalcodes should be replaced for the current replace action
+//compare the depth level ,if first level is bigger than second level,indicates break current control block
+int C编译原理课程设计简易C中间代码生成器Dlg::replacelabel(int depth,int index)
+{
+	//for (int i = 0; i < allsharps.size(); i++)
+	//{
+	//	char s[10];
+	//	sprintf(s, "%d", i);
+	//	totalcodes.Insert(allsharps[i], s[0]);
+	//	if(i>9)
+	//		totalcodes.Insert(allsharps[i]+1, s[1]);
+	//	totalcodes.Remove('#');
+	//}
+	char s[10];
+	static queue<int> indexs;
+	static int loc = 0;
+	int tot = 0;
+	if (index >= syns.length())
+		return tot;
+	int currentdep = syns[index]-'0';
+
+	char order = syns[index + 1];
+
+	if (currentdep >= depth)
+	{
+		switch (order)
+		{
+		case 'i':
+			tot=replacelabel(currentdep, index + 2);
+
+			sprintf(s, "%d", loc);
+			totalcodes.Insert(allsharps[loc], s[0]);
+			if (loc > 9)
+				totalcodes.Insert(allsharps[loc] + 1, s[loc]);
+			totalcodes.Remove('#');
+			loc++;
+			break;
+		case 'w':
+			sprintf(s, "%d", loc);
+			totalcodes.Insert(allsharps[loc], s[0]);
+			if (loc > 9)
+				totalcodes.Insert(allsharps[loc] + 1, s[loc]);
+			totalcodes.Remove('#');
+			loc++;
+
+			tot=replacelabel(currentdep, index + 2);
+
+			sprintf(s, "%d", loc);
+			totalcodes.Insert(allsharps[loc], s[0]);
+			if (loc > 9)
+				totalcodes.Insert(allsharps[loc] + 1, s[loc]);
+			totalcodes.Remove('#');
+			loc++;
+			break;
+		case 'f':
+			sprintf(s, "%d", loc);
+			totalcodes.Insert(allsharps[loc], s[0]);
+			if (loc > 9)
+				totalcodes.Insert(allsharps[loc] + 1, s[loc]);
+			totalcodes.Remove('#');
+			loc++;
+
+			sprintf(s, "%d", loc);
+			totalcodes.Insert(allsharps[loc], s[0]);
+			if (loc > 9)
+				totalcodes.Insert(allsharps[loc] + 1, s[loc]);
+			totalcodes.Remove('#');
+			loc++;
+
+			sprintf(s, "%d", loc);
+			totalcodes.Insert(allsharps[loc], s[0]);
+			if (loc > 9)
+				totalcodes.Insert(allsharps[loc] + 1, s[loc]);
+			totalcodes.Remove('#');
+			loc++;
+
+			tot=replacelabel(currentdep, index + 2);
+
+			sprintf(s, "%d", loc);
+			totalcodes.Insert(allsharps[loc], s[0]);
+			if (loc > 9)
+				totalcodes.Insert(allsharps[loc] + 1, s[loc]);
+			totalcodes.Remove('#');
+			loc++;
+			break;
+		case 's':
+			replacelabel(currentdep, index + 2);
+			break;
+		case 'd':
+			replacelabel(currentdep, index + 2);
+			break;
+		case 'b':
+			replacelabel(currentdep, index + 2);
+			break;
+		case 'e':
+			sprintf(s, "%d", loc);
+			totalcodes.Insert(allsharps[loc], s[0]);
+			if (loc > 9)
+				totalcodes.Insert(allsharps[loc] + 1, s[loc]);
+			totalcodes.Remove('#');
+			loc++;
+
+			tot = replacelabel(currentdep, index + 2);
+
+			break;
+		case 'm':
+			replacelabel(currentdep, index + 2);
+			break;
+		case 'x':
+			break;
+		}
+
+		while (!indexs.empty())
+		{
+			int tdep = syns[indexs.front()] - '0';
+			if (tdep==depth)
+			{
+				char torder = syns[indexs.front() + 1];
+				indexs.pop();
+				replacelabel(tdep, index);
+			}
+		}
+	}
+	else
+	{
+		indexs.push(index);
+	}
+
+
+
+
+
+	//replace $ in jmpjmpz jnzorders.
+	//for (int i = 0; i < alldollars.size(); i++)
+	//{
+	//	char s[10];
+	//	sprintf(s, "%d", i);
+	//	totalcodes.Insert(alldollars[i], s[0]);
+	//	if (i>9)
+	//		totalcodes.Insert(alldollars[i] + 1, s[1]);
+	//	totalcodes.Remove('$');
+	//}
+}
+
+void C编译原理课程设计简易C中间代码生成器Dlg::ShowCodes(int controlId, CString strAdd)
+{
+	((CEdit*)GetDlgItem(controlId))->SetSel(GetDlgItem(controlId)->GetWindowTextLength(), GetDlgItem(controlId)->GetWindowTextLength());
+	((CEdit*)GetDlgItem(controlId))->ReplaceSel(totalcodes);
+}
 
 void C编译原理课程设计简易C中间代码生成器Dlg::AppendText(int controlId, CString strAdd)
 {
-	((CEdit*)GetDlgItem(controlId))->SetSel(GetDlgItem(controlId)->GetWindowTextLength(), GetDlgItem(controlId)->GetWindowTextLength());
-	((CEdit*)GetDlgItem(controlId))->ReplaceSel(strAdd + L"\n");
+	totalcodes+=strAdd + L"\r\n";
 }
 
 double strtodoub(string &s)
@@ -203,7 +414,24 @@ double C编译原理课程设计简易C中间代码生成器Dlg::calculation()// a=(b+6)/3+c*8.2-
 				depth--;
 #endif
 #ifdef middlecode
-				ans = strtodoub(cal.top().substr(2));
+				if (isalpha((cal.top())[2]))
+				{
+					if (vars[cal.top().substr(2)].init == false)
+					{
+						errorlist.push_back(14);
+						throw exception();
+					}
+					ans = vars[cal.top().substr(2)].value;
+				}
+				else
+				{
+					ans = strtodoub(cal.top().substr(2));
+
+				}
+				midcodes = _T("    Pushi  ");
+				tmpcs.Format(_T("%g"), ans);
+				midcodes += tmpcs;
+				AppendText(IDC_MIDDLECODES, midcodes);
 #endif
 				return ans;
 			}
@@ -530,11 +758,11 @@ double C编译原理课程设计简易C中间代码生成器Dlg::calculation()// a=(b+6)/3+c*8.2-
 				{
 #ifdef middlecode
 					tmp = cal.top();
-					if (i == 1 || i == 3)
+					if (i == 1)		//E->E+T, there is T
 					{
 						if (tmp[1] == '_')
 						{
-							cout << "    Push   " << vars[tmp.substr(2)].num << endl;
+							//cout << "    Push   " << vars[tmp.substr(2)].num << endl;
 							tmpcs.Format(_T("%d"), vars[tmp.substr(2)].num);
 							midcodes = _T("    Push   ")+tmpcs;
 							AppendText(IDC_MIDDLECODES, midcodes);
@@ -542,7 +770,7 @@ double C编译原理课程设计简易C中间代码生成器Dlg::calculation()// a=(b+6)/3+c*8.2-
 						}
 						else
 						{
-							cout << "    Pushi  " << tmp.substr(2) << endl;
+							//cout << "    Pushi  " << tmp.substr(2) << endl;
 							midcodes = _T("    Pushi  ");
 							tmpcs=tmp.substr(2).c_str();
 							midcodes += tmpcs;
@@ -550,9 +778,27 @@ double C编译原理课程设计简易C中间代码生成器Dlg::calculation()// a=(b+6)/3+c*8.2-
 							tmpd += strtodoub(tmp.substr(2));
 						}
 					}
-					if (i == 3)
+					else if (i == 3)	//E->E+T, there is E
 					{
-						cout << "    Add    " << endl;
+						if (tmp[1] == '_')
+						{
+							//cout << "    Push   " << vars[tmp.substr(2)].num << endl;
+							tmpcs.Format(_T("%d"), vars[tmp.substr(2)].num);
+							midcodes = _T("    Push   ") + tmpcs;
+							AppendText(IDC_MIDDLECODES, midcodes);
+							tmpd += vars[tmp.substr(2)].value;
+						}
+						else
+						{
+							//cout << "    Pushi  " << tmp.substr(2) << endl;
+							midcodes = _T("    Pushi  ");
+							tmpcs = tmp.substr(2).c_str();
+							midcodes += tmpcs;
+							AppendText(IDC_MIDDLECODES, midcodes);
+							tmpd += strtodoub(tmp.substr(2));
+						}
+
+						//cout << "    Add    " << endl;
 						midcodes = _T("    Add    ");
 						AppendText(IDC_MIDDLECODES, midcodes);
 					}
@@ -598,11 +844,11 @@ double C编译原理课程设计简易C中间代码生成器Dlg::calculation()// a=(b+6)/3+c*8.2-
 				{
 #ifdef middlecode
 					tmp = cal.top();
-					if (i == 1)
+					if (i == 1)	//E->E-T,there is T
 					{
 						if (tmp[1] == '_')
 						{
-							cout << "    Push   " << vars[tmp.substr(2)].num << endl;
+							//cout << "    Push   " << vars[tmp.substr(2)].num << endl;
 							tmpcs.Format(_T("%d"), vars[tmp.substr(2)].num);
 							midcodes = _T("    Push   ") + tmpcs;
 							AppendText(IDC_MIDDLECODES, midcodes);
@@ -610,7 +856,7 @@ double C编译原理课程设计简易C中间代码生成器Dlg::calculation()// a=(b+6)/3+c*8.2-
 						}
 						else
 						{
-							cout << "    Pushi  " << tmp.substr(2) << endl;
+							//cout << "    Pushi  " << tmp.substr(2) << endl;
 							midcodes = _T("    Pushi  ");
 							tmpcs=tmp.substr(2).c_str();
 							midcodes += tmpcs;
@@ -618,11 +864,11 @@ double C编译原理课程设计简易C中间代码生成器Dlg::calculation()// a=(b+6)/3+c*8.2-
 							tmpd -= strtodoub(tmp.substr(2));
 						}
 					}
-					else if (i == 3)
+					else if (i == 3)//E->E-T,there is E
 					{
 						if (tmp[1] == '_')
 						{
-							cout << "    Push   " << vars[tmp.substr(2)].num << endl;
+							//cout << "    Push   " << vars[tmp.substr(2)].num << endl;
 							tmpcs.Format(_T("%d"), vars[tmp.substr(2)].num);
 							midcodes = _T("    Push   ") + tmpcs;
 							AppendText(IDC_MIDDLECODES, midcodes);
@@ -630,14 +876,14 @@ double C编译原理课程设计简易C中间代码生成器Dlg::calculation()// a=(b+6)/3+c*8.2-
 						}
 						else
 						{
-							cout << "    Pushi  " << tmp.substr(2) << endl;
+							//cout << "    Pushi  " << tmp.substr(2) << endl;
 							midcodes = _T("    Pushi  ");
 							tmpcs=tmp.substr(2).c_str();
 							midcodes += tmpcs;
 							AppendText(IDC_MIDDLECODES, midcodes);
 							tmpd += strtodoub(tmp.substr(2));
 						}
-						cout << "    Sub    " << endl;
+						//cout << "    Sub    " << endl;
 						midcodes = _T("    Sub    ");
 						AppendText(IDC_MIDDLECODES, midcodes);
 					}
@@ -669,11 +915,11 @@ double C编译原理课程设计简易C中间代码生成器Dlg::calculation()// a=(b+6)/3+c*8.2-
 				{
 #ifdef middlecode
 					tmp = cal.top();
-					if (i == 1)
+					if (i == 1)		//T->T*F,there is F
 					{
 						if (tmp[1] == '_')
 						{
-							cout << "    Push   " << vars[tmp.substr(2)].num << endl;
+							//cout << "    Push   " << vars[tmp.substr(2)].num << endl;
 							tmpcs.Format(_T("%d"), vars[tmp.substr(2)].num);
 							midcodes = _T("    Push   ") + tmpcs;
 							AppendText(IDC_MIDDLECODES, midcodes);
@@ -681,7 +927,7 @@ double C编译原理课程设计简易C中间代码生成器Dlg::calculation()// a=(b+6)/3+c*8.2-
 						}
 						else
 						{
-							cout << "    Pushi  " << tmp.substr(2) << endl;
+							//cout << "    Pushi  " << tmp.substr(2) << endl;
 							midcodes = _T("    Pushi  ");
 							tmpcs=tmp.substr(2).c_str();
 							midcodes += tmpcs;
@@ -689,11 +935,11 @@ double C编译原理课程设计简易C中间代码生成器Dlg::calculation()// a=(b+6)/3+c*8.2-
 							tmpd += strtodoub(tmp.substr(2));
 						}
 					}
-					else if (i == 3)
+					else if (i == 3)		//T->T*F,there is T
 					{
 						if (tmp[1] == '_')
 						{
-							cout << "    Push   " << vars[tmp.substr(2)].num << endl;
+							//cout << "    Push   " << vars[tmp.substr(2)].num << endl;
 							tmpcs.Format(_T("%d"), vars[tmp.substr(2)].num);
 							midcodes = _T("    Push   ") + tmpcs;
 							AppendText(IDC_MIDDLECODES, midcodes);
@@ -701,14 +947,14 @@ double C编译原理课程设计简易C中间代码生成器Dlg::calculation()// a=(b+6)/3+c*8.2-
 						}
 						else
 						{
-							cout << "    Pushi  " << tmp.substr(2) << endl;
+							//cout << "    Pushi  " << tmp.substr(2) << endl;
 							midcodes = _T("    Pushi  ");
 							tmpcs=tmp.substr(2).c_str();
 							midcodes += tmpcs;
 							AppendText(IDC_MIDDLECODES, midcodes);
 							tmpd *= strtodoub(tmp.substr(2));
 						}
-						cout << "    Mul    " << endl;
+						//cout << "    Mul    " << endl;
 						midcodes = _T("    Mul    ");
 						AppendText(IDC_MIDDLECODES, midcodes);
 					}
@@ -740,11 +986,11 @@ double C编译原理课程设计简易C中间代码生成器Dlg::calculation()// a=(b+6)/3+c*8.2-
 				{
 #ifdef middlecode
 					tmp = cal.top();
-					if (i == 1)
+					if (i == 1)		//T->T/F,there is F
 					{
 						if (tmp[1] == '_')
 						{
-							cout << "    Push   " << vars[tmp.substr(2)].num << endl;
+							//cout << "    Push   " << vars[tmp.substr(2)].num << endl;
 							tmpcs.Format(_T("%d"), vars[tmp.substr(2)].num);
 							midcodes = _T("    Push   ") + tmpcs;
 							AppendText(IDC_MIDDLECODES, midcodes);
@@ -752,19 +998,24 @@ double C编译原理课程设计简易C中间代码生成器Dlg::calculation()// a=(b+6)/3+c*8.2-
 						}
 						else
 						{
-							cout << "    Pushi  " << tmp.substr(2) << endl;
+							//cout << "    Pushi  " << tmp.substr(2) << endl;
 							midcodes = _T("    Pushi  ");
 							tmpcs=tmp.substr(2).c_str();
 							midcodes += tmpcs;
 							AppendText(IDC_MIDDLECODES, midcodes);
 							tmpd += strtodoub(tmp.substr(2));
 						}
+						if (tmpd == 0)
+						{
+							errorlist.push_back(15);
+							throw exception();
+						}
 					}
-					else if (i == 3)
+					else if (i == 3)		//T->T/F,there is T
 					{
 						if (tmp[1] == '_')
 						{
-							cout << "    Push   " << vars[tmp.substr(2)].num << endl;
+							//cout << "    Push   " << vars[tmp.substr(2)].num << endl;
 							tmpcs.Format(_T("%d"), vars[tmp.substr(2)].num);
 							midcodes = _T("    Push   ") + tmpcs;
 							AppendText(IDC_MIDDLECODES, midcodes);
@@ -772,14 +1023,14 @@ double C编译原理课程设计简易C中间代码生成器Dlg::calculation()// a=(b+6)/3+c*8.2-
 						}
 						else
 						{
-							cout << "    Pushi  " << tmp.substr(2) << endl;
+							//cout << "    Pushi  " << tmp.substr(2) << endl;
 							midcodes = _T("    Pushi  ");
 							tmpcs=tmp.substr(2).c_str();
 							midcodes += tmpcs;
 							AppendText(IDC_MIDDLECODES, midcodes);
 							tmpd = strtodoub(tmp.substr(2)) / tmpd;
 						}
-						cout << "    Div    " << endl;
+						//cout << "    Div    " << endl;
 						midcodes = _T("    Div    ");
 						AppendText(IDC_MIDDLECODES, midcodes);
 					}
@@ -973,7 +1224,7 @@ void C编译原理课程设计简易C中间代码生成器Dlg::booleanstatement()
 			}
 			else
 			{
-				cout << "    Push   " << vars[value].num << endl;
+				//cout << "    Push   " << vars[value].num << endl;
 				tmpcs.Format(_T("%d"), vars[value].num);
 				midcodes = _T("    Push   ") + tmpcs;
 				AppendText(IDC_MIDDLECODES, midcodes);
@@ -998,7 +1249,7 @@ void C编译原理课程设计简易C中间代码生成器Dlg::booleanstatement()
 			{
 				if (isnum(value))
 				{
-					cout << "    Pushi  " << value << endl;
+					//cout << "    Pushi  " << value << endl;
 					midcodes = _T("    Pushi  ");
 					tmpcs=value.c_str();
 					midcodes += tmpcs;
@@ -1006,7 +1257,7 @@ void C编译原理课程设计简易C中间代码生成器Dlg::booleanstatement()
 				}
 				else
 				{
-					cout << "    Push   " << vars[value].num << endl;
+					//cout << "    Push   " << vars[value].num << endl;
 					tmpcs.Format(_T("%d"), vars[value].num);
 					midcodes = _T("    Push   ") + tmpcs;
 					AppendText(IDC_MIDDLECODES, midcodes);
@@ -1016,13 +1267,13 @@ void C编译原理课程设计简易C中间代码生成器Dlg::booleanstatement()
 				case '<':
 					if (tlabel)
 					{
-						cout << "    Leq    " << endl;
+						//cout << "    Leq    " << endl;
 						midcodes = _T("    Leq    ");
 						AppendText(IDC_MIDDLECODES, midcodes);
 					}
 					else
 					{
-						cout << "    Ls     " << endl;
+						//cout << "    Ls     " << endl;
 						midcodes = _T("    Ls     ");
 						AppendText(IDC_MIDDLECODES, midcodes);
 					}
@@ -1030,13 +1281,13 @@ void C编译原理课程设计简易C中间代码生成器Dlg::booleanstatement()
 				case '>':
 					if (tlabel)
 					{
-						cout << "    Geq    " << endl;
+						//cout << "    Geq    " << endl;
 						midcodes = _T("    Geq    ");
 						AppendText(IDC_MIDDLECODES, midcodes);
 					}
 					else
 					{
-						cout << "    Gt     " << endl;
+						//cout << "    Gt     " << endl;
 						midcodes = _T("    Gt     ");
 						AppendText(IDC_MIDDLECODES, midcodes);
 					}
@@ -1044,7 +1295,7 @@ void C编译原理课程设计简易C中间代码生成器Dlg::booleanstatement()
 				case '!':
 					if (tlabel)
 					{
-						cout << "    Noteq  " << endl;
+						//cout << "    Noteq  " << endl;
 						midcodes = _T("    Noteq  ");
 						AppendText(IDC_MIDDLECODES, midcodes);
 					}
@@ -1057,7 +1308,7 @@ void C编译原理课程设计简易C中间代码生成器Dlg::booleanstatement()
 				case '=':
 					if (tlabel)
 					{
-						cout << "    Eq     " << endl;
+						//cout << "    Eq     " << endl;
 						midcodes = _T("    Eq     ");
 						AppendText(IDC_MIDDLECODES, midcodes);
 					}
@@ -1098,13 +1349,13 @@ void C编译原理课程设计简易C中间代码生成器Dlg::booleanstatement()
 #ifdef middlecode
 	if (m == '&')
 	{
-		cout << "    And    " << endl;
+		//cout << "    And    " << endl;
 		midcodes = _T("    And    ");
 		AppendText(IDC_MIDDLECODES, midcodes);
 	}
 	else
 	{
-		cout << "    Or     " << endl;
+		//cout << "    Or     " << endl;
 		midcodes = _T("    Or     ");
 		AppendText(IDC_MIDDLECODES, midcodes);
 	}
@@ -1118,7 +1369,10 @@ void C编译原理课程设计简易C中间代码生成器Dlg::ifstatement()
 #ifdef syntaxtree
 	for (int i = 1; i <= depth; i++)
 		cout << "  ";
-	cout << "if-statement" << endl;
+	cout << depth<<"if-statement" << endl;
+#ifdef synlabel
+	//cout << depth << "i";
+#endif
 	depth++;
 #endif
 	sym = getsym();
@@ -1130,12 +1384,16 @@ void C编译原理课程设计简易C中间代码生成器Dlg::ifstatement()
 #ifdef syntaxtree
 	for (int i = 1; i <= depth; i++)
 		cout << "  ";
-	cout << "boolean-statement" << endl;
+	cout << depth<<"boolean-statement" << endl;
+#ifdef synlabel
+	//cout << depth << "b";
+#endif
 	depth++;
 #endif
 #ifdef middlecode
-	cout << "label " << label++ << ":" << endl;
-	midcodes = _T("label ");
+	//cout << "label " << label++ << ":" << endl;
+	label++;
+	midcodes = _T("label   ");
 	tmpcs.Format(_T("%d:"), label - 1);
 	midcodes += tmpcs;
 	AppendText(IDC_MIDDLECODES, midcodes);
@@ -1143,7 +1401,7 @@ void C编译原理课程设计简易C中间代码生成器Dlg::ifstatement()
 	//boolean codes goes here
 	booleanstatement();
 #ifdef middlecode
-	cout << "    jmpz   " << label << endl;
+	//cout << "    jmpz  " << label << endl;
 	midcodes = _T("    jmpz   ");
 	tmpcs.Format(_T("%d"), label);
 	midcodes += tmpcs;
@@ -1172,7 +1430,10 @@ void C编译原理课程设计简易C中间代码生成器Dlg::forstatement()
 #ifdef syntaxtree
 	for (int i = 1; i <= depth; i++)
 		cout << "  ";
-	cout << "for-statement" << endl;
+	cout << depth<<"for-statement" << endl;
+#ifdef synlabel
+	//cout << depth << "f";
+#endif
 	depth++;
 #endif
 	sym = getsym();
@@ -1184,31 +1445,38 @@ void C编译原理课程设计简易C中间代码生成器Dlg::forstatement()
 #ifdef syntaxtree
 	for (int i = 1; i <= depth; i++)
 		cout << "  ";
-	cout << "declare" << endl;
+	cout <<depth<< "declare" << endl;
+#ifdef synlabel
+	//cout << depth << "d";
+#endif
 #endif
 	declare();
 #ifdef syntaxtree
 	for (int i = 1; i <= depth; i++)
 		cout << "  ";
-	cout << "boolean-statement" << endl;
+	cout <<depth<< "boolean-statement" << endl;
+#ifdef synlabel
+	//cout << depth << "b";
+#endif
 #endif
 	//boolean codes goes here
 #ifdef middlecode
-	cout << "label " << label++ << ":" << endl;
-	midcodes = _T("label ");
+	//cout << "label " << label++ << ":" << endl;
+	label++;
+	midcodes = _T("label   ");
 	tmpcs.Format(_T("%d:"), label - 1);
 	midcodes += tmpcs;
 	AppendText(IDC_MIDDLECODES, midcodes);
 #endif
 	booleanstatement();
 #ifdef middlecode
-	cout << "    jnz   " << label + 1 << endl;
-	midcodes = _T("    jnz   ");
+	//cout << "    jnz  " << label + 1 << endl;
+	midcodes = _T("    jnz    ");
 	tmpcs.Format(_T("%d"), label + 1);
 	midcodes += tmpcs;
 	AppendText(IDC_MIDDLECODES, midcodes);
 
-	cout << "    jmp    " << label + 2 << endl;
+	//cout << "    jmp   " << label + 2 << endl;
 	midcodes = _T("    jmp    ");
 	tmpcs.Format(_T("%d"), label + 2);
 	midcodes += tmpcs;
@@ -1221,8 +1489,9 @@ void C编译原理课程设计简易C中间代码生成器Dlg::forstatement()
 		throw exception();
 	}
 #ifdef middlecode
-	cout << "label " << label++ << ":" << endl;
-	midcodes = _T("label ");
+	//cout << "label " << label++ << ":" << endl;
+	label++;
+	midcodes = _T("label   ");
 	tmpcs.Format(_T("%d:"), label - 1);
 	midcodes += tmpcs;
 	AppendText(IDC_MIDDLECODES, midcodes);
@@ -1231,7 +1500,7 @@ void C编译原理课程设计简易C中间代码生成器Dlg::forstatement()
 	word = getword();
 	statement();
 #ifdef middlecode 
-	cout << "    jmp    " << label - 2 << endl;
+	//cout << "    jmp   " << label - 2 << endl;
 	midcodes = _T("    jmp    ");
 	tmpcs.Format(_T("%d"), label - 2);
 	midcodes += tmpcs;
@@ -1242,8 +1511,9 @@ void C编译原理课程设计简易C中间代码生成器Dlg::forstatement()
 #endif
 
 #ifdef middlecode
-	cout << "label " << label++ << ":" << endl;
-	midcodes = _T("label ");
+	//cout << "label " << label++ << ":" << endl;
+	label++;
+	midcodes = _T("label   ");
 	tmpcs.Format(_T("%d:"), label - 1);
 	midcodes += tmpcs;
 	AppendText(IDC_MIDDLECODES, midcodes);
@@ -1253,14 +1523,15 @@ void C编译原理课程设计简易C中间代码生成器Dlg::forstatement()
 	compoundstatement();
 
 #ifdef middlecode
-	cout << "    jmp    " << label - 2 << endl;
+	//cout << "    jmp   " << label - 2 << endl;
 	midcodes = _T("    jmp    ");
 	tmpcs.Format(_T("%d"), label - 2);
 	midcodes += tmpcs;
 	AppendText(IDC_MIDDLECODES, midcodes);
 
-	cout << "label " << label++ << ":" << endl;
-	midcodes = _T("label ");
+	//cout << "label " << label++ << ":" << endl;
+	label++;
+	midcodes = _T("label   ");
 	tmpcs.Format(_T("%d:"), label - 1);
 	midcodes += tmpcs;
 	AppendText(IDC_MIDDLECODES, midcodes);
@@ -1283,7 +1554,10 @@ void C编译原理课程设计简易C中间代码生成器Dlg::whilestatement()
 #ifdef syntaxtree
 	for (int i = 1; i <= depth; i++)
 		cout << "  ";
-	cout << "while-statement" << endl;
+	cout << depth<<"while-statement" << endl;
+#ifdef synlabel
+	//cout << depth << "w";
+#endif
 	depth++;
 #endif
 	sym = getsym();
@@ -1295,20 +1569,24 @@ void C编译原理课程设计简易C中间代码生成器Dlg::whilestatement()
 #ifdef syntaxtree
 	for (int i = 1; i <= depth; i++)
 		cout << "  ";
-	cout << "boolean-statement" << endl;
+	cout << depth<<"boolean-statement" << endl;
+#ifdef synlabel
+	//cout << depth << "b";
+#endif
 	depth++;
 #endif
 	//boolean codes goes here
 #ifdef middlecode
-	cout << "label " << label++ << ":" << endl;
-	midcodes = _T("label ");
+	//cout << "label " << label++ << ":" << endl;
+	label++;
+	midcodes = _T("label   ");
 	tmpcs.Format(_T("%d:"), label - 1);
 	midcodes += tmpcs;
 	AppendText(IDC_MIDDLECODES, midcodes);
 #endif
 	booleanstatement();
 #ifdef middlecode
-	cout << "    jmpz   " << label << endl;
+	//cout << "    jmpz  " << label << endl;
 	midcodes = _T("    jmpz   ");
 	tmpcs.Format(_T("%d"), label);
 	midcodes += tmpcs;
@@ -1324,15 +1602,16 @@ void C编译原理课程设计简易C中间代码生成器Dlg::whilestatement()
 	word = getword();
 	statement();
 #ifdef middlecode
-	cout << "    jmp     " << label - 1 << endl;
+	//cout << "    jmp    " << label - 1 << endl;
 	midcodes = _T("    jmp    ");
 	tmpcs.Format(_T("%d"), label - 1);
 	midcodes += tmpcs;
 	AppendText(IDC_MIDDLECODES, midcodes);
 #endif
 #ifdef middlecode
-	cout << "label " << label++ << ":" << endl;
-	midcodes = _T("label ");
+	//cout << "label " << label++ << ":" << endl;
+	label++;
+	midcodes = _T("label   ");
 	tmpcs.Format(_T("%d:"), label - 1);
 	midcodes += tmpcs;
 	AppendText(IDC_MIDDLECODES, midcodes);
@@ -1371,6 +1650,7 @@ void C编译原理课程设计简易C中间代码生成器Dlg::compoundstatement()
 
 void C编译原理课程设计简易C中间代码生成器Dlg::statement()
 {
+	char oldsym;
 	if (word.length() == 0)
 	{
 		sym = getsym();
@@ -1381,9 +1661,9 @@ void C编译原理课程设计简易C中间代码生成器Dlg::statement()
 		}
 
 		compoundstatement();
-
+		oldsym = sym;
 		sym = getsym();
-		if (sym != '}')
+		if (sym != '}'&&oldsym!='}')
 		{
 			errorlist.push_back(6);//missing },error 6
 			throw exception();
@@ -1394,8 +1674,9 @@ void C编译原理课程设计简易C中间代码生成器Dlg::statement()
 		if (hasif&&!ifmatch&&word != "else")
 		{
 #ifdef middlecode
-			cout << "label " << label++ << ":" << endl;
-			midcodes = _T("label ");
+			//cout << "label " << label++ << ":" << endl;
+			label++;
+			midcodes = _T("label   ");
 			tmpcs.Format(_T("%d:"), label - 1);
 			midcodes += tmpcs;
 			AppendText(IDC_MIDDLECODES, midcodes);
@@ -1414,18 +1695,22 @@ void C编译原理课程设计简易C中间代码生成器Dlg::statement()
 #ifdef syntaxtree
 			for (int i = 1; i <= depth; i++)
 				cout << "  ";
-			cout << "else-statement" << endl;
+			cout << depth<<"else-statement" << endl;
+#ifdef synlabel
+			//cout << depth << "e";
+#endif
 			depth += 2;
 #endif
 #ifdef middlecode
-			cout << "    jmp     " << label + 1 << endl;
+			//cout << "    jmp    " << label + 1 << endl;
 			midcodes = _T("    jmp    ");
 			tmpcs.Format(_T("%d"), label + 1);
 			midcodes += tmpcs;
 			AppendText(IDC_MIDDLECODES, midcodes);
 
-			cout << "label " << label++ << ":" << endl;
-			midcodes = _T("label ");
+			//cout << "label " << label++ << ":" << endl;
+			label++;
+			midcodes = _T("label   ");
 			tmpcs.Format(_T("%d:"), label - 1);
 			midcodes += tmpcs;
 			AppendText(IDC_MIDDLECODES, midcodes);
@@ -1434,8 +1719,9 @@ void C编译原理课程设计简易C中间代码生成器Dlg::statement()
 			word = getword();
 			statement();
 #ifdef middlecode
-			cout << "label " << label++ << ":" << endl;
-			midcodes = _T("label ");
+			//cout << "label " << label++ << ":" << endl;
+			label++;
+			midcodes = _T("label   ");
 			tmpcs.Format(_T("%d:"), label - 1);
 			midcodes += tmpcs;
 			AppendText(IDC_MIDDLECODES, midcodes);
@@ -1452,12 +1738,44 @@ void C编译原理课程设计简易C中间代码生成器Dlg::statement()
 		{
 			forstatement();
 		}
+		else if (word == "read")
+		{
+			word = getword();
+			sym = getsym();
+			if (sym != ';'&&sym != ')')
+			{
+				errorlist.push_back(8);//missing ;,error 8
+				throw exception();
+			}
+			if (vars[word].num == 0)
+			{
+				errorlist.push_back(13);
+				throw exception();
+			}
+#ifdef syntaxtree
+			for (int i = 1; i <= depth; i++)
+				cout << "  ";
+			cout << depth << "statement" << endl;
+#endif
+
+#ifdef middlecode
+			midcodes = _T("    Read   ");
+			tmpcs.Format(_T("%d"), vars[word].num);
+			midcodes += tmpcs;
+			AppendText(IDC_MIDDLECODES, midcodes);
+
+#endif
+			return;
+		}
 		else	//equation such as a=6;b=3;c=b;
 		{
 #ifdef syntaxtree
 			for (int i = 1; i <= depth; i++)
 				cout << "  ";
-			cout << "statement" << endl;
+			cout << depth<<"statement" << endl;
+#ifdef synlabel
+			//cout << depth << "s";
+#endif
 #endif
 			sym = getsym();
 			if (sym == '+' || sym == '-')
@@ -1481,35 +1799,35 @@ void C编译原理课程设计简易C中间代码生成器Dlg::statement()
 					errorlist.push_back(14);
 					throw exception();
 				}
-				cout << "    Push   " << vars[word].num << endl;
+				//cout << "    Push   " << vars[word].num << endl;
 				midcodes = _T("    Push   ");
 				tmpcs.Format(_T("%d"), vars[word].num);
 				midcodes += tmpcs;
 				AppendText(IDC_MIDDLECODES, midcodes);
 
-				cout << "    Pushi  1" << endl;
+				//cout << "    Pushi  1" << endl;
 				midcodes = _T("    Pushi  1");
 				AppendText(IDC_MIDDLECODES, midcodes);
 				if (m == '+')
 				{
-					cout << "    Add   " << endl;
+					//cout << "    Add   " << endl;
 					midcodes = _T("    Add   ");
 					AppendText(IDC_MIDDLECODES, midcodes);
 					vars[word].value += 1;
 				}
 				else
 				{
-					cout << "    Sub   " << endl;
+					//cout << "    Sub   " << endl;
 					midcodes = _T("    Sub   ");
 					AppendText(IDC_MIDDLECODES, midcodes);
 					vars[word].value -= 1;
 				}
-				cout << "    Sto    " << vars[word].num << endl;
+				//cout << "    Sto    " << vars[word].num << endl;
 				midcodes = _T("    Sto    ");
 				tmpcs.Format(_T("%d"), vars[word].num);
 				midcodes += tmpcs;
 				AppendText(IDC_MIDDLECODES, midcodes);
-
+				//cout << word << "\t" << vars[word].value << endl;
 #endif
 				return;
 			}
@@ -1517,6 +1835,13 @@ void C编译原理课程设计简易C中间代码生成器Dlg::statement()
 			{
 				vars[word].value = calculation();
 				vars[word].init = true;
+#ifdef middlecode
+				midcodes = _T("    Sti    ");
+				tmpcs.Format(_T("%d"), vars[word].num);
+				midcodes += tmpcs;
+				AppendText(IDC_MIDDLECODES, midcodes);
+#endif
+				//cout << word << "\t" << vars[word].value << endl;
 			}
 			else
 			{
@@ -1576,7 +1901,7 @@ void C编译原理课程设计简易C中间代码生成器Dlg::declare()
 						//if value is char--,then should use Push instead of Pushi
 						if (isalpha(value[0]))
 						{
-							cout << "    Push  " << vars[value].num << endl;
+							//cout << "    Push  " << vars[value].num << endl;
 							midcodes = _T("    Push   ");
 							if (vars[value].init == false)
 							{
@@ -1586,25 +1911,37 @@ void C编译原理课程设计简易C中间代码生成器Dlg::declare()
 							tmpcs.Format(_T("%d"), vars[value].num);
 							midcodes += tmpcs;
 							AppendText(IDC_MIDDLECODES, midcodes);
+
+							//cout << "    Sto    " << varnum << endl;
+							midcodes = _T("    Sto    ");
+							tmpcs.Format(_T("%d"), varnum);
+							midcodes += tmpcs;
+							AppendText(IDC_MIDDLECODES, midcodes);
+
+							vars[word].value = vars[value].value;
+							vars[word].init = true;
+							vars[word].num = varnum++;
 						}
 						else
 						{
-							cout << "    Pushi " << value << endl;
+							//cout << "    Pushi " << value << endl;
 							midcodes = _T("    Pushi  ");
 
 							tmpcs = value.c_str();
 							midcodes += tmpcs;
 							AppendText(IDC_MIDDLECODES, midcodes);
-						}
-						cout << "    Sto    " << varnum << endl;
-						midcodes = _T("    Sto    ");
-						tmpcs.Format(_T("%d"), varnum);
-						midcodes += tmpcs;
-						AppendText(IDC_MIDDLECODES, midcodes);
 
-						vars[word].value = strtodoub(value);
-						vars[word].init = true;
-						vars[word].num = varnum++;
+							//cout << "    Sto    " << varnum << endl;
+							midcodes = _T("    Sto    ");
+							tmpcs.Format(_T("%d"), varnum);
+							midcodes += tmpcs;
+							AppendText(IDC_MIDDLECODES, midcodes);
+
+							vars[word].value = strtodoub(value);
+							vars[word].init = true;
+							vars[word].num = varnum++;
+						}
+
 					}
 					else
 					{
@@ -1615,6 +1952,18 @@ void C编译原理课程设计简易C中间代码生成器Dlg::declare()
 					if (sym == ';')con = false;
 					break;
 				case ';':
+					if (word.length() != 0)
+					{
+						if (vars[word].num == 0)
+						{
+							vars[word].num = varnum++;
+						}
+						else
+						{
+							errorlist.push_back(12);
+							throw exception();
+						}
+					}
 					con = false;
 					break;
 				default:
@@ -1652,7 +2001,7 @@ void C编译原理课程设计简易C中间代码生成器Dlg::declare()
 					{
 						if (isalpha(value[0]))
 						{
-							cout << "    Push  " << vars[value].num << endl;
+							//cout << "    Push  " << vars[value].num << endl;
 							midcodes = _T("    Push   ");
 							if (vars[value].init == false)
 							{
@@ -1665,14 +2014,14 @@ void C编译原理课程设计简易C中间代码生成器Dlg::declare()
 						}
 						else
 						{
-							cout << "    Pushi " << value << endl;
+							//cout << "    Pushi " << value << endl;
 							midcodes = _T("    Pushi  ");
 
 							tmpcs = value.c_str();
 							midcodes += tmpcs;
 							AppendText(IDC_MIDDLECODES, midcodes);
 						}
-						cout << "    Sto    " << varnum << endl;
+						//cout << "    Sto    " << varnum << endl;
 						midcodes = _T("    Sto    ");
 						tmpcs.Format(_T("%d"), varnum);
 						midcodes += tmpcs;
@@ -1730,7 +2079,7 @@ void C编译原理课程设计简易C中间代码生成器Dlg::declare()
 					{
 						if (value[0] == '\'')
 						{
-							cout << "    Pushi " << value << endl;
+							//cout << "    Pushi " << value << endl;
 							midcodes = _T("    Pushi  ");
 							tmpcs = value.c_str();
 							midcodes += tmpcs;
@@ -1738,16 +2087,23 @@ void C编译原理课程设计简易C中间代码生成器Dlg::declare()
 
 							value = value[1];
 							vars[word].value = strtodoub(value);
+
+							//cout << "    Sto    " << varnum << endl;
+							midcodes = _T("    Sto    ");
+							tmpcs.Format(_T("%d"), varnum);
+							midcodes += tmpcs;
+							AppendText(IDC_MIDDLECODES, midcodes);
+
 						}
 						else if (isdigit(value[0]))
 						{
-							cout << "    Pushi " << value << endl;
+							//cout << "    Pushi " << value << endl;
 							midcodes = _T("    Pushi  ");
 							tmpcs = value.c_str();
 							midcodes += tmpcs;
 							AppendText(IDC_MIDDLECODES, midcodes);
 
-							cout << "    Sto    " << varnum << endl;
+							//cout << "    Sto    " << varnum << endl;
 							midcodes = _T("    Sto    ");
 							tmpcs.Format(_T("%d"), varnum);
 							midcodes += tmpcs;
@@ -1758,13 +2114,13 @@ void C编译原理课程设计简易C中间代码生成器Dlg::declare()
 						}
 						else
 						{
-							cout << "    Push  " << vars[value].num << endl;
+							//cout << "    Push  " << vars[value].num << endl;
 							midcodes = _T("    Push  ");
 							tmpcs.Format(_T("%d"), vars[value].num);
 							midcodes += tmpcs;
 							AppendText(IDC_MIDDLECODES, midcodes);
 
-							cout << "    Sto    " << varnum << endl;
+							//cout << "    Sto    " << varnum << endl;
 							midcodes = _T("    Sto    ");
 							tmpcs.Format(_T("%d"), varnum);
 							midcodes += tmpcs;
@@ -1806,7 +2162,10 @@ void C编译原理课程设计简易C中间代码生成器Dlg::entrance()		//main entrance
 #ifdef syntaxtree
 	for (int i = 1; i < depth; i++)
 		cout << "  ";
-	cout << "main" << endl;
+	cout << depth<<"main" << endl;
+#ifdef synlabel
+	//cout << depth << "m";
+#endif
 	depth++;
 #endif
 	if (word == "main")
@@ -1833,7 +2192,10 @@ void C编译原理课程设计简易C中间代码生成器Dlg::entrance()		//main entrance
 #ifdef syntaxtree
 		for (int i = 1; i <= depth; i++)
 			cout << "  ";
-		cout << "declare" << endl;
+		cout << depth<<"declare" << endl;
+#ifdef synlabel
+		//cout << depth << "d";
+#endif
 #endif
 		//declare goes here
 		declare();
@@ -1861,7 +2223,10 @@ void C编译原理课程设计简易C中间代码生成器Dlg::entrance()		//main entrance
 	depth--;
 	for (int i = 1; i < depth; i++)
 		cout << "  ";
-	cout << "end" << endl;
+	cout <<depth<< "end" << endl;
+#ifdef synlabel
+	//cout << depth << "x";
+#endif
 #endif
 }
 
@@ -1919,6 +2284,8 @@ BEGIN_MESSAGE_MAP(C编译原理课程设计简易C中间代码生成器Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_Load, &C编译原理课程设计简易C中间代码生成器Dlg::OnBnClickedLoad)
 	ON_BN_CLICKED(IDC_EXECUTE, &C编译原理课程设计简易C中间代码生成器Dlg::OnBnClickedExecute)
 	ON_BN_CLICKED(IDC_CLEAR, &C编译原理课程设计简易C中间代码生成器Dlg::OnBnClickedClear)
+	ON_BN_CLICKED(IDC_CONPILE, &C编译原理课程设计简易C中间代码生成器Dlg::OnBnClickedConpile)
+	ON_BN_CLICKED(IDC_CONFIRM, &C编译原理课程设计简易C中间代码生成器Dlg::OnBnClickedConfirm)
 END_MESSAGE_MAP()
 
 
@@ -1929,6 +2296,11 @@ BOOL C编译原理课程设计简易C中间代码生成器Dlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 	font.CreatePointFont(120, _T("consolas"));
 	GetDlgItem(IDC_MIDDLECODES)->SetFont(&font);
+	GetDlgItem(IDC_CODES)->SetFont(&font);
+	GetDlgItem(IDC_SYNTAX)->SetFont(&font);
+	GetDlgItem(IDC_INPUT)->SetFont(&font);
+	GetDlgItem(IDC_OUTPUT)->SetFont(&font);
+	seterrors();
 	// 将“关于...”菜单项添加到系统菜单中。
 
 	// IDM_ABOUTBOX 必须在系统命令范围内。
@@ -1955,11 +2327,9 @@ BOOL C编译原理课程设计简易C中间代码生成器Dlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO:  在此添加额外的初始化代码
-	GetDlgItem(IDC_CODES)->SetWindowTextW(_T("调整Calculation计算逻辑\n以及中间代码显示顺序"));
 	GetDlgItem(IDC_CODES)->ShowScrollBar(SB_VERT, TRUE);
 	GetDlgItem(IDC_MIDDLECODES)->ShowScrollBar(SB_VERT, TRUE);
-	freopen("a.txt", "r", stdin);
-	word = getword();
+	GetDlgItem(IDC_SYNTAX)->ShowScrollBar(SB_VERT, TRUE);
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -2018,7 +2388,45 @@ void C编译原理课程设计简易C中间代码生成器Dlg::OnBnClickedLoad()
 {
 	// TODO:  在此添加控件通知处理程序代码
 	//GetDlgItem(IDC_MIDDLECODES)->SetWindowTextW(CString("hello world"));
-	freopen("f.txt", "r", stdin);
+	//freopen("d.txt", "r", stdin);
+	//freopen("syn.txt", "w", stdout);
+	OnBnClickedClear();
+	CString FilePathName;
+	CFileDialog dlg(TRUE, //TRUE为OPEN对话框，FALSE为SAVE AS对话框
+		NULL,
+		NULL,
+		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		(LPCTSTR)_TEXT("TEXT Files (*.txt)|*.txt|All Files (*.*)|*.*||"),
+		NULL);
+	if (dlg.DoModal() == IDOK)
+	{
+		FilePathName = dlg.GetPathName(); //文件名保存在了FilePathName里
+		fclose(stdin);
+		string filename;
+		string content="";
+		string tmpss="";
+		cin.clear();
+		USES_CONVERSION;
+		filename = W2A(FilePathName);
+		freopen(filename.c_str(), "r", stdin);
+		while (cin)
+		{
+			getline(cin, tmpss);
+			content += tmpss+"\r\n";
+		}
+		cin.clear();
+		fclose(stdin);
+		CString t;
+		t = content.c_str();
+		GetDlgItem(IDC_CODES)->SetWindowTextW(t);
+		freopen(filename.c_str(), "r", stdin);
+		freopen("ans.txt", "w", stdout);
+	}
+	else
+	{
+		return;
+	}
+
 }
 
 
@@ -2026,7 +2434,208 @@ void C编译原理课程设计简易C中间代码生成器Dlg::OnBnClickedExecute()
 {
 	// TODO:  在此添加控件通知处理程序代码
 	//AppendText(IDC_MIDDLECODES, _T("12345"));
+	/*
+	stack<double> numstack;//定义操作数栈
 
+	int i = 0;
+	int StackTopValue;
+	double content;
+	int operator1;
+	int operator2;
+	int Code[1000];//0存操作码，1存操作数，CodeMaxLength参数需要确定
+	string Num[1000];
+	while (i < CodeMaxLength)
+	{
+		switch (Code[i])
+		{
+		case 0://Push d
+			content = vars[Num[i]].value;
+			numstack.push(content);
+			i++;
+			break;
+		case 1://Pushi N
+			content = strtodoub(Num[i]);
+			numstack.push(content);
+			i++;
+			break;
+		case 2://Sto d
+			content = numstack.top();
+			vars[Num[i]].value = content;
+			i++;
+			break;
+		case 3://Sti d
+			content = numstack.top();
+			vars[Num[i]].value = content;
+			numstack.pop();
+			i++;
+			break;
+		case 4://Add
+			operator1 = numstack.top();
+			numstack.pop();
+			operator2 = numstack.top();
+			numstack.pop();
+			numstack.push(operator1 + operator2);
+			i++;
+			break;
+		case 5://Sub
+			operator1 = numstack.top();
+			numstack.pop();
+			operator2 = numstack.top();
+			numstack.pop();
+			numstack.push(operator1 - operator2);
+			i++;
+		case 6://Mul
+			operator1 = numstack.top();
+			numstack.pop();
+			operator2 = numstack.top();
+			numstack.pop();
+			numstack.push(operator1 * operator2);
+			i++;
+		case 7://Div
+			operator1 = numstack.top();
+			numstack.pop();
+			operator2 = numstack.top();
+			numstack.pop();
+			numstack.push(operator1 / operator2);
+			i++;
+		case 8://jmp
+			i++;
+			break;
+		case 9://jnz
+			i++;
+			break;
+		case 10://jmpz
+			i++;
+			break;
+		case 11://Eq
+			operator1 = numstack.top();
+			numstack.pop();
+			operator2 = numstack.top();
+			numstack.pop();
+			if (operator1 == operator2)
+				numstack.push(1);
+			else numstack.push(0);
+			i++;
+			break;
+		case 12://Noteq
+			operator1 = numstack.top();
+			numstack.pop();
+			operator2 = numstack.top();
+			numstack.pop();
+			if (operator1 == operator2)
+				numstack.push(0);
+			else numstack.push(1);
+			i++;
+			break;
+		case 13://Gt
+			operator1 = numstack.top();
+			numstack.pop();
+			operator2 = numstack.top();
+			numstack.pop();
+			if (operator1 < operator2)
+				numstack.push(1);
+			else numstack.push(0);
+			i++;
+			break;
+		case 14://Ls
+			operator1 = numstack.top();
+			numstack.pop();
+			operator2 = numstack.top();
+			numstack.pop();
+			if (operator1 > operator2)
+				numstack.push(1);
+			else numstack.push(0);
+			i++;
+			break;
+		case 15://Geq
+			operator1 = numstack.top();
+			numstack.pop();
+			operator2 = numstack.top();
+			numstack.pop();
+			if (operator1 <= operator2)
+				numstack.push(1);
+			else numstack.push(0);
+			i++;
+			break;
+		case 16://Leq
+			operator1 = numstack.top();
+			numstack.pop();
+			operator2 = numstack.top();
+			numstack.pop();
+			if (operator1 >= operator2)
+				numstack.push(1);
+			else numstack.push(0);
+			i++;
+			break;
+		case 17://And
+			operator1 = numstack.top();
+			numstack.pop();
+			operator2 = numstack.top();
+			numstack.pop();
+			numstack.push(operator1&&operator2);
+			i++;
+			break;
+		case 18://Or
+			operator1 = numstack.top();
+			numstack.pop();
+			operator2 = numstack.top();
+			numstack.pop();
+			numstack.push(operator1 || operator2);
+			i++;
+			break;
+		case 19://Not
+			operator1 = numstack.top();
+			numstack.pop();
+			numstack.push(!operator1);
+			i++;
+			break;
+		case 20://Stop
+			i = CodeMaxLength;
+			break;
+		case 21:	//Read
+		{
+			CString s;
+			GetDlgItem(IDC_INPUT)->GetWindowTextW(s);
+			GetDlgItem(IDC_OUTPUT)->SetWindowTextW(s);
+		}
+			break;
+		default:
+			i++;
+			break;
+		}
+	}
+	*/
+}
+
+
+void C编译原理课程设计简易C中间代码生成器Dlg::OnBnClickedClear()
+{
+	// TODO:  在此添加控件通知处理程序代码
+	GetDlgItem(IDC_MIDDLECODES)->SetWindowTextW(_T(""));
+	GetDlgItem(IDC_CODES)->SetWindowTextW(_T(""));
+	GetDlgItem(IDC_SYNTAX)->SetWindowTextW(_T(""));
+	depth = 2;
+	errorlist.clear();
+	varnum = 1;
+	ifmatch = false;
+	hasif = false;
+	CodeMaxLength = 0;
+	vars.clear();
+	label = 0;
+	syns="";
+	totalcodes = "";
+	fclose(stdin);
+	fclose(stdout);
+//	findallsharps();
+//	OnBnClickedReplace();
+//	replacelabel(0,0);
+
+}
+
+
+void C编译原理课程设计简易C中间代码生成器Dlg::OnBnClickedConpile()
+{
+	// TODO:  在此添加控件通知处理程序代码
 	word = getword();
 	cout << "##BEGIN##" << endl;
 	try
@@ -2037,22 +2646,42 @@ void C编译原理课程设计简易C中间代码生成器Dlg::OnBnClickedExecute()
 	{
 		//catch fatal error,print errorlist
 		cout << "##Catch ERROR##" << endl;
-		for (auto x : errorlist)
-		{
-			cout << x << endl;
-		}
+		cout << errorlist[0] << endl;
+		midcodes = _T("##Catch ERROR##");
+		AppendText(IDC_MIDDLECODES, midcodes);
+		midcodes.Format(_T("%d"), errorlist[0]);
+		AppendText(IDC_MIDDLECODES, midcodes);
+		midcodes=errors[errorlist[0]].c_str();
+		AppendText(IDC_MIDDLECODES, midcodes);
+		ShowCodes(IDC_MIDDLECODES, totalcodes);
 		return;
 	}
-	cout << "##SUCCESS##" << endl;
+	cout << "\n##SUCCESS##" << endl;
+	ShowCodes(IDC_MIDDLECODES, totalcodes);
+	fclose(stdin);
+	string tmpss = "";
+	string content = "";
+	freopen("ans.txt", "r", stdin);
+	cin.clear();
+	while (cin)
+	{
+		getline(cin, tmpss);
+		if (tmpss.length() != 0)
+			content += tmpss + "\r\n";
+	}
+	cin.clear();
+	fclose(stdin);
+	CString t;
+	t = content.c_str();
+	GetDlgItem(IDC_SYNTAX)->SetWindowTextW(t);
 	return;
 }
 
 
-void C编译原理课程设计简易C中间代码生成器Dlg::OnBnClickedClear()
+void C编译原理课程设计简易C中间代码生成器Dlg::OnBnClickedConfirm()
 {
-	// TODO:  在此添加控件通知处理程序代码
-	GetDlgItem(IDC_MIDDLECODES)->SetWindowTextW(_T(""));
-	GetDlgItem(IDC_CODES)->SetWindowTextW(_T(""));
-	fclose(stdin);
-}
 
+	// TODO:  在此添加控件通知处理程序代码
+	inputconfirm = true;
+	
+}
