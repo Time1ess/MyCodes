@@ -1,3 +1,10 @@
+/*
+# Author: David - youchen.du@gmail.com
+# QQ : 449195172
+# Last modified:    2015-07-20 15:41
+# Filename:     LostCows.cpp
+# Description: 
+*/
 #include <cstdlib>
 #include <cstdio>
 using namespace std;
