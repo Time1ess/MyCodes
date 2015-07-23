@@ -121,7 +121,7 @@ int main()
 		Build(1,j-1,1);
 		for(i=1;i<=n;i++)
 		{
-			tl.coord=l[i];	//tl是起始坐标，tr是中点坐标，二者是同一条线段的两个端点
+			tl.coord=l[i];	//tl是起始坐标，tr是终点坐标，二者是同一条线段的两个端点
 			tr.coord=r[i];
 			templ=(item *)bsearch(&tl,poster+1,j,sizeof(item),Cmp);
 				//二分找出tl的地址，以求出其编号
