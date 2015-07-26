@@ -1,4 +1,10 @@
 MyCodes
 =======
->Codes about my CPP learning and my codes about AOAPC II ACM questions
+###Here are my codes about my CS learning
+
+- .c	(C language)
+- .cpp	(C++ language)
+- .m	(Matlab Codes)
+- .py	(Python language)
+- .java	(Java language)
 
