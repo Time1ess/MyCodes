@@ -4,8 +4,9 @@ import fileinput,re
 #like:
 #'The sum of 7 and 9 is [7+9].'
 #'[name="Mr. Gumby"]Hello, [name]'
-
-
+#[x=2]
+#[y=3]
+#The sum of [x] and [y] is [x+y]
 
 #pattern
 field_pat=re.compile(r'\[(.+?)\]')
