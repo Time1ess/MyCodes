@@ -1,4 +1,9 @@
-def square(x):
+"""
+A simple math module.
+""" 
+__revision__= '0.1'
+
+def square(factor1):
 	'''
 	Squares a number and returns the result.
 
@@ -7,7 +12,8 @@ def square(x):
 	>>> square(3)
 	9
 	'''
-	return x*x
+	return factor1 * factor1
 
-def product(x,y):
-	return x*y
+def product(factor1, factor2):
+	'The product of two numbers'
+	return factor1 * factor2
