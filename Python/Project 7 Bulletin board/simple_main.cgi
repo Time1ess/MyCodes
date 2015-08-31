@@ -20,16 +20,20 @@ print """
   """
 dictindex=['id','subject','sender','reply_to','text']
 curs.execute('select * from messages')
-originrows=curs.fetchall()
+#originrows=curs.fetchall()
 
-rows={}
-for row in originrows:
-	rows[row[0]]=dict(zip(dictindex,row))
+#rows={}
+#for row in originrows:
+#	rows[row[0]]=dict(zip(dictindex,row))
+
+names=[d[0] for d in curs.description]
+rows=[dict(zip(names,row)) for row in curs.fetchall()]
 
 toplevel=[]
 children={}
 
-for k,row in rows.items():
+#for k,row in rows.items():
+for row in rows:
 	parent_id=row['reply_to']
 	if parent_id is None:
 		toplevel.append(row)
