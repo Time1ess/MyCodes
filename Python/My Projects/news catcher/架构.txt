@@ -1,0 +1,5 @@
+Agent类负责添加新闻源和添加接收接收源，处理新闻收发
+WebSource类负责使用正则表达式获取新闻的标题和链接，发送给WebParse类处理
+WebParser类派生自HTMLParser类，使用相关方法获取新闻的内容、时间等信息
+WebFormat类负责接收多个完整的新闻内容并生成合理的HTML格式
+
