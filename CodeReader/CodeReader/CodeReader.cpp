@@ -270,8 +270,8 @@ int main()
 {
 	//获取目录名
 	char buf[256];
-	strcpy(buf, "d:\\学习");
-//	gets(buf);
+	strcpy(buf, "D:\\MyCodes");
+	//	gets(buf);
 
 	//构造类对象
 	CStatDir statdir;
@@ -283,82 +283,39 @@ int main()
 		return -1;
 	}
 	//开始遍历
-
-	vector<string>file_vec = statdir.BeginBrowseFilenames("*.cpp");
-	vector<string>file_vec1 = statdir.BeginBrowseFilenames("*.c");
-	vector<string>file_vec2 = statdir.BeginBrowseFilenames("*.java");
-
-	for (vector<string>::const_iterator it = file_vec.begin(); it < file_vec.end(); ++it)
-		std::cout << *it << std::endl;
-
-	ifstream fin;
 	int lines = 0;
 	int chars = 0;
 	int totchars = 0;
 	int Total = 0;
-	for (vector<string>::const_iterator it = file_vec.begin(); it < file_vec.end(); ++it)
+	string types[10] = { "*.cpp", "*.c", "*.h", "*.java", "*.py", "*.pyc","*.jsp","*.html","*.php","*.cgi" };
+	for (string x:types)
 	{
-		fin.open(*it);
-		lines = 0;
-		chars = 0;
-		string s;
-		while (getline(fin, s))
-		{
-//			cout << s << endl;
-			if (s.length()==0)continue;
-			chars += s.length();
-			lines++;
-		}
-		fin.close();
-		Total += lines;
-		totchars += chars;
-		cout << endl <<"CPP Current "<<lines<<" lines, "<< "Total " << Total << " lines.";
-		cout << endl << "CHARS: " << totchars;
-	}
-	cin.get();
+		vector<string>file_vec = statdir.BeginBrowseFilenames(x.c_str());
 
-	for (vector<string>::const_iterator it = file_vec1.begin(); it < file_vec1.end(); ++it)
-		std::cout << *it << std::endl;
-	for (vector<string>::const_iterator it = file_vec1.begin(); it < file_vec1.end(); ++it)
-	{
-		fin.open(*it);
-		lines = 0;
-		chars = 0;
-		string s;
-		while (getline(fin, s))
+		for (vector<string>::const_iterator it = file_vec.begin(); it < file_vec.end(); ++it)
+			std::cout << *it << std::endl;
+
+		ifstream fin;
+
+		for (vector<string>::const_iterator it = file_vec.begin(); it < file_vec.end(); ++it)
 		{
-//			cout << s << endl;
-			if (s.length() == 0)continue;
-			lines++;
-			chars += s.length();
+			fin.open(*it);
+			lines = 0;
+			chars = 0;
+			string s;
+			while (getline(fin, s))
+			{
+				//			cout << s << endl;
+				if (s.length() == 0)continue;
+				chars += s.length();
+				lines++;
+			}
+			fin.close();
+			Total += lines;
+			totchars += chars;
+			cout << endl << "Current " << lines << " lines, " << "Total " << Total << " lines.";
+			cout << endl << "CHARS: " << totchars;
 		}
-		fin.close();
-		Total += lines;
-		totchars += chars;
-		cout << endl << "C Current " << lines << " lines, " << "Total " << Total << " lines.";
-		cout << endl << "CHARS: " << totchars;
-	}
-	cin.get();
-	for (vector<string>::const_iterator it = file_vec2.begin(); it < file_vec2.end(); ++it)
-		std::cout << *it << std::endl;
-	for (vector<string>::const_iterator it = file_vec2.begin(); it < file_vec2.end(); ++it)
-	{
-		fin.open(*it);
-		lines = 0;
-		chars = 0;
-		string s;
-		while (getline(fin, s))
-		{
-//			cout << s << endl;
-			if (s.length() == 0)continue;
-			lines++;
-			chars += s.length();
-		}
-		fin.close();
-		Total += lines;
-		totchars += chars;
-		cout << endl << "JAVA Current " << lines << " lines, " << "Total " << Total << " lines.";
-		cout << endl << "CHARS: " << totchars;
 	}
 	cin.get();
 	return 0;
