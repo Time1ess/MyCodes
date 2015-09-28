@@ -1,0 +1,11 @@
+INDEX VERSION 1.127
+D:\MyCodes\java\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\1085447681.index
+\DuoMeiTi\src
+D:\MyCodes\java\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\35753357.index
+\DuoMeiTi\src
+D:\MyCodes\java\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\1019514499.index
+\DuoMeiTi\src
+D:\MyCodes\java\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\1330044567.index
+\DuoMeiTi\src
+D:\MyCodes\java\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2876639571.index
+\DuoMeiTi\src
