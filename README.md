@@ -1,6 +1,6 @@
 MyCodes
 =======
-###Here are my code about my CS learning
+###Here are my codes about my CS learning
 
 - .c	(C language)
 - .cpp	(C++ language)
