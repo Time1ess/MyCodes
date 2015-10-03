@@ -1,0 +1,37 @@
+{% load staticfiles %}
+	<form enctype="multipart/form-data" method="POST" action="{% url 'fileupload:uploadFile' %}">
+		{% csrf_token %}
+		<input type="file" name="uploadFile" id="uploadFile"  onChange="if(this.value)insertTitle(this.value);" style="color:#000000"/>
+			<input type="input" name="Author" value="" />
+			<select name="fileType">
+				<option value="0" selected="">正常文件</option>
+				<option value="1">附件文件</option>
+			</select>
+		<input type="submit" value="上传文件" />
+
+		<input type="hidden" id="encodeFileName" name="encodeFileName" value="" />
+		<input type="hidden" id="uploadFileName" name="uploadFileName" value="" />
+	</form>
+		<!-- Footer -->
+	<!-- jQuery -->
+	<script src="{% static 'js/jquery.js' %}"></script>
+
+	<!-- Bootstrap Core JavaScript -->
+	<script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+	<!-- Plugin JavaScript -->
+	<script src="{% static 'js/jquery.easing.min.js' %}"></script>
+
+	<!-- API for handling cookies -->
+	<script src="{% static 'js/js.cookie.js' %}"></script>
+
+	<!-- CSRF token file -->
+	<script src="{% static 'js/csrf.js' %}"></script>
+	<script type="text/javascript">
+	function insertTitle(filename)
+	{  
+	    document.getElementById("uploadFileName").value = filename.substring(filename.lastIndexOf('\\') + 1);  
+	    document.getElementById("encodeFileName").value=encodeURIComponent(document.getElementById("uploadFileName").value);
+
+	}  
+	</script>

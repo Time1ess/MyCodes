@@ -40,6 +40,7 @@ INSTALLED_APPS = (
 	'notifications',
 	'mainpage',
 	'workdocuments',
+	'fileupload',
 )
 
 MIDDLEWARE_CLASSES = (

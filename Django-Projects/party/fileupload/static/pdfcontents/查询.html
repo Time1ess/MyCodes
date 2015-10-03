@@ -1,0 +1,208 @@
+﻿<html>
+<head>
+<title>学生成绩表</title>
+<LINK rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+
+<p>
+<form method=post action="http://202.118.65.21:9090/setReportParams">
+	<table><tr style="font-family:宋体;font-size:13px">
+		<td>&nbsp;学号</td><td><input name="LS_XH" value="" style="width:70px"></td>
+		<td><input type=submit value=查询 style="font-family:宋体;font-size:13px;width:40px;height:22px"></td>
+	</tr></table>
+	<input type=hidden name=resultPage value="http://202.118.65.21:9090/reportFiles/cj/cj_zwcjd.jsp?">
+</form>
+<form name="report1_turnPageForm" method=post action="http://202.118.65.21:9090/reportFiles/cj/cj_zwcjd.jsp?1396957925404" style="display:none">
+<input type=hidden name=reportParamsId value=102330>
+<input type=hidden name=srcId value=3407>
+<input type=hidden name=report1_currPage value="">
+<input type=hidden name=report1_cachedId value=3408>
+</form><script language=javascript>
+	function report1_toPage( pageNo ) {
+	if( pageNo < 1 || pageNo > report1_getTotalPage() ) return;
+		document.report1_turnPageForm.report1_currPage.value = pageNo;
+		document.report1_turnPageForm.submit();
+	}
+</script>
+<script language=javascript>
+	function report1_getCurrPage() {
+		return 1;
+	}
+	function report1_getTotalPage() {
+		return 1;
+	}
+</script>
+<script language=javascript>
+	function report1_saveAsExcel() {
+		var address = "http://202.118.65.21:9090/servlet/com.runqian.report.view.excel.ConfigExcelServlet?url=http%3A%2F%2F202.118.65.21%3A80%2Fservlet%2Fcom.runqian.report.view.excel.ExcelReportServlet%3Ffile%3D3407%26columns%3D0%26srcType%3DdefineBean%26width%3D0%26height%3D0%26reportParamsId%3D102330%26cachedId%3D3408%26t_i_m_e%3D1396957925404";
+		window.open( address + "&frame=report1_saveAs_frame", "", "width=300, height=180, left=250, top=200, status=no resizable=yes" );
+	}
+</script>
+<script language=javascript>
+	function report1_saveAsPdf() {
+		document.report1_saveAs_frame.location = "http://202.118.65.21:80/servlet/com.runqian.report.view.pdf.PdfReportServlet?file=3407&columns=0&srcType=defineBean&reportParamsId=102330&cachedId=3408&t_i_m_e=1396957925404";
+	}
+</script>
+
+<iframe name="report1_saveAs_frame" id="report1_saveAs_frame" src="a.html" style="display:none"></iframe>
+<script language=javascript>
+	function report1_saveAsText() {
+		document.report1_saveAs_frame.location = "http://202.118.65.21:80/servlet/com.runqian.report.view.text.TextFileServlet?file=3407&srcType=defineBean&separator=%09&reportParamsId=102330&cachedId=3408&t_i_m_e=1396957925404";
+	}
+</script>
+
+<script language=javascript>
+	function report1_print() {
+		document.report1_printIFrame.location = "http://202.118.65.21:80/servlet/com.runqian.report.view.html.PrintServlet?name=report1&reportFileName=3407&canModifyBeforePrint=yes&srcType=defineBean&reportParamsId=102330&cachedId=3408&t_i_m_e=1396957925404";
+	}
+</script>
+<iframe name="report1_printIFrame" id="report1_printIFrame" src="a.html" style="position:absolute;left:-100px;top:-100px" width=50 height=50></iframe>
+<table>
+	<tr><td style="background-color:#12632256">
+		<div noWrap style="font-family:宋体;font-size:10pt;color:#808040;">
+			页号1/1|最前页|上一页|下一页|最后页|<a href="#" onclick="report1_saveAsExcel();return false">存为Excel</a>|<a href="#" onclick="report1_saveAsPdf();return false">存为PDF</a>|<a href="#" onclick="report1_saveAsText();return false">存为Text</a>|<a href="#" onclick="report1_print();return false">打印</a>|<object classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"	codebase="http://202.118.65.21:80/j2re-1_4_1-windows-i586-i.exe#Version=1,4,1,0"	width="40" height="16" id="report1_directPrintApplet" style="vertical-align:middle">	<param name="name" value="report1_directPrintApplet">	<param name="code" value="com.runqian.report.view.applet.DirectPrintApplet.class">	<param name="archive" value="/runqianReportApplet.jar">	<param name="type" value="application/x-java-applet;version=1.4">	<param name="appRoot" value="http://202.118.65.21:80">	<param name="dataServlet" value="/servlet/com.runqian.report.view.DataServlet">	<param name="fileName" value="3407">	<param name="srcType" value="defineBean">	<param name="fontFace" value="宋体">	<param name="fontSize" value="10pt">	<param name="fontColor" value="#808040">	<param name="backColor" value="#12632256">	<param name="label" value="打印">	<param name="reportParamsId" value="102330">	<param name="cachedId" value="3408">	<param name="scriptable" value="true">	<param name="needPrintPrompt" value="no">	<param name="needSelectPrinter" value="no"></object>		</div>	</td></tr></table>
+<style>
+	.report1_9_13 { text-align:center;background-color:#FFFFFF;border-bottom-color:#000000;border-bottom-style:none;border-bottom-width:1px;padding-left:0px;padding-right:0px;border-left-color:#000000;border-left-style:solid;border-left-width:1px;border-right-color:#000000;border-right-style:solid;border-right-width:1px;font-weight:normal;color:#000000;font-family:宋体;font-style:normal;font-size:9px;text-decoration:none;border-top-color:#000000;border-top-style:solid;border-top-width:1px;vertical-align:top; }
+	.report1_2_1 { text-align:center;background-color:#FFFFFF;border-bottom-color:#000000;border-bottom-style:solid;border-bottom-width:1px;padding-left:0px;padding-right:0px;border-left-color:#000000;border-left-style:solid;border-left-width:1px;border-right-color:#000000;border-right-style:solid;border-right-width:1px;font-weight:normal;color:#000000;font-family:宋体;font-style:normal;font-size:9px;text-decoration:none;border-top-color:#000000;border-top-style:solid;border-top-width:1px;vertical-align:middle; }
+	.report1_8_5 { text-align:right;background-color:#FFFFFF;border-bottom-color:#000000;border-bottom-style:solid;border-bottom-width:1px;padding-right:0px;border-left-color:#000000;border-left-style:solid;border-left-width:1px;border-right-color:#000000;border-right-style:solid;border-right-width:1px;font-weight:normal;color:#000000;font-family:宋体;font-style:normal;font-size:9px;text-decoration:none;border-top-color:#000000;border-top-style:solid;border-top-width:1px;vertical-align:middle; }
+	.report1_13_4 { text-align:left;background-color:#FFFFFF;border-bottom-color:#000000;border-bottom-style:none;border-bottom-width:1px;padding-left:0px;border-left-color:#000000;border-left-style:none;border-left-width:1px;border-right-color:#000000;border-right-style:none;border-right-width:1px;font-weight:normal;color:#000000;font-family:宋体;font-style:normal;font-size:9px;text-decoration:none;border-top-color:#000000;border-top-style:solid;border-top-width:1px;vertical-align:middle; }
+	.report1_13_1 { text-align:center;background-color:#FFFFFF;border-bottom-color:#000000;border-bottom-style:none;border-bottom-width:1px;padding-left:0px;padding-right:0px;border-left-color:#000000;border-left-style:none;border-left-width:1px;border-right-color:#000000;border-right-style:none;border-right-width:1px;font-weight:normal;color:#000000;font-family:宋体;font-style:normal;font-size:9px;text-decoration:none;border-top-color:#000000;border-top-style:solid;border-top-width:1px;vertical-align:middle; }
+	.report1_2_9 { text-align:center;background-color:#FFFFFF;border-bottom-color:#000000;border-bottom-style:solid;border-bottom-width:1px;height:20px;padding-left:0px;padding-right:0px;border-left-color:#000000;border-left-style:solid;border-left-width:1px;border-right-color:#000000;border-right-style:solid;border-right-width:1px;font-weight:normal;color:#000000;font-family:宋体;font-style:normal;font-size:9px;text-decoration:none;border-top-color:#000000;border-top-style:solid;border-top-width:1px;vertical-align:middle; }
+	.report1_10_16 { text-align:center;background-color:#FFFFFF;border-bottom-color:#000000;border-bottom-style:solid;border-bottom-width:1px;padding-left:0px;padding-right:0px;border-left-color:#000000;border-left-style:solid;border-left-width:1px;border-right-color:#000000;border-right-style:solid;border-right-width:1px;font-weight:normal;color:#000000;font-family:宋体;font-style:normal;font-size:9px;text-decoration:none;border-top-color:#000000;border-top-style:none;border-top-width:1px;vertical-align:middle; }
+	.report1_7_9 { text-align:center;background-color:#FFFFFF;border-bottom-color:#000000;border-bottom-style:solid;border-bottom-width:1px;height:31px;padding-left:0px;padding-right:0px;border-left-color:#000000;border-left-style:solid;border-left-width:1px;border-right-color:#000000;border-right-style:solid;border-right-width:1px;font-weight:normal;color:#000000;font-family:宋体;font-style:normal;font-size:9px;text-decoration:none;border-top-color:#000000;border-top-style:solid;border-top-width:1px;vertical-align:middle; }
+	.report1_1_1 { text-align:center;background-color:#FFFFFF;border-bottom-color:#000000;border-bottom-style:solid;border-bottom-width:1px;padding-left:0px;padding-right:0px;border-left-color:#000000;border-left-style:none;border-left-width:1px;border-right-color:#000000;border-right-style:none;border-right-width:1px;font-weight:bold;color:#000000;font-family:宋体;font-style:normal;font-size:12px;text-decoration:none;border-top-color:#000000;border-top-style:none;border-top-width:1px;vertical-align:middle; }
+	.report1_9_16 { text-align:center;background-color:#FFFFFF;border-bottom-color:#000000;border-bottom-style:none;border-bottom-width:1px;padding-left:0px;padding-right:0px;border-left-color:#000000;border-left-style:solid;border-left-width:1px;border-right-color:#000000;border-right-style:solid;border-right-width:1px;font-weight:normal;color:#000000;font-family:宋体;font-style:normal;font-size:9px;text-decoration:none;border-top-color:#000000;border-top-style:solid;border-top-width:1px;vertical-align:middle; }
+	.report1_10_13 { text-align:center;background-color:#FFFFFF;border-bottom-color:#000000;border-bottom-style:solid;border-bottom-width:1px;padding-left:0px;padding-right:0px;border-left-color:#000000;border-left-style:solid;border-left-width:1px;border-right-color:#000000;border-right-style:solid;border-right-width:1px;font-weight:normal;color:#000000;font-family:宋体;font-style:normal;font-size:9px;text-decoration:none;border-top-color:#000000;border-top-style:none;border-top-width:1px;vertical-align:top; }
+</style>
+<table id="report1" cellSpacing=0 cellPadding=0 style="width:452;table-layout:fixed;border-collapse:collapse">
+	<colgroup>
+		<col style="width:23px;"></col>
+		<col style="width:23px;"></col>
+		<col style="width:23px;"></col>
+		<col style="width:26px;"></col>
+		<col style="width:19px;"></col>
+		<col style="width:21px;"></col>
+		<col style="width:23px;"></col>
+		<col style="width:23px;"></col>
+		<col style="width:23px;"></col>
+		<col style="width:19px;"></col>
+		<col style="width:23px;"></col>
+		<col style="width:23px;"></col>
+		<col style="width:23px;"></col>
+		<col style="width:23px;"></col>
+		<col style="width:23px;"></col>
+		<col style="width:25px;"></col>
+		<col style="width:23px;"></col>
+		<col style="width:24px;"></col>
+		<col style="width:23px;"></col>
+		<col style="width:19px;"></col>
+	</colgroup>
+	<tr height=34 style="height:34px;">
+		<td colSpan=20 class="report1_1_1">学生中文成绩单</td>
+	</tr>
+	<tr height=20 style="height:20px;">
+		<td class="report1_2_1">姓名</td>
+		<td colSpan=2 class="report1_2_1"></td>
+		<td class="report1_2_1">学号</td>
+		<td colSpan=4 class="report1_2_1"></td>
+		<td class="report1_2_9">性别</td>
+		<td class="report1_2_1"></td>
+		<td colSpan=2 class="report1_2_1">身份证号</td>
+		<td colSpan=4 class="report1_2_1"></td>
+		<td rowSpan=5 colSpan=4 class="report1_2_1"></td>
+	</tr>
+	<tr height=20 style="height:20px;">
+		<td class="report1_2_1">民族</td>
+		<td colSpan=2 class="report1_2_1"></td>
+		<td class="report1_2_1">籍贯</td>
+		<td colSpan=3 class="report1_2_1"></td>
+		<td colSpan=2 class="report1_2_1">政治面貌</td>
+		<td colSpan=3 class="report1_2_1"></td>
+		<td colSpan=2 class="report1_2_1">出生日期</td>
+		<td colSpan=2 class="report1_2_1"></td>
+	</tr>
+	<tr height=20 style="height:20px;">
+		<td class="report1_2_1">班级</td>
+		<td colSpan=4 class="report1_2_1"></td>
+		<td colSpan=2 class="report1_2_1">入学日期</td>
+		<td colSpan=4 class="report1_2_1"></td>
+		<td colSpan=2 class="report1_2_1">毕业日期</td>
+		<td colSpan=3 class="report1_2_1"></td>
+	</tr>
+	<tr height=20 style="height:20px;">
+		<td class="report1_2_1">专业</td>
+		<td colSpan=6 class="report1_2_1"></td>
+		<td colSpan=2 class="report1_2_1">专业方向</td>
+		<td colSpan=7 class="report1_2_1"></td>
+	</tr>
+	<tr height=20 style="height:20px;">
+		<td class="report1_2_1">系所</td>
+		<td colSpan=6 class="report1_2_1"></td>
+		<td colSpan=2 class="report1_2_1">培养方案</td>
+		<td colSpan=7 class="report1_2_1"></td>
+	</tr>
+	<tr height=31 style="height:31px;">
+		<td colSpan=4 class="report1_2_1">课&nbsp;程&nbsp;名</td>
+		<td class="report1_2_1">学分</td>
+		<td class="report1_2_1">成绩</td>
+		<td class="report1_2_1">修读<br>方式</td>
+		<td class="report1_2_1">课程<br>属性</td>
+		<td colSpan=2 class="report1_7_9">考试时间</td>
+		<td colSpan=4 class="report1_2_1">课&nbsp;程&nbsp;名</td>
+		<td class="report1_2_1">学分</td>
+		<td class="report1_2_1">成绩</td>
+		<td class="report1_2_1">修读<br>方式</td>
+		<td class="report1_2_1">课程<br>属性</td>
+		<td colSpan=2 class="report1_7_9">考试时间</td>
+	</tr>
+	<tr height=20 style="height:20px;">
+		<td colSpan=4 class="report1_2_1"></td>
+		<td class="report1_8_5"></td>
+		<td class="report1_2_1"></td>
+		<td class="report1_2_1"></td>
+		<td class="report1_2_1"></td>
+		<td colSpan=2 class="report1_2_1"></td>
+		<td colSpan=4 class="report1_2_1"></td>
+		<td class="report1_8_5"></td>
+		<td class="report1_2_1"></td>
+		<td class="report1_2_1"></td>
+		<td class="report1_2_1"></td>
+		<td colSpan=2 class="report1_2_1"></td>
+	</tr>
+	<tr height=20 style="height:20px;">
+		<td colSpan=3 class="report1_2_1">已获总学分数：</td>
+		<td class="report1_2_1">0.0</td>
+		<td colSpan=3 class="report1_2_1">平均学分绩点:</td>
+		<td class="report1_2_1"></td>
+		<td colSpan=3 class="report1_2_9">方案要求学分:</td>
+		<td class="report1_2_1"></td>
+		<td colSpan=3 class="report1_9_13">系主任签字:</td>
+		<td colSpan=5 class="report1_9_16">公章:</td>
+	</tr>
+	<tr height=20 style="height:20px;">
+		<td colSpan=3 class="report1_2_1">获得学位:</td>
+		<td colSpan=9 class="report1_2_1"></td>
+		<td rowSpan=3 colSpan=3 class="report1_10_13"></td>
+		<td rowSpan=3 colSpan=5 class="report1_10_16"></td>
+	</tr>
+	<tr height=20 style="height:20px;">
+		<td rowSpan=2 colSpan=3 class="report1_2_1">备注:</td>
+		<td rowSpan=2 colSpan=9 class="report1_2_1"></td>
+	</tr>
+	<tr height=20 style="height:20px;">
+	</tr>
+	<tr height=35 style="height:35px;">
+		<td colSpan=3 class="report1_13_1">制表人:</td>
+		<td colSpan=5 class="report1_13_4"></td>
+		<td class="report1_13_1"></td>
+		<td class="report1_13_1"></td>
+		<td class="report1_13_1"></td>
+		<td colSpan=3 class="report1_13_1">制表日期:</td>
+		<td colSpan=6 class="report1_13_1">2014-04-08&nbsp;19:52:05</td>
+	</tr>
+</table>
+
+<br>
+</body>
+</html>

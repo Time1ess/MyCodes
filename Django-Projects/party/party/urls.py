@@ -20,5 +20,5 @@ urlpatterns = [
 	url(r'^$',include('mainpage.urls',namespace='mainpage')),
     url(r'^admin/', include(admin.site.urls)),
 	url(r'^notifications/',include('notifications.urls',namespace='notifications')),
-	url(r'^pdfcontents/',include('workdocuments.urls',namespace='workdocuments')),
+	url(r'^fileupload/',include('fileupload.urls',namespace='fileupload')),
 ]

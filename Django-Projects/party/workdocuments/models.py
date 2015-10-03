@@ -12,7 +12,7 @@ class Document(models.Model):
 	"""
 	filename=models.CharField('Filename',max_length=200)
 	pub_date=models.DateTimeField('Pub_date')
-	file_path=models.CharField('File_path',max_length=200)
+	file_path=models.CharField('File_path',max_length=400)
 	author=models.CharField('Author',max_length=100)
 	filetype=models.CharField('type',max_length=10,default=0)
 	def __unicode__(self):
