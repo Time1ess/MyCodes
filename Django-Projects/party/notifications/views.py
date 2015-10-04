@@ -16,7 +16,7 @@ def detail(request):
 	response_data['pub_date']=notification.pub_date.strftime('%Y-%m-%d %H:%M:%S')
 	response_data['content']=notification.content
 	response_data['id']=notification.id
-	additionalFiles=notification.additionaldocument_set.filter(notification_set_id=notification_id)
+	additionalFiles=AdditionalDocument.objects.filter(notification_set__id=notification_id)
 	filesJSON={}
 	for item in additionalFiles:
 		filesJSON[item.filename]=item.file_path

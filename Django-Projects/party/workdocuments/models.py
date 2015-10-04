@@ -30,4 +30,4 @@ class AdditionalDocument(Document):
 	"""
 	Inherits from Document,`notification` is required.
 	"""
-	notification_set=models.ForeignKey(Notification)
+	notification_set=models.ManyToManyField(Notification)

@@ -4,6 +4,7 @@ from django.utils import timezone
 import datetime
 
 
+
 class Notification(models.Model):
 	"""
 	class Notification defines a notification with a `title`,`pub_date`,
@@ -13,7 +14,7 @@ class Notification(models.Model):
 	title=models.CharField('title',max_length=200)
 	pub_date=models.DateTimeField('pub_date')
 	content=models.TextField('content')
-
+	
 	def __unicode__(self):
 		return self.title
 
