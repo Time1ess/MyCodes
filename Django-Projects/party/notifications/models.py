@@ -2,7 +2,7 @@
 from django.db import models
 from django.utils import timezone
 import datetime
-
+from ckeditor.fields import RichTextField
 
 
 class Notification(models.Model):
@@ -13,7 +13,7 @@ class Notification(models.Model):
 	"""
 	title=models.CharField('title',max_length=200)
 	pub_date=models.DateTimeField('pub_date')
-	content=models.TextField('content')
+	content=RichTextField('content')
 	
 	def __unicode__(self):
 		return self.title

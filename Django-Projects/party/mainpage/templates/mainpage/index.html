@@ -69,6 +69,9 @@
 					<li>
 						<a class="page-scroll" href="#contact">联系我们</a>
 					</li>
+					<li>
+						<a class="page-scroll" href="admin/">管理员入口</a>
+					</li>
 				</ul>
 			</div>
 			<!-- /.navbar-collapse -->
@@ -96,8 +99,8 @@
 	{% if notifications %}
 
 	<!-- Modal -->
-	<div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModalTitle">
-		<div class="modal-dialog" role="document">
+	<div class="modal fade bs-example-modal-lg" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModalTitle">
+		<div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h4 class="modal-title" id="notificationModalTitle" style="color:#000000;text-align:center;">Modal title</h4>
@@ -159,7 +162,7 @@
 							<td>{{ document.filename }}</td>
 							<td>{{ document.pub_date }}</td>
 							<td><a href="{% static 'web/pdfviewer.html' %}?file={{ document.file_path }}">阅读</a></td>
-							<td><a href="{{ document.file_path }}">下载</a></td>
+							<td><a href="/{{ document.file_path }}">下载</a></td>
 						</tr>						
 						{% endfor %}					
 					</table>
@@ -222,7 +225,7 @@
 		function updateModal(notification)
 		{
 	    	$('#notificationModalTitle').text(notification['title']);
-	    	$('#notificationModalContent>p').text(notification['content']);
+	    	$('#notificationModalContent>p').html(notification['content']);
 	    	$('#additionalFiles').remove();
 	    	if(notification['additionalFiles'])
 	    		addFilesList(notification);

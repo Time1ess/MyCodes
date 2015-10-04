@@ -40,7 +40,7 @@ INSTALLED_APPS = (
 	'notifications',
 	'mainpage',
 	'workdocuments',
-	'fileupload',
+	'ckeditor',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -112,3 +112,22 @@ STATIC_URL = '/static/'
 
 # Pesonal Preference
 
+#ckeditor settings
+
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': (
+			['Styles','Format','Font','FontSize'], 
+			['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+			['Undo','Redo','-','RemoveFormat'], 
+			['Bold','Italic','Underline','Strike','-','Subscript','Superscript'], 
+			['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'], 
+			 
+			['Link','Unlink'], 
+			['Table','HorizontalRule','SpecialChar'], 
+
+			['TextColor','BGColor'], 
+		),
+	}
+}

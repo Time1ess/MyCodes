@@ -3,6 +3,7 @@ from django.shortcuts import render,get_object_or_404
 from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
 import json
+import cgi
 from .models import Notification
 from workdocuments.models import Document,AdditionalDocument
 import simplejson
@@ -19,7 +20,7 @@ def detail(request):
 	additionalFiles=AdditionalDocument.objects.filter(notification_set__id=notification_id)
 	filesJSON={}
 	for item in additionalFiles:
-		filesJSON[item.filename]=item.file_path
+		filesJSON[item.filename]=unicode(item.file_path)
 	if filesJSON:
 		response_data['additionalFiles']=filesJSON
 	return HttpResponse(simplejson.dumps(response_data,ensure_ascii=False),content_type="application/json")
