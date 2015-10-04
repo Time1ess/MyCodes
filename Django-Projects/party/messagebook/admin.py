@@ -4,7 +4,7 @@ from .models import Message
 # Register your models here.
 
 class MessageAdmin(admin.ModelAdmin):
-	list_display=('author','pub_date','content','reply_to')
+	list_display=('id','author','pub_date','short_content','self_reply_to_id')
 	list_filter=['pub_date']
 	search_fields=['content']
 

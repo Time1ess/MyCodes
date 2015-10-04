@@ -12,6 +12,17 @@ class Message(models.Model):
 	pub_date=models.DateTimeField('pub_date')
 	reply_to=models.ForeignKey('self',blank=True,null=True)
 
+	def self_reply_to_id(self):
+		reply=Message.objects.get(pk=self.reply_to_id)
+		return reply.id
+
+	def short_content(self):
+		message=self.content[:70]
+		if(len(self.content)>70):
+			message+='...'
+		return message
+	self_reply_to_id.short_description="REPLY"
+
 	def __unicode__(self):
 		return self.content
 

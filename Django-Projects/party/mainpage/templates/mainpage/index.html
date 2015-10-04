@@ -25,7 +25,7 @@
 	<link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
 -->
 <style type="text/css">  
-	.indent{text-indent: 4em;}   
+	.indent{text-indent: 2em;}   
 </style>  
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -178,30 +178,76 @@
 	{% endif %}
 
 	{% if messages %}
+
+	<div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<form enctype="multipart/form-data" method="POST" action="{% url 'messagebook:replyMessage' %}" onsubmit="return checkForm()">
+				{% csrf_token %}
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="replyModalTitle">Modal title</h4>
+					</div>
+					<div style="color:#000000;" class="modal-body" id="replyModalContent">
+						<div>由   
+							<span id="messageAuthor">...</span>    于    
+							<span id="messageDate">...</span>
+						</div>
+						<div>
+							<p class="indent" id="messageContent" style="text-align: left;">...</p>
+						</div>
+						<label>回复:</label>
+						<div class="input-group" style="margin-bottom: 10px;">
+							<div class="input-group-addon">姓名</div>
+							<input type="text" class="form-control" name="replyName" id="replyName" placeholder="请输入姓名">
+						</div>
+						<div class="input-group" style="width:100%;">
+						<textarea class="form-control" id="replyContent" name="replyContent" rows="3" style="resize:vertical;" placeholder="请输入回复内容"></textarea>
+						</div>
+
+						<input type="hidden" id="replyID" name="replyID" value=""/>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+						<button type="submit" class="btn btn-success">提交</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
 	<section id="messages" class="content-section text-center">
 		<div class="messages-section">
 			<div class="container">
 				<fieldset>
-
 					<div class="col-md-8 col-md-offset-2">
 						<legend style="color:white;">留言区</legend>
 						{% for message in messages%}
-						<div class="col-md-12" style="background-color:rgba(255,255,255,0.1)">
+						<div class="col-md-12" style="padding-bottom:10px;background-color:rgba(0,0,0,0.1);padding-top:10px;border:thin ridge #ffffff;margin-bottom: 5px;">
 							<!-- 留言显示  -->
 							<div class="col-md-12" style="margin-bottom:-30px;">
-								<p style="font-size:5px;text-align: left;">#{{forloop.counter}}    由   {{message.author}}    于    {{message.pub_date}}</p>
+								<div style="font-size:5px;text-align: left;margin-bottom: 30px;float:left;">#{{forloop.revcounter}}    由   {{message.author}}    于    {{message.pub_date}}
+								</div>
+								<div  style="text-align: right;margin-bottom:30px;">
+									<a class="btn" data-toggle="modal" data-target="#replyModal" onclick="replyToMessage({{message.id}})">回复</a>
+								</div>
+
 							</div>
-							<div class="col-md-12">
+							<div class="col-md-12 indent">
 								<p style="text-align: left;">{{message.content}}</p>
 								<!-- 留言回复显示-->
 								{% if message.reply_to_set %}
 								{% for reply in message.reply_to_set %}
-								<div class="col-md-12" style="margin-top:-20px;">
-									<div class="col-md-12" style="margin-bottom:-30px;">
-									<p style="font-size:5px;text-align: left;">#{{forloop.counter}}    由   {{reply.author}}    于    {{reply.pub_date}}</p>
+								<div class="col-md-12" style="background-color:rgba(0,0,0,0.1);">
+									<div class="col-md-12" style="margin-top:10px;margin-bottom: -20px;">
+										<div style="font-size:5px;text-align: left;float:left;margin-bottom:20px;">#{{forloop.counter}}    由   {{reply.author}}    于    {{reply.pub_date}}</div>
+										<div  style="text-align: right;margin-bottom:20px;">
+											<a class="btn" data-toggle="modal" data-target="#replyModal" onclick="replyToMessage({{reply.id}})" >回复</a>
+										</div>
 									</div>
-									<div class="col-md-12">
-									<p style="text-align: left;">{{reply.content}}</p>
+
+									<div class="col-md-12 indent" style="margin-bottom: -20px;">
+										<p style="text-align: left;">{{reply.content}}</p>
 									</div>
 								</div>
 								{% endfor %}
@@ -209,8 +255,8 @@
 							</div>
 						</div>
 						{% endfor %}
-					</fieldset>
-				</div>
+					</div>
+				</fieldset>
 			</div>
 		</div>
 	</section>
@@ -244,13 +290,68 @@
 
 	<!-- Custom Theme JavaScript -->
 	<script src="{% static 'js/grayscale.js' %}"></script>
-	
+
 	<!-- API for handling cookies -->
 	<script src="{% static 'js/js.cookie.js' %}"></script>
 
 	<!-- CSRF token file -->
 	<script src="{% static 'js/csrf.js' %}"></script>
 	<script type="text/javascript">
+		function checkForm()
+		{
+			$('#replyName').parent().removeClass('has-error').removeClass('has-success');
+			$('#replyContent').parent().removeClass('has-error').removeClass('has-success');
+			var FAIL=false;
+			if(!$('#replyName').val()||$('#replyName').val().length==0)
+			{
+				$('#replyName').parent().addClass('has-error');
+				$('#replyName').attr('placeholder',"姓名不能为空");
+				FAIL=true;
+			}
+			else
+			{
+				$('#replyName').parent().addClass('has-success');
+			}
+			if(!$('#replyContent').val()||$('#replyContent').val().length==0)
+			{
+				$('#replyContent').parent().addClass('has-error');
+				$('#replyContent').attr('placeholder',"输入内容不能为空！");
+				FAIL=true;
+			}
+			else if($('#replyContent').val().length>200)
+			{
+				$('#replyContent').parent().addClass('has-error');
+				$('#replyContent').attr('placeholder',"输入不能超过100个字！");
+				FAIL=true;
+			}
+			else
+			{
+				$('#replyContent').parent().addClass('has-success');
+			}
+			return !FAIL;
+		}
+		function replyToMessage(id)
+		{	
+			$.ajax({
+				type:"POST",
+				url:"/messagebook/detail/",
+				datatype:"json",
+				data:{
+					'id':id,
+				},
+				async:false,
+				success:function(data){
+					$('#messageAuthor').text(data['author']);
+					$('#messageDate').text(data['pub_date']);
+					$('#messageContent').text(data['content']);
+					$('#replyID').attr('value',data['id']);
+				},
+				error:function(){
+					alert('ERROR');
+				}
+			});
+
+		}
 		function postData(id)
 		{
 			$.ajax({

@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
 	url(r'^notifications/',include('notifications.urls',namespace='notifications')),
 	url(r'^workdocuments/',include('workdocuments.urls',namespace='workdocuments')),
+	url(r'^messagebook/',include('messagebook.urls',namespace='messagebook')),
 	#url(r'^fileupload/',include('fileupload.urls',namespace='fileupload')),
 
 ]
