@@ -23,12 +23,12 @@
 	<!--
 	<link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
 	<link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-	-->
-	<style type="text/css">  
-		.indent{text-indent: 4em;}   
-	</style>  
-	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+-->
+<style type="text/css">  
+	.indent{text-indent: 4em;}   
+</style>  
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
@@ -66,6 +66,11 @@
 						<a class="page-scroll" href="#file">文件查询</a>
 					</li>
 					{% endif %}
+					{% if messages %}
+					<li>
+						<a class="page-scroll" href="#messages">留言区</a>
+					</li>
+					{% endif %}					
 					<li>
 						<a class="page-scroll" href="#contact">联系我们</a>
 					</li>
@@ -171,6 +176,46 @@
 		</div>
 	</section>
 	{% endif %}
+
+	{% if messages %}
+	<section id="messages" class="content-section text-center">
+		<div class="messages-section">
+			<div class="container">
+				<fieldset>
+
+					<div class="col-md-8 col-md-offset-2">
+						<legend style="color:white;">留言区</legend>
+						{% for message in messages%}
+						<div class="col-md-12" style="background-color:rgba(255,255,255,0.1)">
+							<!-- 留言显示  -->
+							<div class="col-md-12" style="margin-bottom:-30px;">
+								<p style="font-size:5px;text-align: left;">#{{forloop.counter}}    由   {{message.author}}    于    {{message.pub_date}}</p>
+							</div>
+							<div class="col-md-12">
+								<p style="text-align: left;">{{message.content}}</p>
+								<!-- 留言回复显示-->
+								{% if message.reply_to_set %}
+								{% for reply in message.reply_to_set %}
+								<div class="col-md-12" style="margin-top:-20px;">
+									<div class="col-md-12" style="margin-bottom:-30px;">
+									<p style="font-size:5px;text-align: left;">#{{forloop.counter}}    由   {{reply.author}}    于    {{reply.pub_date}}</p>
+									</div>
+									<div class="col-md-12">
+									<p style="text-align: left;">{{reply.content}}</p>
+									</div>
+								</div>
+								{% endfor %}
+								{% endif %}
+							</div>
+						</div>
+						{% endfor %}
+					</fieldset>
+				</div>
+			</div>
+		</div>
+	</section>
+	{% endif %}
+
 	<section id="contact" class="container content-section text-center">
 		<div class="row">
 			<div class="col-lg-8 col-lg-offset-2">
@@ -217,29 +262,29 @@
 				},
 				async: false,
 		      //cache: false,
-		      	success: updateModal,
-		      	error: function() {
-		      		alert("获取数据失败，请联系管理员!");
-		      	}
-  		});};
-		function updateModal(notification)
-		{
-	    	$('#notificationModalTitle').text(notification['title']);
-	    	$('#notificationModalContent>p').html(notification['content']);
-	    	$('#additionalFiles').remove();
-	    	if(notification['additionalFiles'])
-	    		addFilesList(notification);
+		      success: updateModal,
+		      error: function() {
+		      	alert("获取数据失败，请联系管理员!");
+		      }
+		  });};
+			function updateModal(notification)
+			{
+				$('#notificationModalTitle').text(notification['title']);
+				$('#notificationModalContent>p').html(notification['content']);
+				$('#additionalFiles').remove();
+				if(notification['additionalFiles'])
+					addFilesList(notification);
 
-	    };
-	    function addFilesList(notification)
-	    {
-	    	$('#notificationModalContent').append('<div class="modal-body" id="additionalFiles" style="text-align:left;text-indent:0em;">'+'附件:'+'</div>');
-	    	for(var key in notification['additionalFiles'])
-	    	{
-	    		$('#additionalFiles').append('<br /><a href="'+notification['additionalFiles'][key]+'">'+key+'</a>')
-	    	}	    	
-	    }
-</script>
-</body>
+			};
+			function addFilesList(notification)
+			{
+				$('#notificationModalContent').append('<div class="modal-body" id="additionalFiles" style="text-align:left;text-indent:0em;">'+'附件:'+'</div>');
+				for(var key in notification['additionalFiles'])
+				{
+					$('#additionalFiles').append('<br /><a href="'+notification['additionalFiles'][key]+'">'+key+'</a>')
+				}	    	
+			}
+		</script>
+	</body>
 
-</html>
+	</html>

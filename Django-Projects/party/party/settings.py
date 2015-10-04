@@ -41,6 +41,7 @@ INSTALLED_APPS = (
 	'mainpage',
 	'workdocuments',
 	'ckeditor',
+	'messagebook',
 )
 
 MIDDLEWARE_CLASSES = (
