@@ -223,10 +223,28 @@
 		<div class="messages-section">
 			<div class="container">
 				<fieldset>
-					<div class="col-md-8 col-md-offset-2">
-						<legend style="color:white;">留言区</legend>
+
+					<div id="pagination" class="col-md-8 col-md-offset-2">
+					<legend style="color:white;">留言区</legend>
+						<nav>
+							<ul class="pagination" id="pagesGroup">
+								<li id="Page0">
+									<a onclick="changePage(0)" aria-label="Previous">
+										<span aria-hidden="true">&laquo;</span>
+									</a>
+								</li>
+								<li id="page1"><a onclick="changePage(1)">1</a></li>
+								<li id="Page-1">
+									<a onclick="changePage(-1)" aria-label="Next">
+										<span aria-hidden="true">&raquo;</span>
+									</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+					<div id="messageGroup" class="col-md-8 col-md-offset-2">
 						{% for message in messages%}
-						<div class="col-md-12" style="padding-bottom:10px;background-color:rgba(0,0,0,0.1);padding-top:10px;border:thin ridge #ffffff;margin-bottom: 5px;">
+						<div id="messageNo{{ forloop.counter }}" class="col-md-12 Message" style="padding-bottom:10px;background-color:rgba(0,0,0,0.1);padding-top:10px;border:thin ridge #ffffff;margin-bottom: 5px;">
 							<!-- 留言显示  -->
 							<div id="message{{message.id}}" class="col-md-12" style="margin-bottom:-30px;">
 								<div style="font-size:5px;text-align: left;margin-bottom: 30px;float:left;">#{{forloop.revcounter}}    由   {{message.author}}    于    {{message.pub_date}}
@@ -315,6 +333,56 @@
 	<!-- CSRF token file -->
 	<script src="{% static 'js/csrf.js' %}"></script>
 	<script type="text/javascript">
+		var messageLength=$('#messageGroup>div').length;
+		var max_message_per_page=5;
+		var current_page=1;
+		var pageSize=Math.ceil(messageLength/max_message_per_page);
+		$(function(){
+			alert('注意完成多留言信息的情况下page按钮的个数显示问题');
+			if(messageLength>max_message_per_page)
+			{
+				for(var i=max_message_per_page+1;i<=messageLength;i++)
+				{
+					var no='#messageNo'+i;
+					$(no).hide();
+				}
+				$('#page'+current_page).addClass('active');
+				var nextPage=$('#Page-1');
+				for(var i=2;i<=pageSize;i++)
+					nextPage.before('<li id="page'+i+'"><a href="#messages" onclick="changePage('+i+')">'+i+'</a></li>');
+				return;
+			}
+		});
+		function changePage(page)
+		{
+			if(page==current_page)
+				return false;
+			if(page==0)
+			{
+				if(current_page==1)
+					return false;
+				page=current_page-1;
+			}
+			else if(page==-1)
+			{
+				if(current_page==pageSize)
+					return false;
+				page=current_page+1;
+			}
+			$('#page'+current_page).removeClass('active');
+			$('#page'+current_page).addClass('disable');
+			$('#page'+page).removeClass('disable');
+			$('#page'+page).addClass('active');
+			for(var i=max_message_per_page*(current_page-1)+1,j=max_message_per_page*(page-1)+1;i<=current_page*max_message_per_page;i++,j++)
+			{
+				var no='#messageNo'+i;
+				$(no).hide();
+				no='#messageNo'+j;
+				$(no).show();
+			}
+			current_page=page;
+			return true;
+		}
 		function checkMessage()
 		{
 			if(!$('#id_author').val()||$('#id_author').val().trim().length==0)
