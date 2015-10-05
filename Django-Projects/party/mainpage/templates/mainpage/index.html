@@ -202,7 +202,10 @@
 							<input type="text" class="form-control" name="replyName" id="replyName" placeholder="请输入姓名">
 						</div>
 						<div class="input-group" style="width:100%;">
-							<textarea class="form-control" id="replyContent" name="replyContent" rows="3" style="resize:vertical;" placeholder="请输入回复内容"></textarea>
+							<textarea class="form-control" id="replyContent" name="replyContent" rows="3" style="resize:vertical;" placeholder="请输入回复内容" onkeyup="checkReplyContent()"></textarea>
+						</div>
+						<div class="form-group" style="text-align: right;">
+							<label id="charslabel" style="">还可以输入<span id="chars"></span>字</label>
 						</div>
 
 						<input type="hidden" id="replyID" name="replyID" value=""/>
@@ -255,21 +258,21 @@
 						{% endfor %}
 					</div>
 					<div class="col-md-8 col-md-offset-2">
-					<div class="col-md-12" style="padding-bottom:10px;background-color:rgba(0,0,0,0.1);padding-top:10px;border:thin ridge #ffffff;margin-bottom: 5px;">
-					<form action="{% url 'messagebook:message' %}" onsubmit="return checkReply()" method="POST">
-						{% csrf_token %}
-						{% for field in form %}
-						<div class="form-group">
-							<label class="col-sm-2 control-label" id="post{{field.label}}" for="{{field.label}}">{{ field.label }}</label>
-							<div class="col-sm-10" style="text-align: left;">{{ field }} </div>
-							<div class="has-error">
-								<label class="control-label">{{ field.errors }}</label>
-							</div>
+						<div class="col-md-12" style="padding-bottom:10px;background-color:rgba(0,0,0,0.1);padding-top:10px;border:thin ridge #ffffff;margin-bottom: 5px;">
+							<form action="{% url 'messagebook:message' %}" onsubmit="return checkMessage()" method="POST">
+								{% csrf_token %}
+								{% for field in form %}
+								<div class="form-group">
+									<label class="col-sm-2 control-label" id="post{{field.label}}" for="{{field.label}}">{{ field.label }}</label>
+									<div class="col-sm-10" style="text-align: left;">{{ field }} </div>
+									<div class="has-error">
+										<label class="control-label">{{ field.errors }}</label>
+									</div>
+								</div>
+								{% endfor %}
+								<div class="form-group" style="text-align: right;"><input class="btn btn-default"  type="submit" value="留言" /></div>
+							</form>
 						</div>
-						{% endfor %}
-						<div class="form-group" style="text-align: right;"><input class="btn btn-default"  type="submit" value="留言" /></div>
-					</form>
-					</div>
 					</div>
 				</fieldset>
 			</div>
@@ -312,7 +315,7 @@
 	<!-- CSRF token file -->
 	<script src="{% static 'js/csrf.js' %}"></script>
 	<script type="text/javascript">
-		function checkReply()
+		function checkMessage()
 		{
 			if(!$('#id_author').val()||$('#id_author').val().trim().length==0)
 			{
@@ -325,6 +328,32 @@
 				return false;
 			}
 			return true;
+		}
+		function GetCharLength(str) 
+		{ 
+			var iLength = 0; 
+			for(var i = 0;i<str.length;i++) 
+			{ 
+				if(str.charCodeAt(i) >255) 
+				{ 
+					iLength += 2; 
+				} 
+				else 
+				{ 
+					iLength += 1; 
+				} 
+			} 
+			return iLength; 
+		}
+		function checkReplyContent()
+		{
+			var content_length=GetCharLength($('#replyContent').val());
+			$('#charslabel').show();
+			var counts=200-content_length;
+			if(counts>=0)
+				$('#charslabel').html("还可以输入<span id=\"chars\">"+counts+"</span>字符");
+			else
+				$('#charslabel').html("<span style=\"color:red;\">输入字数超过限制！</span>");
 		}
 		function checkForm()
 		{
@@ -347,10 +376,10 @@
 				$('#replyContent').attr('placeholder',"输入内容不能为空！");
 				FAIL=true;
 			}
-			else if($('#replyContent').val().trim().length>200)
+			else if(GetCharLength($('#replyContent').val())>200)
 			{
 				$('#replyContent').parent().addClass('has-error');
-				$('#replyContent').attr('placeholder',"输入不能超过100个字！");
+				alert('输入内容不能超过100个字！请修改内容')
 				FAIL=true;
 			}
 			else
@@ -379,6 +408,7 @@
 					alert('ERROR');
 				}
 			});
+			$('#charslabel').hide();
 
 		}
 		function postData(id)
