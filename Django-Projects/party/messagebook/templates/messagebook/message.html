@@ -1,0 +1,53 @@
+ {% load staticfiles %}
+ <head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Party Information">
+	<meta name="author" content="David">
+
+	<title>回复</title>
+
+	<!-- Bootstrap Core CSS -->
+	<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+
+	<!-- Custom Fonts -->
+	<link href="{% static 'font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+<style type="text/css">  
+	.indent{text-indent: 2em;}   
+</style>  
+
+</head>
+<body>
+ <form action="{% url 'messagebook:message' %}" method="POST">
+ 	{% csrf_token %}
+ 	{% for field in form %}
+ 	<div class="form-group">
+ 		<label class="col-sm-2 control-label"for="exampleInputName2">{{ field.label }}</label>
+ 		<div class="col-sm-10">{{ field }} </div>
+ 		<div class="has-error">
+ 		<label class="control-label">{{ field.errors }}</label>
+ 		</div>
+ 	</div>
+ 	{% endfor %}
+ 	<div class="fieldWrapper"><center><input class="btn btn-default" type="submit" value="留言" /></center></div>
+ </form>
+ 	<script src="{% static 'js/jquery.js' %}"></script>
+
+	<!-- Bootstrap Core JavaScript -->
+	<script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+	<!-- Plugin JavaScript -->
+	<script src="{% static 'js/jquery.easing.min.js' %}"></script>
+
+	<!-- Custom Theme JavaScript -->
+	<script src="{% static 'js/grayscale.js' %}"></script>
+
+	<!-- API for handling cookies -->
+	<script src="{% static 'js/js.cookie.js' %}"></script>
+
+	<!-- CSRF token file -->
+	<script src="{% static 'js/csrf.js' %}"></script>
+ </body>

@@ -202,7 +202,7 @@
 							<input type="text" class="form-control" name="replyName" id="replyName" placeholder="请输入姓名">
 						</div>
 						<div class="input-group" style="width:100%;">
-						<textarea class="form-control" id="replyContent" name="replyContent" rows="3" style="resize:vertical;" placeholder="请输入回复内容"></textarea>
+							<textarea class="form-control" id="replyContent" name="replyContent" rows="3" style="resize:vertical;" placeholder="请输入回复内容"></textarea>
 						</div>
 
 						<input type="hidden" id="replyID" name="replyID" value=""/>
@@ -225,10 +225,10 @@
 						{% for message in messages%}
 						<div class="col-md-12" style="padding-bottom:10px;background-color:rgba(0,0,0,0.1);padding-top:10px;border:thin ridge #ffffff;margin-bottom: 5px;">
 							<!-- 留言显示  -->
-							<div class="col-md-12" style="margin-bottom:-30px;">
+							<div id="message{{message.id}}" class="col-md-12" style="margin-bottom:-30px;">
 								<div style="font-size:5px;text-align: left;margin-bottom: 30px;float:left;">#{{forloop.revcounter}}    由   {{message.author}}    于    {{message.pub_date}}
 								</div>
-								<div  style="text-align: right;margin-bottom:30px;">
+								<div  style="text-align: right;margin-bottom:30px;margin-right: -30px;">
 									<a class="btn" data-toggle="modal" data-target="#replyModal" onclick="replyToMessage({{message.id}})">回复</a>
 								</div>
 
@@ -236,25 +236,40 @@
 							<div class="col-md-12 indent">
 								<p style="text-align: left;">{{message.content}}</p>
 								<!-- 留言回复显示-->
-								{% if message.reply_to_set %}
-								{% for reply in message.reply_to_set %}
+								{% if message.reply_to %}
 								<div class="col-md-12" style="background-color:rgba(0,0,0,0.1);">
 									<div class="col-md-12" style="margin-top:10px;margin-bottom: -20px;">
-										<div style="font-size:5px;text-align: left;float:left;margin-bottom:20px;">#{{forloop.counter}}    由   {{reply.author}}    于    {{reply.pub_date}}</div>
-										<div  style="text-align: right;margin-bottom:20px;">
-											<a class="btn" data-toggle="modal" data-target="#replyModal" onclick="replyToMessage({{reply.id}})" >回复</a>
+										<div style="font-size:5px;text-align: left;float:left;margin-bottom:20px;">由   {{message.reply_to.author}}    于    {{message.reply_to.pub_date}}</div>
+										<div  style="text-align: right;margin-bottom:20px;margin-right:-25px;">
+											<a class="btn" data-toggle="modal" data-target="#replyModal" onclick="replyToMessage({{message.reply_to.id}})">回复</a>
 										</div>
 									</div>
 
 									<div class="col-md-12 indent" style="margin-bottom: -20px;">
-										<p style="text-align: left;">{{reply.content}}</p>
+										<p style="text-align: left;">{{message.reply_to.content}}</p>
 									</div>
 								</div>
-								{% endfor %}
 								{% endif %}
 							</div>
 						</div>
 						{% endfor %}
+					</div>
+					<div class="col-md-8 col-md-offset-2">
+					<div class="col-md-12" style="padding-bottom:10px;background-color:rgba(0,0,0,0.1);padding-top:10px;border:thin ridge #ffffff;margin-bottom: 5px;">
+					<form action="{% url 'messagebook:message' %}" method="POST">
+						{% csrf_token %}
+						{% for field in form %}
+						<div class="form-group">
+							<label class="col-sm-2 control-label"for="{{field.label}}">{{ field.label }}</label>
+							<div class="col-sm-10" style="text-align: left;">{{ field }} </div>
+							<div class="has-error">
+								<label class="control-label">{{ field.errors }}</label>
+							</div>
+						</div>
+						{% endfor %}
+						<div class="form-group" style="text-align: right;"><input class="btn btn-default"  type="submit" value="留言" /></div>
+					</form>
+					</div>
 					</div>
 				</fieldset>
 			</div>

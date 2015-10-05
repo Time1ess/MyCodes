@@ -24,3 +24,9 @@ class Notification(models.Model):
 	was_published_in_recent_14_days.admin_order_field='pub_date'
 	was_published_in_recent_14_days.boolean=True
 	was_published_in_recent_14_days.short_description="Recently"
+
+	def short_content(self):
+		response=self.content[:70]
+		if len(self.content)>70:
+			response+='...'
+		return response

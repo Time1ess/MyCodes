@@ -9,7 +9,7 @@ class AdditionalDocumentShipInline(admin.TabularInline):
 
 
 class NotificationAdmin(admin.ModelAdmin):
-	list_display=('title','pub_date','content','was_published_in_recent_14_days')
+	list_display=('title','pub_date','short_content','was_published_in_recent_14_days')
 	list_filter=['pub_date']
 	search_fields=['title']
 	inlines=[

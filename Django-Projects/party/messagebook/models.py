@@ -1,6 +1,10 @@
+# -*- coding:gb18030 -*-
 from django.db import models
 from django.utils import timezone
-# Create your models here.
+from django import forms
+from django.forms import ModelForm
+from django.utils.translation import ugettext_lazy as _
+
 
 class Message(models.Model):
 	"""
@@ -9,7 +13,7 @@ class Message(models.Model):
 	"""
 	author=models.CharField('author',max_length=100)
 	content=models.TextField('content')
-	pub_date=models.DateTimeField('pub_date')
+	pub_date=models.DateTimeField('pub_date',default=timezone.now())
 	reply_to=models.ForeignKey('self',blank=True,null=True)
 
 	def self_reply_to_id(self):
@@ -26,4 +30,15 @@ class Message(models.Model):
 	def __unicode__(self):
 		return self.content
 
-
+class MessageForm(ModelForm):
+	class Meta:
+		model=Message
+		exclude=('pub_date','reply_to')
+		labels={
+				'author':u'ÐÕÃû',
+				'content':u'ÄÚÈÝ',
+				}
+		widgets={
+				'content':forms.Textarea(attrs={'cols':20,'class':'form-control',},),
+				'author':forms.TextInput(attrs={'class':'form-control',},),
+				}

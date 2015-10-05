@@ -5,7 +5,9 @@ import simplejson
 from django.utils import timezone
 from django.http import Http404
 from django.http import HttpResponseRedirect
-from .models import Message
+from .models import Message,MessageForm
+
+
 
 def replyMessage(request):
 	reply_to_id=request.POST.get('replyID',None)
@@ -16,7 +18,7 @@ def replyMessage(request):
 	reply_to_time=timezone.now()
 	message=Message(author=reply_to_name,content=reply_to_content,pub_date=reply_to_time,reply_to=Message.objects.get(pk=reply_to_id))
 	message.save()
-	return HttpResponseRedirect('/')
+	return HttpResponseRedirect('/#messages')
 
 def detail(request):
 	message_id=request.POST.get('id',None)
@@ -27,3 +29,16 @@ def detail(request):
 	response['pub_date']=message.pub_date.strftime('%Y-%m-%d %H:%M:%S')
 	response['content']=message.content
 	return HttpResponse(simplejson.dumps(response,ensure_ascii=False),content_type="application/json")
+
+
+def postMessage(request):
+	if request.method=='POST':
+		form=MessageForm(request.POST)
+		if form.is_valid():
+			form.save()
+			return HttpResponseRedirect('/#messages')
+	else:
+		form=MessageForm()
+	return Http404('404 ERROR')
+
+
