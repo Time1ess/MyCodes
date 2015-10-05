@@ -35,9 +35,7 @@ def postMessage(request):
 	if request.method=='POST':
 		form=MessageForm(request.POST)
 		if form.is_valid():
-			new_form=form.save(commit=False)
-			new_form.pub_date=timezone.now()
-			new_form.save()
+			form.save()
 			return HttpResponseRedirect('/#messages')
 	else:
 		return Http404('404 ERROR')
