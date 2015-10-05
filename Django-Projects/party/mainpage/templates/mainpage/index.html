@@ -256,11 +256,11 @@
 					</div>
 					<div class="col-md-8 col-md-offset-2">
 					<div class="col-md-12" style="padding-bottom:10px;background-color:rgba(0,0,0,0.1);padding-top:10px;border:thin ridge #ffffff;margin-bottom: 5px;">
-					<form action="{% url 'messagebook:message' %}" method="POST">
+					<form action="{% url 'messagebook:message' %}" onsubmit="return checkReply()" method="POST">
 						{% csrf_token %}
 						{% for field in form %}
 						<div class="form-group">
-							<label class="col-sm-2 control-label"for="{{field.label}}">{{ field.label }}</label>
+							<label class="col-sm-2 control-label" id="post{{field.label}}" for="{{field.label}}">{{ field.label }}</label>
 							<div class="col-sm-10" style="text-align: left;">{{ field }} </div>
 							<div class="has-error">
 								<label class="control-label">{{ field.errors }}</label>
@@ -312,12 +312,26 @@
 	<!-- CSRF token file -->
 	<script src="{% static 'js/csrf.js' %}"></script>
 	<script type="text/javascript">
+		function checkReply()
+		{
+			if(!$('#id_author').val()||$('#id_author').val().trim().length==0)
+			{
+				alert('请输入姓名');
+				return false;
+			}
+			if(!$('#id_content').val()||$('#id_content').val().trim().length==0)
+			{
+				alert('请输入内容');
+				return false;
+			}
+			return true;
+		}
 		function checkForm()
 		{
 			$('#replyName').parent().removeClass('has-error').removeClass('has-success');
 			$('#replyContent').parent().removeClass('has-error').removeClass('has-success');
 			var FAIL=false;
-			if(!$('#replyName').val()||$('#replyName').val().length==0)
+			if(!$('#replyName').val()||$('#replyName').val().trim().length==0)
 			{
 				$('#replyName').parent().addClass('has-error');
 				$('#replyName').attr('placeholder',"姓名不能为空");
@@ -327,13 +341,13 @@
 			{
 				$('#replyName').parent().addClass('has-success');
 			}
-			if(!$('#replyContent').val()||$('#replyContent').val().length==0)
+			if(!$('#replyContent').val()||$('#replyContent').val().trim().length==0)
 			{
 				$('#replyContent').parent().addClass('has-error');
 				$('#replyContent').attr('placeholder',"输入内容不能为空！");
 				FAIL=true;
 			}
-			else if($('#replyContent').val().length>200)
+			else if($('#replyContent').val().trim().length>200)
 			{
 				$('#replyContent').parent().addClass('has-error');
 				$('#replyContent').attr('placeholder',"输入不能超过100个字！");
