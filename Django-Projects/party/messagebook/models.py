@@ -13,7 +13,7 @@ class Message(models.Model):
 	"""
 	author=models.CharField('author',max_length=100)
 	content=models.TextField('content')
-	pub_date=models.DateTimeField('pub_date')
+	pub_date=models.DateTimeField('pub_date',default=timezone.now())
 	reply_to=models.ForeignKey('self',blank=True,null=True)
 
 	def self_reply_to_id(self):
