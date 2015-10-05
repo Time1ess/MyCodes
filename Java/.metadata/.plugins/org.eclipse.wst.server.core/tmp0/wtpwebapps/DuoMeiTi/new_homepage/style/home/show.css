@@ -1,0 +1,135 @@
+/**** Clearfix ****/
+.clearfix:before, .clearfix:after { content: ""; display: table; }
+.clearfix:after { clear: both; }
+.clearfix {
+    zoom: 1;
+    position: relative;
+    width: 900px;
+    float: left;
+}
+.box {
+    margin: 5px;
+    padding: 5px;
+    background: transparent;
+    font-size: 11px;
+    line-height: 1.4em;
+    float: left;
+    border-radius:0px;
+}
+.box a img {
+    width: 280px;
+    height:200px;
+}
+.col1 { width: 80px;height:285px; }
+.col2 { width: 180px;height:285px; }
+.col3 { width: 280px;height:285px; }
+.col4 { width: 380px;height:285px; }
+.col5 { width: 480px;height:285px; }
+
+.col1 img { width: 80px;height:188px }
+.col2 img { width: 180px;height:188px }
+.col3 img { width: 280px;height:188px }
+.col4 img { width: 380px;height:188px }
+.col5 img { width: 480px; height:188px}
+
+.title {
+    text-align:left;
+    margin-top:5px;
+    margin-bottom:2px;
+    color:rgb(32, 183, 240);
+}
+
+p.title {
+    font-weight: 100;
+}
+.title~hr {
+    border-top: 1px solid rgb(72, 65, 231);
+    margin: 5px 0;
+}
+
+#page-nav a {
+    float: left;
+    margin: 10px 0 0 20px;
+    padding: 0 10px;
+    line-height: 30px;
+}
+/* end show contain css */
+
+.introShow {
+    padding:10px 0px 10px 9px;
+    width:300px;
+}
+.introShow .mainShow {
+        width:500px;
+        height:300px;
+}
+.mainShow img{
+        width:400px;
+        height:300px;
+}
+.introShow .scroll {
+        margin-top:3px;
+        width:395px;
+        height:66px;
+        overflow:hidden;
+}
+.scroll img{
+        width:60px;
+        height:60px;
+}
+.scroll a span {
+        display:none;
+}
+.scroll a:hover {
+        text-decoration:none;
+}
+.scroll .prevView, .scroll .nextView, .scroll .prevView.prevStop, .scroll .nextStop {
+        float:left;
+        margin-top:10px;
+        width:7px;
+        height:12px;
+        background:url(../images/bgimg.gif) no-repeat -132px -17px;
+}
+.scroll .prevView {
+        background-position:-139px -17px;
+}
+.scroll .prevStop, #main .scroll .prevView.prevStop:hover {
+        background-position:-132px -17px;
+        cursor:default;
+}
+#main .scroll .nextView.nextStop:hover {
+        cursor:default;
+}
+.scroll .nextView, .scroll .nextStop {
+        float:right;
+        background-position:-160px -17px;
+}
+.scroll .prevView:hover {
+        background-position:-146px -17px;
+}
+.scroll .nextView:hover {
+        background-position:-167px -17px;
+}
+.scroll .nextStop, .scroll .nextStop:hover {
+        background-position:-153px -17px;
+}
+.scroll ul {
+        float:left;
+        margin:0 3px 0 7px;
+        width:360px;
+        height:70px;
+        overflow:hidden;
+}
+.scroll li {
+        float:left;
+        margin-bottom:2px;
+}
+.scroll li a {
+        display:block;
+        margin-right:5px;
+        border:1px solid #ededed;
+        padding:1px;
+}
+.scroll ul li a:hover {
+        border:1px solid #f60;
+}

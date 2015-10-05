@@ -1,0 +1,12 @@
+.classbuilding{
+	height:50px;
+	background:#06B9D1;
+	border-radius:5px;
+	font-weight:bold;
+	font-size:20px;
+	text-align:center;
+	padding:10px;
+}
+#search{
+	height:80px;
+}

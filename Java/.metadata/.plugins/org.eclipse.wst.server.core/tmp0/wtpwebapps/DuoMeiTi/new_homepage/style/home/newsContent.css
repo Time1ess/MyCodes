@@ -1,0 +1,39 @@
+.news-content-nav {
+    background-color: transparent;
+    width: 1170px;
+    margin: 0 auto;
+}
+.news-content-nav .nav {
+    margin-bottom: 0px !important;
+}
+.news-content-nav .nav li {
+    width:106px;
+    line-height: 16px;
+}
+.news-content-nav .nav li a {
+    font-size: 16px;
+    line-height: 15px;
+    font-weight: bold;
+    color: #fff !important;
+    margin-right: 0px !important;
+    padding-left:20px;
+    padding-right:20px;
+    border-top: 0px solid transparent !important;
+    border-left: 0px solid transparent !important;
+    border-right: 0px solid transparent !important;
+    border-radius: 0px;
+}
+.news-content-nav .nav li a:hover,
+.news-content-nav .nav li a:focus,
+.news-content-nav .nav li a:active,
+.news-content-nav .nav li.active a {
+    background-color: rgb(31, 60, 92) !important;
+    border-bottom: 3px solid rgb(245, 81, 84);
+}
+
+.news-list .search .search-input{
+    width:220px;
+}
+.usoft-listview-more h6 a{
+float:left;
+}

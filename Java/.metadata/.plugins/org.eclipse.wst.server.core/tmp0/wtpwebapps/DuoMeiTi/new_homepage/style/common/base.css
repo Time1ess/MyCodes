@@ -1,0 +1,127 @@
+body {
+    background-image: url(/img/background.jpg);
+    width:100%;
+    height:100%;
+    background-repeat:no-repeat;
+    background-size: 100%;
+}
+#nav-container{
+    padding-top: 50px;
+}
+a, h1,h2, h3 {
+    color: rgb(32, 183, 240);
+    font-family: "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif, STHeiti, "LiHei Pro Medium", SimSun, SumHei;
+}
+table span a{
+    color: white;
+}
+
+a:hover, a:focus, a:active {
+    color: black;
+}
+.masthead a{
+    text-decoration:none !important;
+}
+.head-title {
+    font-family:黑体;
+    font-weight:bold;
+    color: white;
+    font-size:44px;
+    !important;
+}
+.head-title-low {
+    font-family:黑体;
+    font-size: 20px;
+    color: white;
+    opacity:0.8;
+}
+.head-hr {
+    opacity:0.7;
+    border-top-width: 0px;
+    margin-top:5px;
+    border-bottom:1px solid #fff;
+
+}
+.container{
+    width:1170px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.home-content-container {
+    background-color: rgb(248,248,248);
+    min-height:700px;
+    max-height:1200px;
+    width:1170px;
+    overflow-y:auto;
+    overflow-x:hidden;
+}
+.main-content-container {
+    background-color: rgb(248,248,248);
+    min-height:700px;
+    max-height:1200px;
+    width:1170px;
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding: 10px;
+}
+.main-content-container > div{
+    width:1150px;
+}
+
+footer p {
+    width:620px;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: 100;
+}
+
+
+#schedule_form select
+{
+    width:180px!important;
+    margin-right: 5px;
+
+}
+input:
+{
+    background-color:white;
+}
+
+
+
+th,td{
+    text-align: center;
+}
+
+.report-content-container {
+    background-color: rgb(248,248,248);
+    overflow-y:auto;
+    overflow-x:hidden;
+}
+.report-content-container .datastatics{
+    margin-top: 10px;
+}
+
+.datastatics_change_table{
+    width: 700px;
+}
+
+div.finalerror-lg{
+	width: 95%;
+}
+
+div.finalerror-sm{
+	width: 30%;
+	margin-left:5px;
+	height:45px;
+}
+
+
+th.achivement{
+    width:15% ;
+}
+li.nav-li{
+width:36px;
+}

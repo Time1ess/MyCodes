@@ -1,0 +1,23 @@
+#class_table td{
+    border:2px solid blue!important;
+    text-align:center;
+}
+h2{
+    text-align:center;
+}
+.period{
+    vertical-align:middle!important;
+    width:5%;
+    background-color:#7B68EE;
+}
+.lesson{
+    width:13%;
+    background-color:#B0C4DE;
+}
+.week{
+    background-color:#4682B4;
+}
+td{
+    vertical-align:middle!important;
+    word-break:break-all;
+}

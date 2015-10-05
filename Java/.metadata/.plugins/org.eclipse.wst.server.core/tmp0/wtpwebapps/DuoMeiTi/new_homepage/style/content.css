@@ -1,0 +1,444 @@
+/**/
+.container-content{
+	padding-top: 100px;
+	padding-bottom: 100px;
+}
+
+.user-count{
+	border-top-color: #ccc;
+	border-top-style: solid;
+	border-top-width: 1px;
+	font-size: 11px;
+	font-weight: bold;
+	line-height: 20px;
+	background-color: #fafafa;
+	position: relative;
+	color: #333333;
+	border-radius: 3px;
+	margin-left: 9px;
+	margin-right: 15px;
+}
+
+a.user-info{
+	font-size: 35px;
+	font-weight: bold;
+	color: #333333;
+	background-color: white;
+	margin-right: 10px;
+	position: relative;
+	border-radius: 3px;
+}
+
+a.user-info-label{
+	margin-left: 5px;
+}
+.bootcamp{
+  margin: 0 0 20px 0;
+}
+#bootcamp-title{
+	font-size:60%;
+}
+/*.bootcamp ul li {
+  color: #666;
+  font-size: 13px;
+  font-weight: normal;
+  background-color: #F5F3B4;
+  background-image: -moz-linear-gradient(#FFFFF5, #F5F3B4);
+  background-image: -webkit-linear-gradient(#FFFFF5, #F5F3B4);
+  background-image: linear-gradient(#FFFFF5, #F5F3B4);
+  background-repeat: repeat-x;
+  border: 1px solid #DFDDB5;
+  border-radius: 5px 5px 5px 5px;
+  display: block;
+  width: 215px;
+  height: 215px;
+  float: left;
+  position: relative;
+  margin: 0 10px 0 0;
+  box-shadow: 0px 1px 0px white;
+}*/
+.bootcamp a {
+  color: #666;
+  text-decoration: none;
+}
+.bootcamp-block{
+	background-color: #f5f3b4;
+	border-top-color: #ccc;
+	border-top-style: solid;
+	border-top-width: 1px;
+	border-radius: 5px;
+	font-size: 13px;
+	font-weight: normal;
+	display:block;
+	height: 215px;
+}
+.bootcamp .image {
+  display: block;
+  position: relative;
+  height: 133px;
+  border-bottom: 1px solid #F1EFAF;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+.bootcamp .first-step-image {
+  background-image: url("../images/cat1.png");
+}
+.bootcamp .second-step-image {
+  background-image: url("../images/cat2.png");
+}
+.bootcamp .third-step-image {
+  background-image: url("../images/cat3.png");
+}
+.bootcamp .fourth-step-image {
+  background-image: url("../images/cat4.png");
+}
+.bootcamp .bootcamp-block-text {
+  padding: 13px 0px 15px 15px;
+  display: block;
+  height: 50px;
+  overflow: hidden;
+  border-top: 1px solid white;
+  background-repeat: no-repeat;
+  position: relative;
+  z-index: 2;
+}
+.bootcamp .bootcamp-block-text h2 {
+  margin: 0px;
+  padding: 0px;
+  font-size: 15px;
+  color: #393939;
+}
+.bootcamp .bootcamp-block-text p {
+  margin: 0px;
+  padding: 0px;
+  line-height: 1.2em;
+}
+.bootcamp .bootcamp-block-image{
+  display: block;
+  position: relative;
+  height: 133px;
+  border-bottom: 1px solid #F1EFAF;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.bootcamp .step-number{
+  background-image: url("../images/num.png");
+  background-repeat: no-repeat;
+  display: block;
+  width: 64px;
+  height: 80px;
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  z-index: 0;
+}
+.bootcamp .one{
+  background-position: 0px 0px;
+}
+.bootcamp .two {
+  background-position: -64px 0px;
+}
+.bootcamp .three {
+  background-position: -128px 0px;
+}
+.bootcamp .four {
+  background-position: -192px 0px;
+}
+/*.bootcamp .bootcamp-block-image{
+	
+  height: 133px;
+	margin-left:auto; 
+	margin-right:auto; 
+	
+}*/
+
+/*.bootcamp-block-text{
+	height: 55px;
+}*/
+
+.bootcamp-center{
+	text-align:center;
+}
+
+
+div .calculate-steps{
+	text-align:center;
+	margin-left: 30px;
+	margin-right: 30px;
+}
+
+.tab-fix{
+	width:auto;
+	float:none;
+    display:inline-block;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+div#search-tips{
+	float:center;
+	width: 45%;
+	display:inline-block;
+	text-align:left;
+}
+
+#filesupload-tips{
+	float:left;
+	width: 75%;
+	display:inline-block;
+	text-align:left;
+}
+
+.search-result{
+	margin-left:60px;
+	margin-right: 60px;
+	text-align:left;
+}
+
+.carousel .search-result img
+{
+	position: relative;
+	width:auto;
+  	height: auto;
+}
+.bootcamp-carousel{
+	height:1200px;
+}
+
+p#opeartions-button{
+	margin-top: 30px;
+	float:right;
+	margin-right:10px;
+}
+
+a.carousel-arrow-black{
+	font-weight:bold;
+	color: black;
+}
+
+div.left-content{
+	text-align:left;
+}
+
+#addinput{
+	text-align:left;
+	width: 80px;
+
+}
+
+div#info-input-tab3{
+	margin-left: 30px;
+	margin-right: 30px;
+}
+
+div#info-input-tab1{
+	margin-left: 30px;
+	margin-right: 30px;
+}
+
+div#models-choice-accordions{
+	margin-left: 50px;
+	margin-right: 50px;
+	text-align:left;
+}
+
+div.step-content {
+			border: 1px solid #D4D4D4;
+			border-top: 0;
+			border-radius: 0 0 4px 4px;
+			padding: 10px;
+			margin-bottom: 10px;
+		}
+
+div.div-center{
+	float:center;
+	text-align:center;
+}
+
+div.models-choice-div{
+	margin-top: 20px;
+	margin-bottom: 20;
+}
+
+.right-float{
+	float:right;
+}
+
+.center-float{
+	float:center;
+	text-align: center;
+}
+
+div.response-label{
+  font-size:25px;
+  font-weight:bold;
+  width:auto;
+  height:35px;
+  line-height:35px;
+  text-align:center;
+  margin-top:10px;
+}
+
+.left-txt{
+  text-align:left;
+}
+
+label.filetype{
+  font-size: 20px;
+  font-weight:bold;
+}
+
+label.model-choice{
+   margin-right:30px;
+   font-size: 20px;
+   font-weight:bold;
+}
+
+ul.tasklist{
+	display:block;
+	list-style-type: disc;
+	list-style:none;
+}
+
+p.task-introduction{
+	font-size: 14px;
+	margin-left: 56px;
+}
+
+p.task-date{
+	font-size: 11px;
+	margin-left: 56px;
+	color: #999999;
+}
+
+ul.model-label{
+	margin-left: 56px;
+	list-style-type: disc;
+	list-style:none;
+}
+ul.model-label > span{
+	margin-left: 8px;
+}
+
+div.task-progress-bar{
+	margin-left: 56px;
+	margin-top: 10px;
+	margin-right: 5px;
+}
+
+p.progress-value{
+	margin-top: 10px;
+	margin-left: 5px;
+	font-weight: bold;
+}
+
+div.container-center{
+	text-align: center;
+}
+
+div.modal-fixed{
+	margin-left : 10px;
+	top:0%;
+	left:0%;
+	position: relative;
+	z-index: 0;
+}
+
+div.modal-fixed-another{
+	margin-top:75px;
+}
+
+label.settings-label{
+	font-weight:bold;
+}
+
+#result_tabs{
+  margin-left: 80px;
+}
+
+span.form-error{
+  color:red;
+}
+#analysis_div .span6{
+    margin-top:20px;
+    width:40%;
+}
+#platform_intro .span9{
+    width:60%;
+}
+
+/* Example page
+------------------------- */
+.bootstrap-examples h4 {
+  margin: 10px 0 5px;
+}
+.bootstrap-examples p {
+  font-size: 13px;
+  line-height: 18px;
+}
+.bootstrap-examples .thumbnail {
+  margin-bottom: 9px;
+  background-color: #fff;
+}
+
+
+
+/* Bootstrap code examples
+-------------------------------------------------- */
+
+/* Base class */
+.bs-docs-example {
+  position: relative;
+  margin: 15px 0;
+  padding: 39px 19px 14px;
+  *padding-top: 19px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+}
+
+/* Echo out a label for the example */
+.bs-docs-example:after {
+  /* content: ""; */
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  padding: 3px 7px;
+  font-size: 12px;
+  font-weight: bold;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  color: #9da0a4;
+  -webkit-border-radius: 4px 0 4px 0;
+     -moz-border-radius: 4px 0 4px 0;
+          border-radius: 4px 0 4px 0;
+}
+
+/* Remove spacing between an example and it's code */
+.bs-docs-example + .prettyprint {
+  margin-top: -20px;
+  padding-top: 15px;
+}
+
+/* Tweak examples
+------------------------- */
+.bs-docs-example > p:last-child {
+  margin-bottom: 0;
+}
+.bs-docs-example .table,
+.bs-docs-example .progress,
+.bs-docs-example .well,
+.bs-docs-example .alert,
+.bs-docs-example .hero-unit,
+.bs-docs-example .pagination,
+.bs-docs-example .navbar,
+.bs-docs-example > .nav,
+.bs-docs-example blockquote {
+  margin-bottom: 5px;
+}
+.bs-docs-example .pagination {
+  margin-top: 0;
+}

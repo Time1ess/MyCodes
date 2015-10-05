@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+    <package name="message" namespace="/message" extends="HomepageDefault">
+    	<action name="userlist" class="Message.ChatBoardAction" method="getUserList">
+    		<result type="json">
+    			<param name="includeProperties">
+    				adminList\[\d+\]\.username,
+    				adminList\[\d+\]\.id,
+    				studentList\[\d+\]\.username,
+    				studentList\[\d+\]\.id,
+    			</param>
+    		</result>
+    	</action>
+    	
+    	<action name="receiveMes" class="Message.ChatBoardAction" method="receiveMes">
+    		<result type="json">
+    		</result>
+    	</action>
+    	
+    	<action name="getNewMessage" class="Message.ChatBoardAction" method="getNewMessage">
+    		<result type="json">
+    			<param name="includeProperties">
+    				messageListHtml
+    			</param>
+    		</result>
+    	</action>
+    	
+    	
+    	<action name="getMessage" class="Message.ChatBoardAction" method="getMessage">
+    		<result type="json">
+    			<param name="includeProperties">
+    				historyMesHtml
+    			</param>
+    		</result>
+    	</action>
+    	
+    </package>
+</struts>

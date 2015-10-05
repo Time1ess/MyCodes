@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+    <constant name="struts.enable.DynamicMethodInvocation" value="false" />
+    <constant name="struts.devMode" value="true" />
+    <constant name="struts.multipart.saveDir " value="d:/tmp" />
+      
+    <constant name="struts.multipart.maxSize" value="1000000000" />
+    <constant name="struts.aciton.excludePattern" value="ws://*"></constant>
+     <constant name="struts.ognl.allowStaticMethodAccess" value="true"></constant>
+
+    
+
+     
+    <package name="Default" namespace="" extends="json-default">
+    
+    	<default-action-ref name="hello"/>
+  	    <global-results>
+            <result name="not_login" type="redirect"> /not_login</result>
+        </global-results>    	
+        
+        <action name="hello">
+        	<result> /hello.jsp</result>
+        </action>
+    </package>
+    
+      
+	<package name="AdminLoginInterceptor" abstract="true" extends="struts-default">	
+		<!-- 定义一个拦截器 -->  
+        <interceptors>  
+            <interceptor name="AdminLoginInterceptor" class="homepage.AdminLoginInterceptor">  
+            </interceptor>  
+            <!-- 拦截器栈 -->  
+            <interceptor-stack name="AdminLoginInterceptorStack">
+                <interceptor-ref name="defaultStack" />  
+                <interceptor-ref name="AdminLoginInterceptor" />  
+            </interceptor-stack>  
+        </interceptors>  
+        
+		<default-interceptor-ref name="AdminLoginInterceptorStack" />
+		
+	</package>
+	
+	
+	
+	<package name="AdminDefault" extends="Default, AdminLoginInterceptor">
+	</package>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<package name="HomepageDefault" extends="Default">	
+	</package>
+	
+	
+<!--     <package name="global"  extends="struts-default">	 -->
+        
+<!--         <default-action-ref name="hello"/> -->
+        
+<!--         <global-exception-mappings> -->
+<!--             <exception-mapping exception="java.lang.Exception" result="error"/> -->
+<!--         </global-exception-mappings> -->
+        
+<!--     </package> -->
+    
+    <include file="/admin/admin.xml"/>	
+    <include file="/homepage/homepage.xml"/>
+    <include file="/Message/message.xml"/>
+
+    <!-- Add packages here -->
+
+</struts>

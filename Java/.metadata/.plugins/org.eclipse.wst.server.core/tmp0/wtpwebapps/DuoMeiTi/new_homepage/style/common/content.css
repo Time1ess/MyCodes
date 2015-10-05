@@ -1,0 +1,74 @@
+textarea.fill-form{
+  width: 95%;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.budgetform{
+	padding-bottom:20px;
+	padding-left:10px;
+}
+
+select.budgetformselect{
+    width: 140px !important;
+}
+
+input.budgetform{
+    width: 150px !important;
+}
+
+label.budgetform{
+    width: 180px !important;
+    text-align: right;    
+}
+
+label.budgetform-small{
+    width: 100px !important;
+    text-align: right;    
+}
+/* show search css */
+#search-tools-bar{
+    float:left;
+    margin-top:20px;
+    margin-left:15px;
+}
+#search-tools-bar input[type="text"], s#search-tools-bar select{
+    margin-left:5px;
+    width:220px!important;
+}
+.search-input {
+    margin-left: 5px;
+}
+.search-input:hover,
+.search-input:focus,
+.search-input:active {
+    color: rgb(32, 183, 240);
+    text-shadow: none;
+    border-color: rgb(32, 183, 240) !important;
+}
+.search form {
+    margin-top: 5px;
+}
+.search-news {
+    height: 30px;
+    vertical-align:top;
+    background: transparent;
+    border: 1px solid rgb(32, 183, 240);
+    color: rgb(32, 183, 240);
+}
+.search-news:hover,
+.search-news:focus,
+.search-news:active {
+    color: #eee;
+    text-shadow: none;
+    background-color: rgb(32, 183, 240);
+    border-color: rgb(32, 183, 240);
+}
+/* end show search css */
+/* show contain css */
+
+select.final_report_form{
+    margin-left: 0px;
+    width: 230px !important;
+	outline: rgb(91, 157, 217) auto 5px;
+}

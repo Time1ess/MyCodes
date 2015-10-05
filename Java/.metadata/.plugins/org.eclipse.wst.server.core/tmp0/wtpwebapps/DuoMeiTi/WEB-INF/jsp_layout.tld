@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3g.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee web-jsptaglibrary_2_0.xsd"
+    version="2.0">
+    <tlib-version>1.2</tlib-version>
+    <jsp-version>1.2</jsp-version>
+    <short-name>Taglib</short-name>
+    <uri>/WEB-INF/jsp_layout.tld</uri>
+    <description>jsp模板继承</description>
+ 
+    <tag>
+        <name>block</name><!--tag的名字-->
+        <tag-class>tags.BlockTag</tag-class><!--其中对应的java类-->
+        <body-content>jsp</body-content>
+        <!--   
+            JSP,empty,scriptless,tagdependent  
+            JSP:接受所有JSP语法，如定制的或内部的tag、scripts、静态HTML、脚本元素、  
+                JSP指令和动作  
+            empty:空标记，即起始标记和结束标记之间没有内容  
+            scriptless:接受文本、EL和JSP动作。如<%=request.getProtocol()%>使用  
+                <body-content> scriptless </body-content>则报错  
+            tagdependent:标签体内容直接被写入BodyContent，由自定义标签类来进行处理，而不被JSP容器解释  
+         -->
+ 
+        <attribute><!--tag的参数-->
+            <name>name</name><!--参数名-->
+            <required>true</required><!-- 是否是必填选项 --> 
+            <rtexprvalue>true</rtexprvalue><!--是否可以动态赋值--> 
+            <type>java.lang.String</type><!--参数类型-->
+        </attribute>
+ 
+        <!-- 支持动态属性(必须实现DynamicAttributes接口)
+        <dynamic-attributes>true</dynamic-attributes>
+         -->
+    </tag>
+ 
+    <tag>
+        <name>override</name>
+        <tag-class>tags.OverrideTag</tag-class>
+        <body-content>jsp</body-content>
+ 
+        <attribute>
+            <name>name</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+    </tag>
+</taglib>

@@ -1,0 +1,237 @@
+#envelope{
+    height:50px;
+    width:50px;
+    position:fixed;
+    right:50px;
+    bottom:50px;
+    background-image:url(/img/chat.png);
+}
+
+#envelope:hover{
+    cursor:pointer;
+}
+
+#message-list-box{
+    height:500px;
+    width:500px;
+    position:fixed;
+    right:50px;
+    bottom:110px;
+    background-color:rgb(255,255,255);
+    border:1px solid #ccc;
+    border-radius:3px;
+}
+
+#message-content-box{
+    height:500px;
+    width:500px;
+    position:fixed;
+    right:50px;
+    bottom:110px;
+    background-color:rgb(255,255,255);
+    border:1px solid #ccc;
+    border-radius:3px;
+}
+
+#message-contacts-box{
+    height:500px;
+    width:150px;
+    position: fixed;
+    right:550px;
+    bottom:110px;
+    background-color:rgb(255,255,255);
+    border:1px solid #ccc;
+    border-radius: 3px;
+}
+
+.message-list-top,.message-list-bottom,.message-content-top,.message-contacts-top{
+    height:30px;
+    background-color:rgb(80, 187, 233);
+}
+
+.message-list-bottom{
+    width: 100%;
+    position: absolute;
+    bottom:0;
+}
+
+.message-list-bottom span{
+    text-align:center;
+    display:block;
+    line-height:30px;
+    font-size:14px;
+    color:#fff;
+}
+
+
+.message-list-top span{
+    display:inline-block;
+    line-height:30px;
+    font-size:14px;
+    color:#fff;
+}
+
+.message-content-top span{
+    display:inline-block;
+    line-height:30px;
+    font-size:14px;
+    color:#fff;
+}
+
+.message-contacts{
+    height:470px;
+    overflow: auto;
+}
+
+.message-contacts-top span{
+    display:inline-block;
+    line-height:30px;
+    font-size:14px;
+    color:#fff;
+}
+
+.message-contacts a{
+    padding-left:10px;
+    color:#3F394C;
+    font-size:16px;
+    display:block;
+    text-align:left;
+}
+.message-contacts span{
+    font-size:10px;
+}
+
+.message-contacts a:hover{
+    color:#3F394C;
+}
+
+.message-list-top .title{
+    float:left;
+    margin-left:20px;
+}
+
+.message-content-top .title{
+    float:left;
+    margin-left:20px;
+}
+
+.message-contacts-top .title{
+    float:left;
+    margin-left:20px;
+}
+
+.closed,.users,.back{
+    float:right;
+    margin:0 10px;
+}
+
+
+.closed:hover,.users:hover,.back:hover{
+    cursor:pointer;
+}
+.message-list-bottom span:hover{
+    cursor: pointer;
+}
+.message-list-group li{
+    border-left:0px;
+    cursor:pointer;
+}
+.contacts-list-group li{
+    padding:5px 35px;
+    border:none;
+    cursor:pointer;
+}
+
+.hide{
+    display:none;
+}
+
+.message-content{ 
+    padding:none;
+    margin:0px auto; 
+    height:300px;
+    width:%100;
+    overflow:auto;
+    /*border-bottom:3px solid #88C1E7;*/
+}
+
+.message-tool{
+    height:25px;
+    background-color:rgb(214, 239, 250);
+}
+
+.message-writeboard textarea{
+    border:none;
+    height:114px;
+    resize:none;
+}
+
+.send-bottom{
+    height:30px;
+    background-color: rgb(80, 187, 233);
+}
+
+.send-bottom button{
+    float:right;
+    background-color:#88C1E7;
+    color:#eee;
+}
+
+.message {
+    margin-top:20px;
+    padding-left:13px;
+    padding-right:60px;
+    position:relative;
+}
+ 
+.triangle {
+    position:absolute;
+    top:50%;
+    margin-top:-8px;
+    left:5px;
+    display:block;
+    width:0;
+    height:0;
+    overflow:hidden;
+    line-height:0;
+    font-size:0;
+    border-bottom:8px solid #FFF;
+    border-top:8px solid #FFF;
+    border-left:none;
+    border-right:8px solid #ddd;
+}
+ 
+.message .article {
+    float:left;
+    margin-right:20px;
+    color:#6B6767;
+    display:inline-block;
+    *display:inline; 
+    zoom:1;
+    padding:5px 10px;
+    /*border:1px solid #3079ED;*/
+    border:none;
+    border-radius:5px;
+    background-color: #ddd;
+    /*background-image:-webkit-gradient(linear,left top,left bottom,from(#4D90FE),to(#4787ED));*/
+    /*background-image:-webkit-linear-gradient(top,#4D90FE,#4787ED);
+    background-image:-moz-linear-gradient(center top , #4D90FE, #4787ED);
+    background-image:linear-gradient(top,#4D90FE,#4787ED);*/
+}
+ 
+.fr { padding-left:60px; padding-right:13px; }
+ 
+.fr .triangle {
+    left:auto;
+    right:5px;
+    border-bottom:8px solid #FFF;
+    border-top:8px solid #FFF;
+    border-right:none;
+    border-left:8px solid #ddd;
+}
+ 
+.fr .article {
+    float:right;
+    margin-right:0px;
+    margin-left:20px;
+}

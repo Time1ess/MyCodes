@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+
+    <package name="homepage" namespace="/" extends="HomepageDefault">    	
+    	
+    	<action name="home2">
+    		<result> /jsp/homepage/home2.jsp</result>
+    	</action>
+    	
+    	<action name="new_home">
+    		<result> /jsp/homepage/new_home.jsp</result>
+    	</action>
+      	<action name="old_home" >
+        	<result>/jsp/homepage/home.jsp</result>
+        </action>
+    	
+       	<action name="" class="homepage.HomeAction">
+        	<result>/jsp/homepage/new_home.jsp</result>
+        </action>
+        
+        <action name="ClassroomFile" class="homepage.HomeAction" method="classroomFile">
+			<result>/jsp/homepage/ClassroomFile.jsp</result>
+    	</action>
+        
+    
+<!--     	<action name="" class="homepage.HomeAction"> -->
+<!--         	<result>/jsp/homepage/home.jsp</result> -->
+<!--         </action> -->
+        
+        <action name="file_upload" class="homepage.FileUploadAction">
+        	<result>/jsp/homepage/file_upload.jsp</result>
+        </action>
+        
+        
+        <action name="admin_eg">
+            <result>
+                /jsp/admin/admin_eg.jsp
+            </result>
+        </action>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    	<action name="not_login">
+            <result> /jsp/homepage/not_login.jsp </result>
+        </action>
+        
+        <action name="logout" class="homepage.UserAction" method="logout">
+            <result type="redirect"> / </result>
+        </action>
+        
+                        
+        <action name="register" class="homepage.UserAction" method="register">
+            <result name="success">                
+<!--                 <param name="includeProperties">username, password, user_list</param> -->
+                /jsp/homepage/register.jsp
+            </result>            
+        </action>
+        
+        <action name="register_save" class="homepage.UserAction" method="save">
+            <result name="success" type="json">
+            	<param name="includeProperties">status, user_id, username, password, added_user_html</param>           
+<!-- 				<param name="excludeProperties"> user_list</param> -->
+            </result>            
+        </action>
+        
+        <action name="register_delete" class="homepage.UserAction" method="delete">
+            <result name="success" type="json">
+            	<param name="includeProperties">status,user_id</param>           
+				
+            </result>            
+        </action>
+        
+        
+        
+        
+
+        <action name="login" class="homepage.UserAction" method="login">
+        	<result> /jsp/homepage/login.jsp </result>
+        	
+            <result name="login_fail" type="redirect">
+                /login_fail
+            </result>
+            
+            
+            <result name="login_success" type="redirect">
+            	/admin/
+            </result>
+        </action>
+        
+        <action name="login_success">
+            <result> /jsp/homepage/login_success.jsp </result>
+        </action>
+        
+        <action name="login_fail">
+            <result> /jsp/homepage/login_fail.jsp </result>
+        </action>
+        
+        
+        <action name="student_register" class="homepage.StudentAction" method="studentRegister">
+        	<result>
+        		/jsp/homepage/student_register.jsp
+        	</result>
+        </action>
+        
+        <action name="student_register_save" class="homepage.StudentAction" method="studentRegisterSave">
+            <result name="success" type="json">
+            	<param name="includeProperties">register_status,  username, password, fullName,passwordAgain,studentId,sex,status,classrooms,college,phoneNumber,bankNumber,idCard,entryTime</param>           
+<!-- 				<param name="excludeProperties"> user_list</param> -->
+            </result>            
+        </action>
+        
+
+
+        <action name="admin_register" class="homepage.AdminAction" method="adminRegister">
+        
+        	<result>
+        		/jsp/homepage/admin_register.jsp
+        	</result>
+        </action>
+        <!--  -->
+        <action name="admin_register_save" class="homepage.AdminAction" method="adminRegisterSave">
+            <result name="success" type="json">
+            	<param name="includeProperties">register_status</param>           
+<!-- 				<param name="excludeProperties"> user_list</param> -->
+            </result>            
+        </action>
+      
+
+   
+
+
+
+    </package>
+    
+
+
+</struts>
