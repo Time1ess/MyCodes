@@ -123,8 +123,10 @@
 
 
 	<section id="news" class="container content-section text-center">
+	<div class="container">
 		<div class="col-lg-8 col-lg-offset-2">
 			<h2>最新党务通知</h2>
+			<span style="float:right;margin-bottom: 10px;"><a href='#'>更多..</a></span>
 			<table class="table">
 				<tr>
 					<th>序号</th>
@@ -144,6 +146,7 @@
 				{% endfor %}
 			</table>
 		</div>
+		</div>
 	</section>
 	{% endif %}
 
@@ -153,6 +156,7 @@
 			<div class="container">
 				<div class="col-lg-8 col-lg-offset-2">
 					<h2>党务工作文件列表</h2>
+					<span style="float:right;margin-bottom: 10px;"><a href='#'>更多..</a></span>
 					<table class="table">
 						<tr>
 							<th>序号</th>
@@ -166,7 +170,7 @@
 							<td>{{ forloop.counter }}</td>
 							<td>{{ document.filename }}</td>
 							<td>{{ document.pub_date }}</td>
-							<td><a href="{% static 'web/pdfviewer.html' %}?file={{ document.file_path }}">阅读</a></td>
+							<td><a href="{% static 'web/pdfviewer.html' %}?file=../../../{{ document.file_path }}">阅读</a></td>
 							<td><a href="/{{ document.file_path }}">下载</a></td>
 						</tr>						
 						{% endfor %}					
@@ -225,17 +229,17 @@
 				<fieldset>
 
 					<div id="pagination" class="col-md-8 col-md-offset-2">
-					<legend style="color:white;">留言区</legend>
+						<legend style="color:white;">留言区</legend>
 						<nav>
 							<ul class="pagination" id="pagesGroup">
 								<li id="Page0">
-									<a onclick="changePage(0)" aria-label="Previous">
+									<a onclick="changePage('p')" aria-label="Previous">
 										<span aria-hidden="true">&laquo;</span>
 									</a>
 								</li>
 								<li id="page1"><a onclick="changePage(1)">1</a></li>
 								<li id="Page-1">
-									<a onclick="changePage(-1)" aria-label="Next">
+									<a onclick="changePage('n')" aria-label="Next">
 										<span aria-hidden="true">&raquo;</span>
 									</a>
 								</li>
@@ -336,9 +340,10 @@
 		var messageLength=$('#messageGroup>div').length;
 		var max_message_per_page=5;
 		var current_page=1;
+		var max_page_per_line=5;
 		var pageSize=Math.ceil(messageLength/max_message_per_page);
 		$(function(){
-			alert('注意完成多留言信息的情况下page按钮的个数显示问题');
+			//alert('注意完成多留言信息的情况下page按钮的个数显示问题');
 			if(messageLength>max_message_per_page)
 			{
 				for(var i=max_message_per_page+1;i<=messageLength;i++)
@@ -349,7 +354,12 @@
 				$('#page'+current_page).addClass('active');
 				var nextPage=$('#Page-1');
 				for(var i=2;i<=pageSize;i++)
+				{
 					nextPage.before('<li id="page'+i+'"><a href="#messages" onclick="changePage('+i+')">'+i+'</a></li>');
+					if(i>max_page_per_line)
+						$('#page'+i).hide();
+				}
+
 				return;
 			}
 		});
@@ -357,13 +367,13 @@
 		{
 			if(page==current_page)
 				return false;
-			if(page==0)
+			if(page=='p')
 			{
 				if(current_page==1)
 					return false;
 				page=current_page-1;
 			}
-			else if(page==-1)
+			else if(page=='n')
 			{
 				if(current_page==pageSize)
 					return false;
@@ -373,6 +383,19 @@
 			$('#page'+current_page).addClass('disable');
 			$('#page'+page).removeClass('disable');
 			$('#page'+page).addClass('active');
+			var startPage=current_page-Math.floor(max_page_per_line/2);
+			startPage=startPage>0?startPage:1;
+			var endPage=startPage+max_page_per_line-1;
+			endPage=endPage>pageSize?pageSize:endPage;
+			for(var i=startPage;i<=endPage;i++)
+				$('#page'+i).hide();
+
+			startPage=page-Math.floor(max_page_per_line/2);
+			startPage=startPage>0?startPage:1;
+			endPage=startPage+max_page_per_line-1;
+			endPage=endPage>pageSize?pageSize:endPage;
+			for(var i=startPage;i<=endPage;i++)
+				$('#page'+i).show();
 			for(var i=max_message_per_page*(current_page-1)+1,j=max_message_per_page*(page-1)+1;i<=current_page*max_message_per_page;i++,j++)
 			{
 				var no='#messageNo'+i;

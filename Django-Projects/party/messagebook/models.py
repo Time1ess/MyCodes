@@ -11,9 +11,9 @@ class Message(models.Model):
 	class Message defines a message with `author`,`content`,
 	`pub_date`,`reply_to`.
 	"""
-	author=models.CharField('author',max_length=100)
-	content=models.TextField('content')
-	pub_date=models.DateTimeField('pub_date',default=timezone.now)
+	author=models.CharField(u'发布者',max_length=100)
+	content=models.TextField(u'内容')
+	pub_date=models.DateTimeField(u'发布时间',default=timezone.now)
 	reply_to=models.ForeignKey('self',blank=True,null=True)
 
 	def self_reply_to_id(self):
@@ -25,7 +25,8 @@ class Message(models.Model):
 		if(len(self.content)>70):
 			message+='...'
 		return message
-	self_reply_to_id.short_description="REPLY"
+	short_content.short_description=u"简要内容"
+	self_reply_to_id.short_description=u"回复"
 
 	def __unicode__(self):
 		return self.content

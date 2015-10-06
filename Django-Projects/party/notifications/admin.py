@@ -1,4 +1,4 @@
-#coding=UTF-8
+# -*- coding:gb18030 -*-
 from django.contrib import admin
 
 from .models import Notification
