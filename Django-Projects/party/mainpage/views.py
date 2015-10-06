@@ -1,4 +1,4 @@
-#coding=UTF-8
+# -*- coding:gb18030 -*-
 from django.shortcuts import render
 
 from notifications.models import Notification
@@ -7,7 +7,7 @@ from messagebook.models import Message,MessageForm
 
 def homepage(request):
 	notifications=Notification.objects.all().order_by('-pub_date')[:10]
-	documents=Document.objects.filter(filetype=0).order_by('-pub_date')[:10]
+	documents=Document.objects.filter(filetype='indep').order_by('-pub_date')[:10]
 	messages=Message.objects.all().order_by('-pub_date')
 	for message in messages:
 		if message.reply_to:

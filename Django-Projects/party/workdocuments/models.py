@@ -7,8 +7,8 @@ from notifications.models import Notification
 
 
 FILE_TYPES=(
-		(u'独立文档',u'独立文档'),
-		(u'附件文档',u'附件文档'),
+		('dep',u'附件文件'),
+		('indep',u'独立文件'),
 		)
 
 class Document(models.Model):
@@ -17,10 +17,10 @@ class Document(models.Model):
 	`file_path`,`author`
 	"""
 	filename=models.CharField(u'文件名',max_length=200)
-	pub_date=models.DateTimeField(u'发布时间')
+	pub_date=models.DateTimeField(u'发布时间',default=timezone.now)
 	file_path=models.FileField(u'文件路径',upload_to='workdocuments/media/uploadFiles',default=None)
 	author=models.CharField(u'作者',max_length=100)
-	filetype=models.CharField(u'类型',choices=FILE_TYPES,max_length=10,default=u'独立文档')
+	filetype=models.CharField(u'类型',choices=FILE_TYPES,max_length=10,default='indep')
 	def __unicode__(self):
 		return self.filename
 

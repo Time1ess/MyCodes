@@ -25,3 +25,9 @@ def detail(request):
 		response_data['additionalFiles']=filesJSON
 	return HttpResponse(simplejson.dumps(response_data,ensure_ascii=False),content_type="application/json")
 	#return HttpResponse(json.dumps(response_data,cls=DjangoJSONEncoder),content_type="application/json")
+
+def getAllNotifications(request):
+	notifications=Notification.objects.all().order_by('-pub_date')
+	return render(request,'notifications/index.html',{
+		'notifications':notifications,
+		})

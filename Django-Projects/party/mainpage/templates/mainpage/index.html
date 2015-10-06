@@ -75,7 +75,7 @@
 						<a class="page-scroll" href="#contact">联系我们</a>
 					</li>
 					<li>
-						<a class="page-scroll" href="admin/">管理员入口</a>
+						<a class="page-scroll" href="/admin/">管理员入口</a>
 					</li>
 				</ul>
 			</div>
@@ -123,29 +123,29 @@
 
 
 	<section id="news" class="container content-section text-center">
-	<div class="container">
-		<div class="col-lg-8 col-lg-offset-2">
-			<h2>最新党务通知</h2>
-			<span style="float:right;margin-bottom: 10px;"><a href='#'>更多..</a></span>
-			<table class="table">
-				<tr>
-					<th>序号</th>
-					<th>通知标题</th>
-					<th>发布时间</th>
-					<th>详细</th>
-				</tr>
-				{% for notification in notifications %}
-				<tr>
-					<td>{{ forloop.counter }}</td>
-					<td>{{ notification.title }}</td>
-					<td>{{ notification.pub_date }}</td>
-					<td>
-						<button class="btn btn-default"  onclick="postData({{ notification.id }})" data-toggle="modal" data-target="#notificationModal" type="button">查看</button>
-					</td>
-				</tr>
-				{% endfor %}
-			</table>
-		</div>
+		<div class="container">
+			<div class="col-lg-8 col-lg-offset-2">
+				<h2>最新党务通知</h2>
+				<span style="float:right;margin-bottom: 10px;"><a href='{% url 'notifications:getAllNotifications' %}'>更多..</a></span>
+				<table class="table">
+					<tr>
+						<th>序号</th>
+						<th>通知标题</th>
+						<th>发布时间</th>
+						<th>详细</th>
+					</tr>
+					{% for notification in notifications %}
+					<tr>
+						<td>{{ forloop.counter }}</td>
+						<td>{{ notification.title }}</td>
+						<td>{{ notification.pub_date }}</td>
+						<td>
+							<button class="btn btn-default"  onclick="postData({{ notification.id }})" data-toggle="modal" data-target="#notificationModal" type="button">查看</button>
+						</td>
+					</tr>
+					{% endfor %}
+				</table>
+			</div>
 		</div>
 	</section>
 	{% endif %}
@@ -156,8 +156,8 @@
 			<div class="container">
 				<div class="col-lg-8 col-lg-offset-2">
 					<h2>党务工作文件列表</h2>
-					<span style="float:right;margin-bottom: 10px;"><a href='#'>更多..</a></span>
-					<table class="table">
+					<span style="float:right;margin-bottom: 10px;"><a href='{% url 'workdocuments:getAllDocuments' %}'>更多..</a></span>
+					<table class="table" id="documentGroup">
 						<tr>
 							<th>序号</th>
 							<th>文件名</th>
@@ -170,245 +170,257 @@
 							<td>{{ forloop.counter }}</td>
 							<td>{{ document.filename }}</td>
 							<td>{{ document.pub_date }}</td>
-							<td><a href="{% static 'web/pdfviewer.html' %}?file=../../../{{ document.file_path }}">阅读</a></td>
-							<td><a href="/{{ document.file_path }}">下载</a></td>
-						</tr>						
-						{% endfor %}					
-					</table>
+							<td><a
+								type="button"
+								name="document"
+								class="btn btn-default" 
+								href="{% static 'web/pdfviewer.html' %}?file=../../../{{ document.file_path }}"
+								>阅读</a></td>
+								<td><a type="button" class="btn btn-default" href="/{{ document.file_path }}">下载</a></td>
+							</tr>						
+							{% endfor %}					
+						</table>
+					</div>
 				</div>
 			</div>
-		</div>
-	</section>
-	{% endif %}
+		</section>
+		{% endif %}
 
-	{% if messages %}
+		{% if messages %}
 
-	<div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-		<div class="modal-dialog" role="document">
-			<form enctype="multipart/form-data" method="POST" action="{% url 'messagebook:replyMessage' %}" onsubmit="return checkForm()">
-				{% csrf_token %}
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title" id="replyModalTitle">Modal title</h4>
-					</div>
-					<div style="color:#000000;" class="modal-body" id="replyModalContent">
-						<div>由   
-							<span id="messageAuthor">...</span>    于    
-							<span id="messageDate">...</span>
+		<div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			<div class="modal-dialog" role="document">
+				<form enctype="multipart/form-data" method="POST" action="{% url 'messagebook:replyMessage' %}" onsubmit="return checkForm()">
+					{% csrf_token %}
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="replyModalTitle">Modal title</h4>
 						</div>
-						<div>
-							<p class="indent" id="messageContent" style="text-align: left;">...</p>
-						</div>
-						<label>回复:</label>
-						<div class="input-group" style="margin-bottom: 10px;">
-							<div class="input-group-addon">姓名</div>
-							<input type="text" class="form-control" name="replyName" id="replyName" placeholder="请输入姓名">
-						</div>
-						<div class="input-group" style="width:100%;">
-							<textarea class="form-control" id="replyContent" name="replyContent" rows="3" style="resize:vertical;" placeholder="请输入回复内容" onkeyup="checkReplyContent()"></textarea>
-						</div>
-						<div class="form-group" style="text-align: right;">
-							<label id="charslabel" style="">还可以输入<span id="chars"></span>字</label>
-						</div>
-
-						<input type="hidden" id="replyID" name="replyID" value=""/>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
-						<button type="submit" class="btn btn-success">提交</button>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
-
-	<section id="messages" class="content-section text-center">
-		<div class="messages-section">
-			<div class="container">
-				<fieldset>
-
-					<div id="pagination" class="col-md-8 col-md-offset-2">
-						<legend style="color:white;">留言区</legend>
-						<nav>
-							<ul class="pagination" id="pagesGroup">
-								<li id="PageFirst">
-									<a onclick="changePage('first')">首页</a>
-								</li>
-								<li id="Page0">
-									<a onclick="changePage('p')" aria-label="Previous">
-										<span aria-hidden="true">&laquo;</span>
-									</a>
-								</li>
-								<li id="page1"><a href="#messages" onclick="changePage(1)">1</a></li>
-								<li id="Page-1">
-									<a onclick="changePage('n')" aria-label="Next">
-										<span aria-hidden="true">&raquo;</span>
-									</a>
-								</li>
-								<li id="PageLast">
-									<a onclick="changePage('last')">尾页</a>
-								</li>
-							</ul>
-						</nav>
-					</div>
-					<div id="messageGroup" class="col-md-8 col-md-offset-2">
-						{% for message in messages%}
-						<div id="messageNo{{ forloop.counter }}" class="col-md-12 Message" style="padding-bottom:10px;background-color:rgba(0,0,0,0.1);padding-top:10px;border:thin ridge #ffffff;margin-bottom: 5px;">
-							<!-- 留言显示  -->
-							<div id="message{{message.id}}" class="col-md-12" style="margin-bottom:-30px;">
-								<div style="font-size:5px;text-align: left;margin-bottom: 30px;float:left;">#{{forloop.revcounter}}    由   {{message.author}}    于    {{message.pub_date}}
-								</div>
-								<div  style="text-align: right;margin-bottom:30px;margin-right: -30px;">
-									<a class="btn" data-toggle="modal" data-target="#replyModal" onclick="replyToMessage({{message.id}})">回复</a>
-								</div>
-
+						<div style="color:#000000;" class="modal-body" id="replyModalContent">
+							<div>由   
+								<span id="messageAuthor">...</span>    于    
+								<span id="messageDate">...</span>
 							</div>
-							<div class="col-md-12 indent">
-								<p style="text-align: left;">{{message.content}}</p>
-								<!-- 留言回复显示-->
-								{% if message.reply_to %}
-								<div class="col-md-12" style="background-color:rgba(0,0,0,0.1);">
-									<div class="col-md-12" style="margin-top:10px;margin-bottom: -20px;">
-										<div style="font-size:5px;text-align: left;float:left;margin-bottom:20px;">由   {{message.reply_to.author}}    于    {{message.reply_to.pub_date}}</div>
-										<div  style="text-align: right;margin-bottom:20px;margin-right:-25px;">
-											<a class="btn" data-toggle="modal" data-target="#replyModal" onclick="replyToMessage({{message.reply_to.id}})">回复</a>
+							<div>
+								<p class="indent" id="messageContent" style="text-align: left;">...</p>
+							</div>
+							<label>回复:</label>
+							<div class="input-group" style="margin-bottom: 10px;">
+								<div class="input-group-addon">姓名</div>
+								<input type="text" class="form-control" name="replyName" id="replyName" placeholder="请输入姓名">
+							</div>
+							<div class="input-group" style="width:100%;">
+								<textarea class="form-control" id="replyContent" name="replyContent" rows="3" style="resize:vertical;" placeholder="请输入回复内容" onkeyup="checkReplyContent()"></textarea>
+							</div>
+							<div class="form-group" style="text-align: right;">
+								<label id="charslabel" style="">还可以输入<span id="chars"></span>字</label>
+							</div>
+
+							<input type="hidden" id="replyID" name="replyID" value=""/>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+							<button type="submit" class="btn btn-success">提交</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<section id="messages" class="content-section text-center">
+			<div class="messages-section">
+				<div class="container">
+					<fieldset>
+
+						<div id="pagination" class="col-md-8 col-md-offset-2">
+							<legend style="color:white;">留言区</legend>
+							<nav>
+								<ul class="pagination" id="pagesGroup">
+									<li id="PageFirst">
+										<a onclick="changePage('first')">首页</a>
+									</li>
+									<li id="Page0">
+										<a onclick="changePage('p')" aria-label="Previous">
+											<span aria-hidden="true">&laquo;</span>
+										</a>
+									</li>
+									<li id="page1"><a href="#messages" onclick="changePage(1)">1</a></li>
+									<li id="Page-1">
+										<a onclick="changePage('n')" aria-label="Next">
+											<span aria-hidden="true">&raquo;</span>
+										</a>
+									</li>
+									<li id="PageLast">
+										<a onclick="changePage('last')">尾页</a>
+									</li>
+								</ul>
+							</nav>
+						</div>
+						<div id="messageGroup" class="col-md-8 col-md-offset-2">
+							{% for message in messages%}
+							<div id="messageNo{{ forloop.counter }}" class="col-md-12 Message" style="padding-bottom:10px;background-color:rgba(0,0,0,0.1);padding-top:10px;border:thin ridge #ffffff;margin-bottom: 5px;">
+								<!-- 留言显示  -->
+								<div id="message{{message.id}}" class="col-md-12" style="margin-bottom:-30px;">
+									<div style="font-size:5px;text-align: left;margin-bottom: 30px;float:left;">#{{forloop.revcounter}}    由   {{message.author}}    于    {{message.pub_date}}
+									</div>
+									<div  style="text-align: right;margin-bottom:30px;margin-right: -30px;">
+										<a class="btn" data-toggle="modal" data-target="#replyModal" onclick="replyToMessage({{message.id}})">回复</a>
+									</div>
+
+								</div>
+								<div class="col-md-12 indent">
+									<p style="text-align: left;">{{message.content}}</p>
+									<!-- 留言回复显示-->
+									{% if message.reply_to %}
+									<div class="col-md-12" style="background-color:rgba(0,0,0,0.1);">
+										<div class="col-md-12" style="margin-top:10px;margin-bottom: -20px;">
+											<div style="font-size:5px;text-align: left;float:left;margin-bottom:20px;">由   {{message.reply_to.author}}    于    {{message.reply_to.pub_date}}</div>
+											<div  style="text-align: right;margin-bottom:20px;margin-right:-25px;">
+												<a class="btn" data-toggle="modal" data-target="#replyModal" onclick="replyToMessage({{message.reply_to.id}})">回复</a>
+											</div>
+										</div>
+
+										<div class="col-md-12 indent" style="margin-bottom: -20px;">
+											<p style="text-align: left;">{{message.reply_to.content}}</p>
 										</div>
 									</div>
-
-									<div class="col-md-12 indent" style="margin-bottom: -20px;">
-										<p style="text-align: left;">{{message.reply_to.content}}</p>
-									</div>
+									{% endif %}
 								</div>
-								{% endif %}
+							</div>
+							{% endfor %}
+						</div>
+						<div class="col-md-8 col-md-offset-2">
+							<div class="col-md-12" style="padding-bottom:10px;background-color:rgba(0,0,0,0.1);padding-top:10px;border:thin ridge #ffffff;margin-bottom: 5px;">
+								<form action="{% url 'messagebook:message' %}" onsubmit="return checkMessage()" method="POST">
+									{% csrf_token %}
+									{% for field in form %}
+									<div class="form-group">
+										<label class="col-sm-2 control-label" id="post{{field.label}}" for="{{field.label}}">{{ field.label }}</label>
+										<div class="col-sm-10" style="text-align: left;">{{ field }} </div>
+										<div class="has-error">
+											<label class="control-label">{{ field.errors }}</label>
+										</div>
+									</div>
+									{% endfor %}
+									<div class="form-group" style="text-align: right;"><input class="btn btn-default"  type="submit" value="留言" /></div>
+								</form>
 							</div>
 						</div>
-						{% endfor %}
-					</div>
-					<div class="col-md-8 col-md-offset-2">
-						<div class="col-md-12" style="padding-bottom:10px;background-color:rgba(0,0,0,0.1);padding-top:10px;border:thin ridge #ffffff;margin-bottom: 5px;">
-							<form action="{% url 'messagebook:message' %}" onsubmit="return checkMessage()" method="POST">
-								{% csrf_token %}
-								{% for field in form %}
-								<div class="form-group">
-									<label class="col-sm-2 control-label" id="post{{field.label}}" for="{{field.label}}">{{ field.label }}</label>
-									<div class="col-sm-10" style="text-align: left;">{{ field }} </div>
-									<div class="has-error">
-										<label class="control-label">{{ field.errors }}</label>
-									</div>
-								</div>
-								{% endfor %}
-								<div class="form-group" style="text-align: right;"><input class="btn btn-default"  type="submit" value="留言" /></div>
-							</form>
-						</div>
-					</div>
-				</fieldset>
+					</fieldset>
+				</div>
 			</div>
-		</div>
-	</section>
-	{% endif %}
+		</section>
+		{% endif %}
 
-	<section id="contact" class="container content-section text-center">
-		<div class="row">
-			<div class="col-lg-8 col-lg-offset-2">
-				<h2>联系学生工作办公室党支部</h2>
-				<p>辽宁省大连市大连理工大学创新园大厦B座311</p>
-				<p>邮箱:<a href="mailto:feedback@startbootstrap.com">mail@mail.com</a></p>
+		<section id="contact" class="container content-section text-center">
+			<div class="row">
+				<div class="col-lg-8 col-lg-offset-2">
+					<h2>联系学生工作办公室党支部</h2>
+					<p>辽宁省大连市大连理工大学创新园大厦B座311</p>
+					<p>邮箱:<a href="mailto:feedback@startbootstrap.com">mail@mail.com</a></p>
+				</div>
 			</div>
-		</div>
-		<footer>
-			<div class="container text-center">
-				<p>Copyright &copy; Time1ess 2015</p>
-			</div>
-		</footer>
-	</section>
+			<footer>
+				<div class="container text-center">
+					<p>Copyright &copy; Time1ess 2015</p>
+				</div>
+			</footer>
+		</section>
 
 
-	<!-- Footer -->
-	<!-- jQuery -->
-	<script src="{% static 'js/jquery.js' %}"></script>
+		<!-- Footer -->
+		<!-- jQuery -->
+		<script src="{% static 'js/jquery.js' %}"></script>
 
-	<!-- Bootstrap Core JavaScript -->
-	<script src="{% static 'js/bootstrap.min.js' %}"></script>
+		<!-- Bootstrap Core JavaScript -->
+		<script src="{% static 'js/bootstrap.min.js' %}"></script>
 
-	<!-- Plugin JavaScript -->
-	<script src="{% static 'js/jquery.easing.min.js' %}"></script>
+		<!-- Plugin JavaScript -->
+		<script src="{% static 'js/jquery.easing.min.js' %}"></script>
 
-	<!-- Custom Theme JavaScript -->
-	<script src="{% static 'js/grayscale.js' %}"></script>
+		<!-- Custom Theme JavaScript -->
+		<script src="{% static 'js/grayscale.js' %}"></script>
 
-	<!-- API for handling cookies -->
-	<script src="{% static 'js/js.cookie.js' %}"></script>
+		<!-- API for handling cookies -->
+		<script src="{% static 'js/js.cookie.js' %}"></script>
 
-	<!-- CSRF token file -->
-	<script src="{% static 'js/csrf.js' %}"></script>
-	<script type="text/javascript">
-		var messageLength=$('#messageGroup>div').length;
-		var max_message_per_page=3;
-		var current_page=1;
-		var max_page_per_line=5;
-		var pageSize=Math.ceil(messageLength/max_message_per_page);
-		$(function(){
-			if(messageLength>max_message_per_page)
-			{
-				for(var i=max_message_per_page+1;i<=messageLength;i++)
+		<!-- CSRF token file -->
+		<script src="{% static 'js/csrf.js' %}"></script>
+		<script type="text/javascript">
+			var messageLength=$('#messageGroup>div').length;
+			var max_message_per_page=3;
+			var current_page=1;
+			var max_page_per_line=5;
+			var pageSize=Math.ceil(messageLength/max_message_per_page);
+			$(function(){
+				if(messageLength>max_message_per_page)
 				{
-					var no='#messageNo'+i;
-					$(no).hide();
+					for(var i=max_message_per_page+1;i<=messageLength;i++)
+					{
+						var no='#messageNo'+i;
+						$(no).hide();
+					}
+					$('#page'+current_page).addClass('active');
+					var nextPage=$('#Page-1');
+					for(var i=2;i<=pageSize;i++)
+					{
+						nextPage.before('<li id="page'+i+'"><a href="#messages" onclick="changePage('+i+')">'+i+'</a></li>');
+						if(i>max_page_per_line)
+							$('#page'+i).hide();
+					}
 				}
-				$('#page'+current_page).addClass('active');
-				var nextPage=$('#Page-1');
-				for(var i=2;i<=pageSize;i++)
+				var documents=$('#documentGroup a[name="document"]');
+				documents.map(function(){
+					var filetype=this.attributes['href'].value.substring(this.attributes['href'].value.lastIndexOf('.')+1);
+					if(filetype!='pdf')
+					{
+						this.setAttribute('disabled','disabled');
+					}
+
+				})
+			});
+			function changePage(page)
+			{
+				if(page==current_page)
+					return false;
+				if(page=='p')
 				{
-					nextPage.before('<li id="page'+i+'"><a href="#messages" onclick="changePage('+i+')">'+i+'</a></li>');
-					if(i>max_page_per_line)
-						$('#page'+i).hide();
+					if(current_page==1)
+						return false;
+					page=current_page-1;
 				}
+				else if(page=='n')
+				{
+					if(current_page==pageSize)
+						return false;
+					page=current_page+1;
+				}
+				else if(page=='first')
+				{
+					page=1;
 
-				return;
-			}
-		});
-		function changePage(page)
-		{
-			if(page==current_page)
-				return false;
-			if(page=='p')
-			{
-				if(current_page==1)
-					return false;
-				page=current_page-1;
-			}
-			else if(page=='n')
-			{
-				if(current_page==pageSize)
-					return false;
-				page=current_page+1;
-			}
-			else if(page=='first')
-			{
-				page=1;
+				}
+				else if(page=='last')
+				{
+					page=pageSize;
 
-			}
-			else if(page=='last')
-			{
-				page=pageSize;
+				}
+				$('#page'+current_page).removeClass('active');
+				$('#page'+current_page).addClass('disable');
+				$('#page'+page).removeClass('disable');
+				$('#page'+page).addClass('active');
+				var startPage=current_page-Math.floor(max_page_per_line/2);
+				startPage=startPage>0?startPage:1;
+				var endPage=startPage+max_page_per_line-1;
+				endPage=endPage>pageSize?pageSize:endPage;
+				for(var i=startPage;i<=endPage;i++)
+					$('#page'+i).hide();
 
-			}
-			$('#page'+current_page).removeClass('active');
-			$('#page'+current_page).addClass('disable');
-			$('#page'+page).removeClass('disable');
-			$('#page'+page).addClass('active');
-			var startPage=current_page-Math.floor(max_page_per_line/2);
-			startPage=startPage>0?startPage:1;
-			var endPage=startPage+max_page_per_line-1;
-			endPage=endPage>pageSize?pageSize:endPage;
-			for(var i=startPage;i<=endPage;i++)
-				$('#page'+i).hide();
-
-			startPage=page-Math.floor(max_page_per_line/2); 
-			endPage=page+Math.floor(max_page_per_line/2);  
-			if(endPage>pageSize&&startPage>=1)
-			{
+				startPage=page-Math.floor(max_page_per_line/2); 
+				endPage=page+Math.floor(max_page_per_line/2);  
+				if(endPage>pageSize&&startPage>=1)
+				{
 				//alert('cut tail')
 				var tmpStartPage=startPage-(endPage-pageSize);
 				startPage=tmpStartPage>0?tmpStartPage:1;

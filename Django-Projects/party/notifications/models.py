@@ -12,7 +12,7 @@ class Notification(models.Model):
 	note: notification to `additional_files is a many-to-many relationship. 
 	"""
 	title=models.CharField(u'标题',max_length=200)
-	pub_date=models.DateTimeField(u'发布时间')
+	pub_date=models.DateTimeField(u'发布时间',default=timezone.now)
 	content=RichTextField(u'内容')
 	
 	def __unicode__(self):

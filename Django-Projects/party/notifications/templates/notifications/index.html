@@ -1,0 +1,235 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Party Information">
+	<meta name="author" content="David">
+
+	<title>党务工作指导系统-党务通知</title>
+
+	<!-- Bootstrap Core CSS -->
+	<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+	<!-- Custom CSS -->
+	<link href="{% static 'css/grayscale.css' %}" rel="stylesheet">
+
+	<!-- Custom Fonts -->
+	<link href="{% static 'font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+	<!--
+	<link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+	<link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+-->
+<style type="text/css">  
+	.indent{text-indent: 2em;}   
+</style>  
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+</head>
+
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top" style="color:b80000;">
+	<!-- Navigation -->
+	<nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+					<i class="fa fa-bars"></i>
+				</button>
+				<a class="navbar-brand page-scroll" href="/">
+					<i class="fa fa-play-circle"></i>  返回首页
+				</a>
+				<a class="navbar-brand page-scroll" href="#page-top">
+					<i class="fa fa-play-circle"></i>  回到顶部
+				</a>
+			</div>
+
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+				<ul class="nav navbar-nav">
+					<!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+					<li class="hidden">
+						<a href="#page-top"></a>
+					</li>
+					{% if notifications %}
+					<li>
+						<a class="page-scroll" href="#news">最新通知</a>
+					</li>
+					{% endif %}
+					{% if documents %}
+					<li>
+						<a class="page-scroll" href="#file">文件查询</a>
+					</li>
+					{% endif %}
+					{% if messages %}
+					<li>
+						<a class="page-scroll" href="#messages">留言区</a>
+					</li>
+					{% endif %}					
+					<li>
+						<a class="page-scroll" href="#contact">联系我们</a>
+					</li>
+					<li>
+						<a class="page-scroll" href="/admin/">管理员入口</a>
+					</li>
+				</ul>
+			</div>
+			<!-- /.navbar-collapse -->
+		</div>
+		<!-- /.container -->
+	</nav>
+
+	<!-- Intro Header -->
+	<header class="intro">
+		<div class="intro-body">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-8 col-md-offset-2">
+						<h1 class="brand-heading">党务工作指导系统</h1>
+						<p class="intro-text">电子信息与电气工程学部学生工作办公室党支部</p>
+						<a href="#news" class="btn btn-circle page-scroll">
+							<i class="fa fa-angle-double-down animated"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	{% if notifications %}
+
+	<!-- Modal -->
+	<div class="modal fade bs-example-modal-lg" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModalTitle">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title" id="notificationModalTitle" style="color:#000000;text-align:center;">Modal title</h4>
+				</div>
+				<div id="notificationModalContent" class="modal-body indent" style="color:#000000;">
+					<p></p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<section id="news" class="container content-section text-center">
+	<div class="container">
+		<div class="col-lg-8 col-lg-offset-2">
+			<h2>最新党务通知</h2>
+			<table class="table">
+				<tr>
+					<th>序号</th>
+					<th>通知标题</th>
+					<th>发布时间</th>
+					<th>详细</th>
+				</tr>
+				{% for notification in notifications %}
+				<tr>
+					<td>{{ forloop.counter }}</td>
+					<td>{{ notification.title }}</td>
+					<td>{{ notification.pub_date }}</td>
+					<td>
+						<button class="btn btn-default"  onclick="postData({{ notification.id }})" data-toggle="modal" data-target="#notificationModal" type="button">查看</button>
+					</td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+		</div>
+	</section>
+	{% endif %}
+
+
+	<section id="contact" class="container content-section text-center">
+		<div class="row">
+			<div class="col-lg-8 col-lg-offset-2">
+				<h2>联系学生工作办公室党支部</h2>
+				<p>辽宁省大连市大连理工大学创新园大厦B座311</p>
+				<p>邮箱:<a href="mailto:feedback@startbootstrap.com">mail@mail.com</a></p>
+			</div>
+		</div>
+		<footer>
+			<div class="container text-center">
+				<p>Copyright &copy; Time1ess 2015</p>
+			</div>
+		</footer>
+	</section>
+
+
+	<!-- Footer -->
+	<!-- jQuery -->
+	<script src="{% static 'js/jquery.js' %}"></script>
+
+	<!-- Bootstrap Core JavaScript -->
+	<script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+	<!-- Plugin JavaScript -->
+	<script src="{% static 'js/jquery.easing.min.js' %}"></script>
+
+	<!-- Custom Theme JavaScript -->
+	<script src="{% static 'js/grayscale.js' %}"></script>
+
+	<!-- API for handling cookies -->
+	<script src="{% static 'js/js.cookie.js' %}"></script>
+
+	<!-- CSRF token file -->
+	<script src="{% static 'js/csrf.js' %}"></script>
+	<script type="text/javascript">
+		var messageLength=$('#messageGroup>div').length;
+		var max_message_per_page=3;
+		var current_page=1;
+		var max_page_per_line=5;
+		var pageSize=Math.ceil(messageLength/max_message_per_page);
+		$(function(){
+			window.location.href='#news';
+		});
+		function postData(id)
+		{
+			$.ajax({
+				type: "POST",
+				url: "/notifications/detail/",
+				datatype: "json",
+				data: {
+					'id':id,
+				},
+				async: false,
+		      //cache: false,
+		      success: updateModal,
+		      error: function() {
+		      	alert("获取数据失败，请联系管理员!");
+		      }
+		  });};
+			function updateModal(notification)
+			{
+				$('#notificationModalTitle').text(notification['title']);
+				$('#notificationModalContent>p').html(notification['content']);
+				$('#additionalFiles').remove();
+				if(notification['additionalFiles'])
+					addFilesList(notification);
+
+			};
+			function addFilesList(notification)
+			{
+				$('#notificationModalContent').append('<div class="modal-body" id="additionalFiles" style="text-align:left;text-indent:0em;">'+'附件:'+'</div>');
+				for(var key in notification['additionalFiles'])
+				{
+					$('#additionalFiles').append('<br /><a href="'+notification['additionalFiles'][key]+'">'+key+'</a>')
+				}	    	
+			}
+		</script>
+	</body>
+
+	</html>
