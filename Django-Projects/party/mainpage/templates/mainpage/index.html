@@ -232,16 +232,22 @@
 						<legend style="color:white;">留言区</legend>
 						<nav>
 							<ul class="pagination" id="pagesGroup">
+								<li id="PageFirst">
+									<a onclick="changePage('first')">首页</a>
+								</li>
 								<li id="Page0">
 									<a onclick="changePage('p')" aria-label="Previous">
 										<span aria-hidden="true">&laquo;</span>
 									</a>
 								</li>
-								<li id="page1"><a onclick="changePage(1)">1</a></li>
+								<li id="page1"><a href="#messages" onclick="changePage(1)">1</a></li>
 								<li id="Page-1">
 									<a onclick="changePage('n')" aria-label="Next">
 										<span aria-hidden="true">&raquo;</span>
 									</a>
+								</li>
+								<li id="PageLast">
+									<a onclick="changePage('last')">尾页</a>
 								</li>
 							</ul>
 						</nav>
@@ -338,12 +344,11 @@
 	<script src="{% static 'js/csrf.js' %}"></script>
 	<script type="text/javascript">
 		var messageLength=$('#messageGroup>div').length;
-		var max_message_per_page=5;
+		var max_message_per_page=3;
 		var current_page=1;
 		var max_page_per_line=5;
 		var pageSize=Math.ceil(messageLength/max_message_per_page);
 		$(function(){
-			//alert('注意完成多留言信息的情况下page按钮的个数显示问题');
 			if(messageLength>max_message_per_page)
 			{
 				for(var i=max_message_per_page+1;i<=messageLength;i++)
@@ -379,6 +384,16 @@
 					return false;
 				page=current_page+1;
 			}
+			else if(page=='first')
+			{
+				page=1;
+
+			}
+			else if(page=='last')
+			{
+				page=pageSize;
+
+			}
 			$('#page'+current_page).removeClass('active');
 			$('#page'+current_page).addClass('disable');
 			$('#page'+page).removeClass('disable');
@@ -390,10 +405,26 @@
 			for(var i=startPage;i<=endPage;i++)
 				$('#page'+i).hide();
 
-			startPage=page-Math.floor(max_page_per_line/2);
-			startPage=startPage>0?startPage:1;
-			endPage=startPage+max_page_per_line-1;
-			endPage=endPage>pageSize?pageSize:endPage;
+			startPage=page-Math.floor(max_page_per_line/2); 
+			endPage=page+Math.floor(max_page_per_line/2);  
+			if(endPage>pageSize&&startPage>=1)
+			{
+				//alert('cut tail')
+				var tmpStartPage=startPage-(endPage-pageSize);
+				startPage=tmpStartPage>0?tmpStartPage:1;
+			}
+			else if(endPage<=pageSize&&startPage<1)
+			{
+				//alert('cut head');
+				var tmpEndPage=endPage+(1-startPage);
+				endPage=tmpEndPage<=pageSize?tmpEndPage:pageSize;
+			}
+			else if(endPage>pageSize&&startPage<1)
+			{
+				//alert('both cut');
+				endPage=pageSize;
+				startPage=1;
+			}
 			for(var i=startPage;i<=endPage;i++)
 				$('#page'+i).show();
 			for(var i=max_message_per_page*(current_page-1)+1,j=max_message_per_page*(page-1)+1;i<=current_page*max_message_per_page;i++,j++)
