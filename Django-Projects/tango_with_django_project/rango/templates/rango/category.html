@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+    <head>
+        <title>Rango-Category</title>
+        <link rel="stylesheet" href="{% static "css/bootstrap.css" %}" /> <!-- CSS -->
+        <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}" /> <!-- CSS -->
+        <script src="{% static "js/jquery.js" %}"></script> <!-- JavaScript -->
+        <script src="{% static "js/bootstrap.js" %}"></script> <!-- JavaScript -->
+        <script src="{% static "js/bootstrap.min.js" %}"></script> <!-- JavaScript -->
+        <script src="{% static "js/csrf.js" %}"></script> <!-- JavaScript -->
+        <script src="{% static "js/jquery.easing.min.js" %}"></script> <!-- JavaScript -->
+        <script src="{% static "js/js.cookie.js" %}"></script> <!-- JavaScript -->
+    </head>
+
+    <body>
+        <h1>{{ category_name }}</h1>
+        {% if category %}
+            {% if pages %}
+            <ul>
+                {% for page in pages %}
+                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <strong>No pages currently in category.</strong>
+            {% endif %}
+        {% else %}
+            The specified category {{ category_name }} does not exist!
+        {% endif %}
+    </body>
+</html>
