@@ -8,7 +8,7 @@
 
 	<package name="admin" namespace="/admin" extends="AdminDefault">	
 		
-		
+	
 		<action name="" >
 			<result name="success" type="redirect">
 				/admin/classroom/teachBuildingAction 
@@ -51,7 +51,7 @@
 			</result>
 		</action>
 		
-		<action name="modifypassword" class="admin.ModifyPasswordAction" method="modifyPassword">
+		<action name="modifypassword" class="admin.ModifyPasswordAction">
 			<result name="success">
 				/jsp/admin/modify_password.jsp
 			</result>
@@ -59,7 +59,7 @@
 		
 		<action name="modify_password" class="admin.ModifyPasswordAction" method="modifyPassword">
 			<result name="success" type="json">
-				<param name="includeProperties">input_initial_password,input_new_paasword</param>
+				<param name="includeProperties">oldPsw,newPsw,rePsw,id,cmpResult</param>
 			</result>
 		</action>
 
@@ -113,6 +113,8 @@
 				<param name="includeProperties">strValue,userid</param>
 			</result>
 		</action>
+		
+		<action name="request_change" class="admin.RequestAction" method="studentRequestChange"></action>
 
 		<action name="handled" class="admin.RequestAction" method="studentRequestResult">
 			<result>
@@ -145,8 +147,23 @@
 				/jsp/admin/student_information.jsp
 			</result>
 		</action>
-	
 		
+		<!-- 规章制度 -->
+		<action name="rules" class="admin.StudentManageAction" method="studentInformation">
+			<result>
+				/jsp/admin/student_manage_rules.jsp
+			</result>
+		</action>
+		
+		<!-- 技术培训 -->
+		<action name="techteach" class="admin.StudentManageAction" method="studentInformation">
+			<result>
+				/jsp/admin/student_manage_techteach.jsp
+			</result>
+		</action>
+	
+	
+	
 		<!-- 获取学生信息 -->
 		<action name="get_student_information" class="admin.StudentManageAction" method="getStudentInformation">
            <result name="success" type="json">
@@ -169,6 +186,12 @@
 			</result>        
         </action>
         
+        <!-- 检索学生信息 -->
+        <action name="student_information_search" class="admin.StudentManageAction" method="searchStudentInformation">
+            <result name="success" type="json">
+            <param name="includeProperties">isEmpty,student_profile_id,fullName,studentId,college,phoneNumber,isUpgradePrivilege</param>
+			</result>        
+        </action>
         
 	</package>
 

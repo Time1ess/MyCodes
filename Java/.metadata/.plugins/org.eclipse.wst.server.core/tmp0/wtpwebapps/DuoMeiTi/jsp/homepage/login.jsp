@@ -21,22 +21,22 @@
 	  
 	  
 
-	  <div class="form-group">
+<!-- 	  <div class="form-group"> -->
 
-			<label class="radio-inline">
-			  <input type="radio" name="role" value="<s:property value="AdminRole"/>" checked> 系统管理员
-			</label>
+<!-- 			<label class="radio-inline"> -->
+<%-- 			  <input type="radio" name="role" value="<s:property value="AdminRole"/>" checked> 系统管理员 --%>
+<!-- 			</label> -->
 			
-			<label class="radio-inline">
-			  <input type="radio" name="role" value="<s:property value="StudentRole"/>" > 在职学生
-			</label>
-			<label class="radio-inline">
-			  <input type="radio" name="role" value="<s:property value="TeacherRole"/>" > 授课教师
+<!-- 			<label class="radio-inline"> -->
+<%-- 			  <input type="radio" name="role" value="<s:property value="StudentRole"/>" > 在职学生 --%>
+<!-- 			</label> -->
+<!-- 			<label class="radio-inline"> -->
+<%-- 			  <input type="radio" name="role" value="<s:property value="TeacherRole"/>" > 授课教师 --%>
 			  
-			</label>
+<!-- 			</label> -->
 
 				  	
-	  </div>
+<!-- 	  </div> -->
 	  
 	  <button type="submit" class="btn btn-default" id="login">登录</button>
 	</form>

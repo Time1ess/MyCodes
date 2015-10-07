@@ -7,28 +7,30 @@
 		<div id="classlist-content">
 			<table class="classlist table table-bordered table-striped" id="student_messeage">
 				<tr class="row">
-					<th class="col-lg-1.5">姓名</th>
-					<th class="col-lg-0.5">性别</th>
-					<th class="col-lg-1.5">学号</th>
-					<th class="col-lg-2.5">身份证号</th>
-					<th class="col-lg-2.5">院系信息</th>
-					<th class="col-lg-1.5">联系方式</th>
-					<th class="col-lg-1">待审核</th>
-					<th class="col-lg-1"></th>
+					<th>姓名</th>
+					<th>性别</th>
+					<th>学号</th>
+					<th>身份证号</th>
+					<th>银行卡号</th>
+					<th>院系信息</th>
+					<th>联系方式</th>
+					<th>待审核</th>
+					<th></th>
 				</tr>
 			
 			
 		<s:iterator value="student_list" var="i" status="index">
 			<s:if test="%{#i.isPassed==0}">
 				<tr class="row" id=<s:property value="#i.id"/> >
-					<td class="col-lg-1.5"> <s:property value="#i.user.fullName"/> </td>
-					<td class="col-lg-0.5"> <s:property value="#i.user.sex"/> </td>
-					<td class="col-lg-1.5"> <s:property value="#i.studentId"/> </td>
-					<td class="col-lg-2.5"> <s:property value="#i.idCard"/> </td>
-					<td class="col-lg-2.5"> <s:property value="#i.college"/> </td>
-					<td class="col-lg-1.5"> <s:property value="#i.user.phoneNumber"/> </td>
+					<td> <s:property value="#i.user.fullName"/> </td>
+					<td> <s:property value="#i.user.sex"/> </td>
+					<td> <s:property value="#i.studentId"/> </td>
+					<td> <s:property value="#i.idCard"/> </td>
+					<td> <s:property value="#i.bankCard"/></td>
+					<td> <s:property value="#i.college"/> </td>
+					<td> <s:property value="#i.user.phoneNumber"/> </td>
 					<form class="form-inline" action="untreated" method="POST" id="request_form">
-					<td class="col-lg-1"> 
+					<td> 
 					<%-- <s:select list="{'不通过','通过'}" name="strValue"></s:select>  --%>
 						<select id="judge" name="strValue">
 							<option value="1">不通过</option>
@@ -36,7 +38,7 @@
 						</select>
 					</td>
 					</form>
-					<td class="col-lg-1 ">
+					<td>
 						<button type="button" class="btn btn-primary btn-sm" id="ensure-button">确定</button>
 					</td>
 				</tr>

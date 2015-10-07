@@ -133,7 +133,7 @@
 		var title = $("#notice_title").val();
 		var content = $("#notice_content").val();
 		var id =  $("#hidden_id").val();
-		alert("id"+title+"   "+"  "+content +"  "+id+"  "+submit_type);
+		//alert("id"+title+"   "+"  "+content +"  "+id+"  "+submit_type);
 		//var id =$("#notice_search_table").find("tr:eq("+(index+1) +")").attr("notice_id");
 //		Request = GetRequest();
 //		var build_id = Request['build_id'];
@@ -193,7 +193,7 @@
 		var notice_id;
 		var select_notice_id = $("#notice_search_table").find("tr:eq("+(index+1) +")").attr("notice_id");
 		//notice_id = $(this).parents("tr").attr("notice_id");
-			    alert(select_notice_id);
+			//    alert(select_notice_id);
 		// 	    alert(typeof user_id);
 
 		$.ajax({

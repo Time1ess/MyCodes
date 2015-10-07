@@ -93,9 +93,14 @@
             </result>
             
             
-            <result name="login_success" type="redirect">
+            <result name="admin_login_success" type="redirect">
             	/admin/
             </result>
+            
+            <result name="student_login_success" type="redirect">
+            	/student/
+            </result>
+            
         </action>
         
         <action name="login_success">

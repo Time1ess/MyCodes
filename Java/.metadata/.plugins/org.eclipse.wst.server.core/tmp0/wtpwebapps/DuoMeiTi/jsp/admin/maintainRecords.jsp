@@ -13,18 +13,16 @@ td,tr,th{
 </style>
 
 	<div class="mycontent">
-		<div class="row">
-			<a type="button" class="btn btn-primary"
-				style="width: 49%; float: left" href="/admin/classroomDevice/maintainRecords">设备维修记录</a>
-			<a type="button" class="btn btn-primary"
-				style="width: 49%; float: right" href="/admin/classroomDevice/equipmentQueryAndEdit">设备信息查询及批量修改</a>
-		</div>
+		<!--  <div class="row">
+			<label type="label" class="btn btn-primary"
+				style="width: 100%; float: left">设备维修记录</label>
+		</div>-->
 		<hr>
 
 		<div class="radios">
 			<label class="radio-inline" style="margin-left:5%" > <input type="radio"
 				name="radio-select" value="0"
-				onclick="return showdiv('#personCondition')" checked> 按负责人
+				onclick="return showdiv('#buildingCondition')" checked> 按教学楼
 			</label> <!-- <label class="radio-inline" style="margin-left:5%" > <input type="radio"
 				name="radio-select" value="1"
 				onclick="return showdiv('#buildingCondition')"> 按教学楼
@@ -40,15 +38,21 @@ td,tr,th{
 		</div>
 		<br />
 		<div class="searchCondition" id="conditions">
-			<div class="searchCondition-person" id="personCondition">
-				<select id="principal" class="form-control" style="width: 10%; float: left">
-					<option value="0">姓名</option>
-					<option value="1">学号</option>
+			<div class="searchCondition-building" id="buildingCondition">
+				<select id="building" class="form-control" style="width: 30%;">
+					<option value="0">综合教学一号楼</option>
+					<option value="6">综合教学二号楼</option>
+					<option value="3">一馆</option>
+					<option value="4">二馆</option>
+					<option value="5">建馆</option>
+					<option value="1">研教楼</option>
+					<option value="7">机械馆</option>
+					<option value="8">材料馆</option>
 				</select>
-				<input type="text" class="form-control" id="personVal" style="width: 30%">
+				<!--<input type="text" class="form-control" id="personVal" style="width: 30%">-->
 			</div>
 			
-			<div class="searchCondition-building" id="buildingCondition">
+			<!--<div class="searchCondition-building" id="buildingCondition">
 				<select id="building" class="form-control" style="width: 20%; float: left">
 					<option value="0">一馆</option>
 					<option value="1">综合教学一号楼</option>
@@ -57,7 +61,7 @@ td,tr,th{
 					<option value="0">101</option>
 					<option value="1">205</option>
 				</select>
-			</div>
+			</div>-->
 			
 			<div class="searchCondition-equipment" id="equipmentCondition">
 				<select id="deviceid" class="form-control" style="width: 30%">
@@ -76,7 +80,7 @@ td,tr,th{
 					<option value="2">2015年7月</option>
 					<option value="3">2015年6月</option>
 				</select> -->
-				<div class="form-group">
+				<div class="form-group" style="margin-bottom:-0.5%;">
 	    			<label for="startTime">开始时间</label>
 					<input id="startTime" type="date" value="2015-09-30"></input>
 					<label for="endTime">结束时间</label>
@@ -133,23 +137,18 @@ td,tr,th{
 		function sc_condition(type,val)
 		{
 			var href="<%=path%>/admin/classroomDevice/query_action";
+			
 			href=href+"?Type="+type+"&Value="+val;
+			//alert(href);
 			document.getElementById("commitSearch").href=href;
 			/* alert(type + ":" +val); */
 		}
-		function sc_principal() {
+		function sc_building() {
 			
-			var optionval = $("#principal option:selected").val();
-			var personval=$("#personVal").val();
-			sc_condition(optionval,personval);
+			var optionval = $("#building option:selected").val();
+			sc_condition('1',optionval);
 		}
 		
-		function sc_building() {
-			/* var options = $("#building option:selected");
-			var options1 = $("#classroom option:selected");
-			alert("this is 1: " + options.val() + " - " + options1.val()); */
-			alert("There's no need!");
-		}
 		
 		function sc_device() {
 			var optionval = $("#deviceid option:selected").val();
@@ -160,7 +159,7 @@ td,tr,th{
 			/* var optionval = $("#time option:selected").val() */
 			var str = $("#startTime").val();
 			var end = $("#endTime").val();
-			optionval = str + end;
+			optionval = str +":"+ end;
 			sc_condition('3',optionval);
 		}
 		
@@ -168,13 +167,9 @@ td,tr,th{
 			var items=$(":radio:checked"); //获取选中的项;
 			switch (parseInt(items.val())) {
 				case 0:
-					sc_principal();
-					break;
-				case 1:
 					sc_building();
 					break;
 				case 2:
-					
 					sc_device();
 					break;
 				case 3:
@@ -188,7 +183,6 @@ td,tr,th{
 		}
 	
 		function showdiv(objId) {
-			$('#personCondition').hide();
 			$('#buildingCondition').hide();
 			$('#equipmentCondition').hide();
 			$('#timeCondition').hide();
@@ -199,8 +193,8 @@ td,tr,th{
 			document.getElementById(objId).style.display = "none";
 		}
 		$(window).load(function() {
-			$('#personCondition').show();
-			$('#buildingCondition').hide();
+			$('#buildingCondition').show();
+			//$('#buildingCondition').hide();
 			$('#equipmentCondition').hide();
 			$('#timeCondition').hide();
 		});

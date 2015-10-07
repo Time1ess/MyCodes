@@ -50,6 +50,8 @@
 	<package name="AdminDefault" extends="Default, AdminLoginInterceptor">
 	</package>
 	
+<!-- 	<package name="StudentDefault" extends="Default, StudentLoginInterceptor"> -->
+<!-- 	</package> -->
 	
 	
 	
@@ -75,6 +77,8 @@
     
     <include file="/admin/admin.xml"/>	
     <include file="/homepage/homepage.xml"/>
+<!--     <include file="/homepage/homepage.xml"/> -->
+    <include file="/student/student.xml"/>
     <include file="/Message/message.xml"/>
 
     <!-- Add packages here -->

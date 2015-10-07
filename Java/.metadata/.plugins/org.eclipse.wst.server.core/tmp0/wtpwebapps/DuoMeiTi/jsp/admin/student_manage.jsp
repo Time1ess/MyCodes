@@ -14,11 +14,11 @@
         		</div>
         
        			<div class="col-lg-4 nopadding" >
-           			<a href="/admin/user_request/handled" class="navbar-button">规章制度</a> 
+           			<a href="/admin/student_manage/rules" class="navbar-button">规章制度</a> 
         		</div>
         		
         		<div class="col-lg-4 nopadding">
-           			<a href="/admin/user_request/untreated" class="navbar-button navbar-button-left">技术培训</a> 
+           			<a href="/admin/student_manage/techteach" class="navbar-button navbar-button-left">技术培训</a> 
         		</div>
     
     		</div>
