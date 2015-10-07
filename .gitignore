@@ -13,3 +13,4 @@
 *.frq
 .metadata
 .recommenders
+*.pyc

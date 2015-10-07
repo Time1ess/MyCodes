@@ -17,31 +17,9 @@
 </head>
 
 <body>
-    <h1>Rango says..hello world!</h1>
-
-    {% if categories %}
-    <ul>
-        {% for category in categories %}
-        <!-- Following line changed to add an HTML hyperlink -->
-        <li><a href="/rango/category/{{ category.slug }}">{{ category.name }}</a></li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <strong>There are no categories present.</strong>
-    {% endif %}
-
-    {% if pages %}
-    <hr />
-    <ul>
-        {% for page in pages %}
-        <!-- Following line changed to add an HTML hyperlink -->
-        <li><a href="{{ page.url }}">{{ page.title }}</a></li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <strong>There are no categories present.</strong>
-    {% endif %}
-    <a href="/rango/add_category/">Add a New Category</a><br />
+    <h1>Sorry,404 ERROR!</h1>
+    <h2>Content Does Not Exists!</h2>
+    <a href="/rango">Go back to Index</a><br />
 
 </body>
 

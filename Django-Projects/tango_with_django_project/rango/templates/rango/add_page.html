@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+<head>
+    <title>Rango-Add Page</title>
+    <link rel="stylesheet" href="{% static "css/bootstrap.css" %}" /> <!-- CSS -->
+    <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}" /> <!-- CSS -->
+    <script src="{% static "js/jquery.js" %}"></script> <!-- JavaScript -->
+    <script src="{% static "js/bootstrap.js" %}"></script> <!-- JavaScript -->
+    <script src="{% static "js/bootstrap.min.js" %}"></script> <!-- JavaScript -->
+    <script src="{% static "js/csrf.js" %}"></script> <!-- JavaScript -->
+    <script src="{% static "js/jquery.easing.min.js" %}"></script> <!-- JavaScript -->
+    <script src="{% static "js/js.cookie.js" %}"></script> <!-- JavaScript -->
+</head>
+
+    <body>
+        <h1>Add a Page</h1>
+
+        <form id="page" method="post" action="{% url 'rango:add_page' category %}">
+
+            {% csrf_token %}
+            {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+
+            {% for field in form.visible_fields %}
+                {{ field.errors }}
+                {{ field.help_text }}
+                {{ field }}
+            {% endfor %}
+
+            <input type="submit" name="submit" value="Create Page" />
+        </form>
+    </body>
+
+</html>
