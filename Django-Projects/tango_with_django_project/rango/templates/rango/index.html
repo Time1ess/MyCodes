@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+{% load staticfiles %} 
+
+<html>
+
+    <head>
+        <title>Rango</title>
+        <link rel="stylesheet" href="{% static "css/bootstrap.css" %}" /> <!-- CSS -->
+        <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}" /> <!-- CSS -->
+        <script src="{% static "js/jquery.js" %}"></script> <!-- JavaScript -->
+        <script src="{% static "js/bootstrap.js" %}"></script> <!-- JavaScript -->
+        <script src="{% static "js/bootstrap.min.js" %}"></script> <!-- JavaScript -->
+        <script src="{% static "js/csrf.js" %}"></script> <!-- JavaScript -->
+        <script src="{% static "js/jquery.easing.min.js" %}"></script> <!-- JavaScript -->
+        <script src="{% static "js/js.cookie.js" %}"></script> <!-- JavaScript -->
+    </head>
+
+    <body>
+        <h1>Rango says...</h1>
+        hello world! <strong>{{ boldmessage }}</strong><br />
+        <a href="/rango/about/">About</a><br />
+        <img src="{% static "images/taylor.jpg" %}" style="width:30%" alt="Picture of taylor" />
+    </body>
+
+</html>

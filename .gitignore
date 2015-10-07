@@ -3,3 +3,13 @@
 *.tmp
 *.err
 *.pdf
+*.nrm
+*.tii
+*.tis
+*.prx
+*.fdt
+*.fdx
+*.fnm
+*.frq
+.metadata
+.recommenders
