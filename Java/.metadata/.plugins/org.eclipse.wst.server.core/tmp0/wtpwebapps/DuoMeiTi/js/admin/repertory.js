@@ -26,7 +26,6 @@ $(document).find("#rtDevice").change(function() {
 		$("#rtType2").show();
 		$("#rtType1").hide();
 	}
-	
 })
 
 
@@ -282,6 +281,7 @@ function searchCallback(data) {
 		})
 
 	} else if (data.status == "0") {
+		$(document).find("#rtSearchLen").text(0);
 		$(document).find("#repertory_table tr:not(:first)").remove();
 //		$("#repertory_table tr:not(:first)").remove();
 		$(document).find("#noResult").text("无查询结果");
@@ -313,6 +313,13 @@ function importCallback(data) {
 		alert("导入成功！");
 		window.location.reload();
 	}
-	else alert("导入失败！ ");
+	else if(data.status == "0")
+	{
+		alert("导入失败！可能文件格式有误！");
+	}
+	else if(data.status == "2")
+	{
+		alert("导入数据有误！");
+	}
 }
 

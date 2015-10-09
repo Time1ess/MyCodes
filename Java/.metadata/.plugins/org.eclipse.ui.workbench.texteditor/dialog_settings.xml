@@ -3,26 +3,26 @@
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item value="273" key="DIALOG_WIDTH"/>
 		<item value="190" key="DIALOG_Y_ORIGIN"/>
-		<item value="400" key="DIALOG_HEIGHT"/>
 		<item value="911" key="DIALOG_X_ORIGIN"/>
+		<item value="400" key="DIALOG_HEIGHT"/>
 		<item value="1|Microsoft YaHei UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Microsoft YaHei UI" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="true" key="wrap"/>
-		<item value="false" key="isRegEx"/>
 		<item value="false" key="casesensitive"/>
+		<item value="false" key="isRegEx"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="" key="selection"/>
+		<item value="classroom" key="selection"/>
 		<list key="findhistory">
+			<item value="classroom"/>
+			<item value="teachbuilding"/>
+			<item value="namespace=&quot;/admin/classroom"/>
+			<item value="classroommanage"/>
 			<item value="hello"/>
 			<item value="登录"/>
 			<item value="登陆"/>
 			<item value="user"/>
-			<item value="admin_register_save"/>
-			<item value="注册"/>
-			<item value="admin"/>
-			<item value="admin_register"/>
 		</list>
 		<list key="replacehistory">
 		</list>

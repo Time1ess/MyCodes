@@ -32,14 +32,14 @@
 					<form class="form-inline" action="untreated" method="POST" id="request_form">
 					<td> 
 					<%-- <s:select list="{'不通过','通过'}" name="strValue"></s:select>  --%>
-						<select id="judge" name="strValue">
+						<select class="judge" name="strValue">
 							<option value="1">不通过</option>
 							<option value="2">通过</option>
 						</select>
 					</td>
 					</form>
 					<td>
-						<button type="button" class="btn btn-primary btn-sm" id="ensure-button">确定</button>
+						<button type="button" class="btn btn-primary btn-sm ensure-button">确定</button>
 					</td>
 				</tr>
 			</s:if>		
@@ -74,9 +74,10 @@
 	}
 	 */
 	 
-	$("#ensure-button").click(function(){
+	$(".ensure-button").click(function(){
 		var id=$(this).closest("tr").attr("id");
-		var isPass=$('#judge').find("option:selected").val();
+		var isPass=$(this).closest("td").prev().children("select").val();
+		//var isPass=$('#judge').find("option:selected").val();
 		
 		$.ajax({
 			url: 'request_ensure',

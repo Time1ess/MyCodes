@@ -107,3 +107,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Personal settings
+LOGIN_URL= '/rango/login/'
+

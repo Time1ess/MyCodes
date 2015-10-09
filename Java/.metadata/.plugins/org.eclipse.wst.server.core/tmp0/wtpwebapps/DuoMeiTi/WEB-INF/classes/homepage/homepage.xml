@@ -31,7 +31,7 @@
 <!--     	<action name="" class="homepage.HomeAction"> -->
 <!--         	<result>/jsp/homepage/home.jsp</result> -->
 <!--         </action> -->
-        
+        <!--这个是原始的文件上传，最新的在admin账户下  -->
         <action name="file_upload" class="homepage.FileUploadAction">
         	<result>/jsp/homepage/file_upload.jsp</result>
         </action>
@@ -135,8 +135,23 @@
         </action>
         <!--  -->
         <action name="admin_register_save" class="homepage.AdminAction" method="adminRegisterSave">
+          
+           <!-- 配置fileUpload的拦截器 -->
+			<interceptor-ref name="fileUpload">
+				<!-- 配置允许上传的文件类型 -->
+				<param name="allowedTypes">image/png
+					,image/gif,image/jpeg,image/jpg</param>
+				<!-- 配置允许上传的文件大小 -->
+			<!-- 	<param name="maximumSize">2000</param>  -->
+			</interceptor-ref> 
+			<!-- 配置系统默认的拦截器 -->
+			<interceptor-ref name="defaultStack"/>
+			<!-- 配置Struts 2默认的视图页面 -->
+			
+			<result name="input" >/jsp/homepage/new_home.jsp</result>
             <result name="success" type="json">
-            	<param name="includeProperties">register_status</param>           
+            	
+            	<!-- <param name="includeProperties">register_status,profilePhotoPath</param> -->           
 <!-- 				<param name="excludeProperties"> user_list</param> -->
             </result>            
         </action>

@@ -27,7 +27,7 @@ function checkrecord_save_callback(data) {
 		var table = $("#checkrecord_table");
 		var rowcount = $(table).find("tr").length;
 //		alert(rowcount);
-		$(table).find("tr:last").after("<tr><td width=\"25%\"></td><td></td><td></td></tr>");
+		$(table).find("tr:last").after("<tr><td width=\"20%\"></td><td></td><td></td></tr>");
 		var row = $(table).find("tr:last");
 		$(row).find("td:eq(0)").text(login_username);
 		$(row).find("td:eq(1)").text(checkrecord_detail);
@@ -86,7 +86,7 @@ function repairrecord_save_callback(data) {
 		var table = $("#repairrecord_table");
 		var rowcount = $(table).find("tr").length;
 //		alert(rowcount);
-		$(table).find("tr:last").after("<tr><td width=\"25%\"></td><td></td><td></td><td></td></tr>");
+		$(table).find("tr:last").after("<tr><td width=\"20%\"></td><td></td><td></td><td></td></tr>");
 		var row = $(table).find("tr:last");
 		$(row).find("td:eq(0)").text(login_username);
 		$(row).find("td:eq(1)").text(type);
@@ -102,5 +102,7 @@ function repairrecord_save_callback(data) {
 	}
 	$('#repair-record-modal').modal('hide');
 }
+
+
 
 

@@ -43,7 +43,7 @@
 		  <br><br>
 		<div class="form-group col-lg-offset-4">
 			<label for="fullName">姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名</label>
-			<input type="text" class="form-control" name="fullName"
+			<input type="text" class="form-control" name="fullName" id="fullName"
 				value="<s:property value="fullName"/>" placeholder="">
 		</div>
 		<br> <br> 
@@ -55,17 +55,23 @@
 				value="<s:property value="unitInfo"/>" placeholder="">
 		</div> --%>
 		
-		<div class="form-group col-lg-offset-4">
+		 <div class="form-group col-lg-offset-4">
 	  	<label for="sex">性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别</label>
-	  	<s:select list="sexSelect"  class="form-control" name="sex" style="width:180px"></s:select>
-	  </div>
+	  	<s:select list="{'男','女'}"  class="form-control" id="sex" name="sex" style="width:180px"></s:select>
+	  </div>   
   	<br><br>
 		<div class="form-group col-lg-offset-4">
-			<label for="profilePhotoPath">上传头像</label> <input type="text"
+			
+			<label for="profilePhotoPath">上传头像</label> 
+			 <input type="file" class ="pull-right "name="profilePhotoPath" id="file_upload"  placeholder="图片地址"> 
+			
+			 <br>
+			 <s:fielderror/>
+			 <%-- <input type="text"
 				class="form-control" name="profilePhotoPath"
-				value="<s:property value="profilePhotoPath"/>" placeholder="">
+				value="<s:property value="profilePhotoPath"/>" placeholder="">  --%>
 		</div>
-
+		
 		<br> <br> 
 
 
@@ -73,14 +79,14 @@
 
 		<div class="form-group col-lg-offset-4">
 			<label for="unitInfo">工作单位</label> <input type="text"
-				class="form-control" name="unitInfo"
+				class="form-control" name="unitInfo" id="unitInfo"
 				value="<s:property value="unitInfo"/>" placeholder="">
 		</div>
   <br><br>
 
 		<div class="form-group col-lg-offset-4">
 			<label for="phoneNumber">联系方式</label> <input type="text"
-				class="form-control" name="phoneNumber"
+				class="form-control" name="phoneNumber" id="phoneNumber"
 				value="<s:property value="phoneNumber"/>" placeholder="">
 		</div>
 
@@ -88,7 +94,7 @@
 
 		<div class="form-group col-lg-offset-4">
 			<label for="remark">备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注</label>
-			<input type="" text"" class="form-control" name="remark"
+			<input type="" text"" class="form-control" name="remark" id="remark"
 				value="<s:property value="remark"/>" placeholder="">
 		</div>
 
@@ -97,7 +103,7 @@
 		<br /> <br />
 		<button type="button" class="btn btn-primary col-lg-offset-5">注册</button>
 	</form>
-
+	<s:fielderror></s:fielderror>
 	<br />
 
 
@@ -105,7 +111,7 @@
 		style="display: none">
 		<br />
 	</div>
-
+<s:debug></s:debug>
 
 
 
@@ -115,12 +121,27 @@
 	<script>
 
     $(document).on("click", "button", function (){
-        var params = $('#admin_register_form').serialize(); //利用jquery将表单序列化
+    	checkUsername();
+    	checkPassword();
+    	var fd = new FormData();
+        fd.append("file", document.getElementById('file_upload').files[0]);
+        fd.append("username",$("#usernameId").val());
+        fd.append("password",$("#passwordId").val());
+        fd.append("fullName",$("#fullName").val());
+        fd.append("sex",$("#sex").val());
+        fd.append("unitInfo",$("#unitInfo").val());
+        fd.append("phoneNumber",$("#phoneNumber").val());
+        fd.append("remark",$("#remark").val());
+        //var params = $('#admin_register_form').serialize(); //利用jquery将表单序列化
+       
         $.ajax({
           url: 'admin_register_save',
           type: 'post',
           dataType: 'json',
-          data: params,
+          data: fd,
+          async: true,  
+          contentType: false,  //
+          processData: false,  
           success: adminRegisterCallback
         });
 
@@ -132,6 +153,9 @@
     	$("#alert_register_info").hide();
 		$("#alert_register_info").text(text);
 		$("#alert_register_info").show(500);
+    }
+    function animatesHide(){
+    	$("#alert_register_info").hide();
     }
     function adminRegisterCallback(data)
     {    	
@@ -150,8 +174,11 @@
         	
 			
         	$(cnt).attr("user_id", data.user_id);
- */
-    		alert("yeah");
+ */			
+    		alert("ok");
+ 			animatesHide();
+ 			 
+ 			window.location.href = "${pageContext.request.contextPath}/login";
     	}
     	/* else if(data.register_status == "1")
     	{

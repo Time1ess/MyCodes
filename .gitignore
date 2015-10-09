@@ -14,3 +14,7 @@
 .metadata
 .recommenders
 *.pyc
+*.jsp
+*.ini
+*.json
+*.gen

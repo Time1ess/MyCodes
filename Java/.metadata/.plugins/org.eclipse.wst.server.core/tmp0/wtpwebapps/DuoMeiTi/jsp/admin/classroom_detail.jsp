@@ -45,7 +45,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						<h4 class="modal-title">课表</h4>
 					</div>
 					<div class="modal-body">
-						<div class="form-group">
+						<!-- <div class="form-group">
 							<label for="dtp_input2" class="col-md-2 control-label">选择日期</label>
 							<div style="float:left;position:relative;" class="input-group date form_date col-md-5" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
 								<input class="form-control" size="16" type="text" value="" readonly> 
@@ -59,15 +59,16 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							<input type="hidden" id="dtp_input2" value="" />
 							<button type="button" style="float:right" class="btn btn-primary">查询</button>
 							<br /><br /><br />
-						</div>
-						<table class="table table-bordered">
+						</div> -->
+						<!-- <table class="table table-bordered">
 							<thead>
 								<tr><td>1-2节</td><td>3-4节</td><td>5-6节</td><td>7-8节</td><td>9-10节</td></tr>
 							</thead>
 							<tbody>
 								<tr><td>C语言</td><td>Java语言</td><td>PHP语言</td><td>C#语言</td><td>C++语言</td></tr>
 							</tbody>
-						</table>
+						</table> -->
+						<iframe name="myFrame" frameborder="0" scrolling="no" style="width:100%;" height="200px" src="/schedule/校部第一教学馆1-101(10301).html"></iframe>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -149,15 +150,19 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					}
 					
 					function addcallback(data) {
-						if (parseInt(data.ret))
-							alert("Ok，添加成功");
+						if (parseInt(data.ret)) {
+							alert("Ok, 添加成功");
+							location.reload();	
+						}
+							
 						else
-							alert("Sorry，添加失败");
+							alert("Sorry, 添加失败");
 					}
 				</script>
 				</div>
 				<div class="col-lg-2">
-					<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#schedule-modal">查看课表</button>
+					<!-- <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#schedule-modal">查看课表</button> -->
+					<a type="button" href="<%=path%>/schedule/校部第一教学馆1-101(10301).pdf" target="_black" class="btn btn-primary btn-sm">查看课表</a>
 					</div>
 				<div class="col-lg-2">
 					<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#check-record-modal">填写周检查记录</button>
@@ -167,7 +172,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<div class="detail-div">
 			<div class="device">
 				<ul>
-					<s:iterator value="classroom.repertorys" var="device" status="i">
+				<s:iterator value="rtClass" var="device" status="i">
 						<li id="device-<s:property value="#i.index"/>" />
 							<div style="margin-bottom:5px">
 								<label class="control-label device-type-label"><s:property value="#device.rtType"/>&nbsp;</label>
@@ -207,7 +212,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							<tbody>
 								<s:iterator value="checkrecords" var="checkrecord" status="i">
 									<tr>
-										<td width="20%"><s:property value="#checkrecord.user.fullName"/></td>
+										<td width="20%"><s:property value="#checkrecord.checkman.username"/></td>
 										<td><s:property value="#checkrecord.checkdetail"/></td>
 										<td><s:property value="#checkrecord.checkdate"/></td>
 									</tr>
@@ -224,7 +229,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							<tbody>
 								<s:iterator value="repairrecords" var="repairrecord" status="i">
 									<tr>
-										<td width="20%"><s:property value="#repairrecord.repairman.fullName"/></td>
+										<td width="20%"><s:property value="#repairrecord.repairman.username"/></td>
 										<td><s:property value="#repairrecord.device.rtType"/></td>
 										<td><s:property value="#repairrecord.repairdetail"/></td>
 										<td><s:property value="#repairrecord.repairdate"/></td>

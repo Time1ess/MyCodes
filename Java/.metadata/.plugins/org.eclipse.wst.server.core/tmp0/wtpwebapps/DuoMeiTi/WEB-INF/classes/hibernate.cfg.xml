@@ -6,7 +6,7 @@
     <session-factory>
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
 
-        <property name="connection.url"> jdbc:mysql://192.168.2.108:3306/DuoMeiTi2?useUnicode=true&amp;characterEncoding=utf8</property>
+        <property name="connection.url"> jdbc:mysql://192.168.2.108:3306/DuoMeiTi?useUnicode=true&amp;characterEncoding=utf8</property>
 
         <property name="connection.username">root</property>
         <property name="connection.password">root</property>

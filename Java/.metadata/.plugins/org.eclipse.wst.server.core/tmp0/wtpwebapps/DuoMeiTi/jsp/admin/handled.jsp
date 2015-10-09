@@ -35,7 +35,7 @@
 					<td>审核通过</td>
 				</s:else>
 					<td>
-						<button type="button" class="btn btn-primary btn-sm" id="change">撤销</button>
+						<button type="button" class="btn btn-primary btn-sm change">撤销</button>
 					</td>	
 				</tr>
 			</s:if>
@@ -45,10 +45,9 @@
 	</div>
 	
 	<script>
-	$("#change").click(function(){
+	$(".change").click(function(){
 		var id=$(this).closest("tr").attr("id");
 		/* var isPass=$('#judge').find("option:selected").val(); */
-		
 		$.ajax({
 			url: 'request_change',
 	        type: 'post',
@@ -60,7 +59,7 @@
 	
 	function changeCallBack(data){
 		if(data.strValue=="success"){
-			var t=$("#"+data.userid);
+			var p=$("#"+data.userid);
 			$("#"+data.userid).remove();
 		}
 		else alert("something wrong!!");
