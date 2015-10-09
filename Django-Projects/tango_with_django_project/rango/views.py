@@ -28,7 +28,7 @@ def category(request,category_name_slug):
 	except Category.DoesNotExist:
 		pass
 	return render(request,'rango/category.html',context_dict)
-
+@login_required
 def add_category(request):
 	if request.method=='POST':
 		form=CategoryForm(request.POST)
@@ -137,7 +137,7 @@ def user_login(request):
 
 @login_required
 def restricted(request):
-	return HttpResponse("Since you're logged in, you can see this text!")
+	return render(request,'rango/restricted.html',{})
 
 @login_required
 def user_logout(request):
