@@ -1,13 +1,17 @@
-{% extends 'base.html' %}
+{% extends 'rango/base.html' %}
 {% load staticfiles %}
 {% block title %}{{ category_name }}{% endblock %}
 {% block body_block %}
+<div class="page-header">
 <h1>{{ category_name }}</h1>
+</div>
+
+<div>
 {% if category %}
 {% if pages %}
-<ul>
+<ul class="list-group">
     {% for page in pages %}
-    <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+    <li clss="list-group-item"><a href="{{ page.url }}">{{ page.title }}</a></li>
     {% endfor %}
 </ul>
 {% else %}
@@ -19,4 +23,5 @@
 {% else %}
 The specified category {{ category_name }} does not exist!
 {% endif %}
+</div>
 {% endblock %}

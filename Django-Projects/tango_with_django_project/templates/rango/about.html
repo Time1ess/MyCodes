@@ -1,0 +1,14 @@
+{% extends 'rango/base.html' %}
+{% load staticfiles %}
+{% block title %}About{% endblock %}
+{% block body_block %}
+<div class="page-header">
+	<h1>About</h1>
+</div>
+<div>
+	<p>This is <strong>Rango's about page.</strong></p>
+	<p>You've visited the site on <strong>{{ visits }} occasion(s).</strong></p>
+	<p>Here's a picture of Taylor Swift!</p>
+	<img src="{% static 'images/taylor2.jpg' %}" style="width:60%" alt="Picture of taylor" />
+</div>
+{% endblock %}

@@ -1,6 +1,11 @@
-{% extends 'base.html' %}
+{% extends 'rango/base.html' %}
 {% load staticfiles %}
 {% block title %}Restricted{% endblock %}
+<div class="page-header">
+	<h1>Restricted</h1>
+</div>
+<div>
 {% block body_block %}
 <P>Since you're logged in,you can see this text!</P>
+</div>
 {% endblock %}
