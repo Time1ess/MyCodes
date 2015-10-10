@@ -13,10 +13,11 @@ Including another URLconf
     1. Add an import:  from blog import urls as blog_urls
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
-from django.conf.urls import include, url
+from django.conf.urls import include, url,patterns
 from django.contrib import admin
 from registration.backends.simple.views import RegistrationView
-
+from django.conf import settings
+from django.conf.urls.static import static
 class MyRegistrationView(RegistrationView):
 	def get_success_url(self,request,user):
 		return '/rango/register_profile/'
@@ -27,3 +28,4 @@ urlpatterns = [
 	url(r'^accounts/register/$',MyRegistrationView.as_view(),name='registration_register'),
 	url(r'^accounts/',include('registration.backends.simple.urls')),
 ]
+urlpatterns+=patterns('django.views.static',(r'^profile_images/(?P<path>.*)','serve',{'document_root':settings.MEDIA_ROOT}),)

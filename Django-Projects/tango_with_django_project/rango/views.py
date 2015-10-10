@@ -248,3 +248,16 @@ def register_profile(request):
 	else: 
 		profile_form=UserProfileForm() 
 		return render(request,'registration/profile_registration.html',{ 'profile_form':profile_form, }) 
+
+def users(request):
+	users=User.objects.all()
+	return render(request,'rango/users.html',{'users':users})
+
+def user(request):
+	user_id=request.GET['user_id']
+	user=None
+	try:
+		user=User.objects.get(pk=user_id)
+	except:
+		pass
+	return render(request,'rango/user.html',{'user':user})

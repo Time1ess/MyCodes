@@ -111,6 +111,7 @@ STATIC_URL = '/static/'
 
 # Personal settings
 LOGIN_URL= '/accounts/login/'
+MEDIA_ROOT=os.path.join(BASE_DIR,'profile_images')
 #SESSION_EXPIRE_AT_BROWSER_CLOSE=True
 
 # Django-registration-redux settings
