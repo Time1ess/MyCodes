@@ -6,6 +6,10 @@
 	<form class="form-inline" action="student_register" method="POST"
 		id="admin_register_form">
 
+		<div class="alert alert-info" role="alert" id="alert_register_info"
+		style="display: none">
+		<br />
+	</div>
 		<div class="form-group col-lg-offset-4">
 			<label for="username">用&nbsp;&nbsp;户&nbsp;&nbsp;名</label> <input type="text"
 				class="form-control" name="username" id="usernameId"
@@ -107,10 +111,7 @@
 	<br />
 
 
-	<div class="alert alert-info" role="alert" id="alert_register_info"
-		style="display: none">
-		<br />
-	</div>
+	
 <s:debug></s:debug>
 
 
@@ -121,10 +122,13 @@
 	<script>
 
     $(document).on("click", "button", function (){
+    	
+    	
     	checkUsername();
     	checkPassword();
     	var fd = new FormData();
-        fd.append("file", document.getElementById('file_upload').files[0]);
+        if(document.getElementById('file_upload').files.length != 0)
+    		fd.append("file", document.getElementById('file_upload').files[0]);
         fd.append("username",$("#usernameId").val());
         fd.append("password",$("#passwordId").val());
         fd.append("fullName",$("#fullName").val());
@@ -133,6 +137,7 @@
         fd.append("phoneNumber",$("#phoneNumber").val());
         fd.append("remark",$("#remark").val());
         //var params = $('#admin_register_form').serialize(); //利用jquery将表单序列化
+       
        
         $.ajax({
           url: 'admin_register_save',
@@ -144,7 +149,7 @@
           processData: false,  
           success: adminRegisterCallback
         });
-
+        
     });
     
     function animatedShow(text)

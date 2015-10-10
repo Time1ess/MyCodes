@@ -22,11 +22,16 @@
 	$(document).on("click", "#file_upload_button", function() {
 		
 		var fd = new FormData();
-
-     	fd.append("file", document.getElementById('file_upload').files[0]); 
-     	
-//      	fd.append("test", "YESYESYES");
- 
+		
+		
+		var file_list = document.getElementById('file_upload').files;
+		if(file_list.length != 0)
+		{
+			fd.append("file", file_list[0]);
+		}	
+			
+		
+ 		
 	    $.ajax({  
 	          url: "HomepageModify/FileUploadInsert" ,  
 	          type: "POST",  
@@ -60,13 +65,11 @@
 	
 	function insertCallBack(data)
 	{
-// 		alert("GOGO");
-// 		alert(data.classroom_file_table);
-		$(document).find("#ClassroomFileTableDiv").html(data.classroom_file_table)
+		$("#file_upload").val("");
+		$(document).find("#ClassroomFileTableDiv").html(data.classroom_file_table);
+		
 // 		window.location.reload() 
-// 		$(document).find("#file_list_table tr:first").after("<td>" + data. "  </td")
-// 		$("#file_list_table").tr.
-// 		alert("BACK");
+
 	}
 	
 

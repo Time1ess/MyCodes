@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import HttpResponse,HttpResponseRedirect
-from rango.models import Category,Page
+from rango.models import Category,Page,UserProfile
 from rango.forms import CategoryForm,PageForm,UserForm,UserProfileForm
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from datetime import datetime
 from rango.bing_search import run_query
 def index(request):
@@ -56,6 +57,16 @@ def category(request,category_name_slug):
 		context_dict['category_name_slug']=category_name_slug
 	except Category.DoesNotExist:
 		pass
+	result_list=[]
+	query=None
+	if request.method=='POST':
+		query=request.POST['query'].strip()
+		if query:
+			# Run our Bing function to get the results list!
+			result_list=run_query(query)
+	context_dict['result_list']=result_list
+	context_dict['query']=query
+
 	return render(request,'rango/category.html',context_dict)
 @login_required
 def add_category(request):
@@ -190,3 +201,50 @@ def search(request):
 		'result_list':result_list,
 		'query':query,
 		})
+
+def track_url(request):
+	if request.method=='GET':
+		if 'page_id' in request.GET:
+			page_id=request.GET['page_id']
+			try:
+				page=Page.objects.get(pk=page_id)
+				page.views+=1
+				page.save()
+				return redirect(page.url)
+			except:
+				pass
+	return redirect('/rango/')
+@login_required
+def register_profile(request):
+	if request.method=='POST':
+		user_id=request.POST['user_id'] 
+		old_profile_form=None
+		try:
+			old_profile_form=UserProfile.objects.get(user_id=user_id)
+		except:
+			pass
+		profile_form=UserProfileForm(data=request.POST) 
+		user=None 
+		try: 
+			user=User.objects.get(pk=user_id) 
+		except: 
+			pass 
+		if user and profile_form.is_valid():
+			if not old_profile_form:
+				profile=profile_form.save(commit=False)
+				profile.user=user
+				if 'picture' in request.FILES:
+					profile.picture=request.FILES['picture'] 
+				profile.save()
+			else:
+				old_profile_form.website=request.POST['website']
+				if 'picture' in request.FILES: 
+					old_profile_form.picture=request.FILES['picture'] 
+				old_profile_form.save() 
+				return redirect('/rango/') 
+		else: 
+			print profile_form.errors 
+			return render(request,'rango/404.html',{}) 
+	else: 
+		profile_form=UserProfileForm() 
+		return render(request,'registration/profile_registration.html',{ 'profile_form':profile_form, }) 

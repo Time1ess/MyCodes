@@ -1,9 +1,10 @@
 //insert
-$(document).on("click", "#rtInsert", function() {
-	
+function cleanValue() {
 	$("[name=rtDevice]").val("");
 	$("#rtType1").hide();
 	$("#rtType2").hide();
+	$("#filterclean").hide();
+	$("#freq").hide();
 	$("[name=rtType]").val("");
 	$("[name=rtNumber]").val("");
 	$("[name=rtVersion]").val("");
@@ -11,7 +12,15 @@ $(document).on("click", "#rtInsert", function() {
 	$("[name=rtApprDate]").val("");
 	$("[name=rtFactorynum]").val("");
 	$("[name=rtDeviceStatus]").val("");
+	$("[name=rtReplacePeriod]").val("");
+	$("[name=rtFilterCleanPeriod]").val("");
+	$("[name=rtFreqPoint]").val("");
+}
+
+$(document).on("click", "#rtInsert", function() {
+	cleanValue();
 	$("#rtSave").attr("mark","insert");
+	$("#modal-title").html("添加设备信息");
 })
 
 $(document).find("#rtDevice").change(function() {
@@ -27,18 +36,32 @@ $(document).find("#rtDevice").change(function() {
 		$("#rtType1").hide();
 	}
 })
+$(document).find("#rtType1").change(function() {
+	var svalue = $("#rtType1 option:selected").attr("value");
+	if(svalue == "投影机") {
+		$("#filterclean").show();
+		$("#freq").hide();
+	}
+	else if(svalue == "麦克") {
+		$("#filterclean").hide();
+		$("#freq").show();
+	}
+	else {
+		$("#freq").hide();
+		$("#filterclean").hide();
+	}
+})
 
 
 //update
 var rtId;
-//$(document).find("#repertory_table").on("click"," tr:not(:first) .click_me", function() {
 $(document).on("click",".click_me", function() {
-	
 	rtId = $(this).parent().attr("rt_id");
+	cleanValue();
 //	$(this).attr("data-toggle","modal");
 //	$(this).attr("data-target","#rtModal");
 	$("#rtSave").attr("mark","update");
-	
+	$("#modal-title").html("修改设备信息");
 	$(document).find('#rtModal').modal('toggle');
 	$.ajax({
 		url : 'repertory_fetch',
@@ -49,7 +72,6 @@ $(document).on("click",".click_me", function() {
 	});
 })
 function fetchCallback(data) {
-	//alert(data.status + "," + data.rtSearch_list[0].rtType);
 	if(data.status == "0") {
 		alert("error");
 		return;
@@ -61,6 +83,20 @@ function fetchCallback(data) {
 			$(document).find("#rtType1").val(temp.rtType);
 			$("#rtType1").show();
 			$("#rtType2").hide();
+			if(temp.rtType == "投影机") {
+				$("#filterclean").show();
+				$(document).find("#rtFilterCleanPeriod").val(temp.rtFilterCleanPeriod);
+				$("#freq").hide();
+			}
+			else if(temp.rtType == "麦克") {
+				$("#filterclean").hide();
+				$("#freq").show();
+				$(document).find("#rtFreqPoint").val(temp.rtFreqPoint);
+			}
+			else {
+				$("#freq").hide();
+				$("#filterclean").hide();
+			}
 		}
 		else if(temp.rtDevice == "耗材设备") {
 			$(document).find("#rtType2").val(temp.rtType);
@@ -73,6 +109,7 @@ function fetchCallback(data) {
 		$(document).find("#rtApprDate").val(temp.rtApprDateString);
 		$(document).find("#rtFactorynum").val(temp.rtFactorynum);
 		$(document).find("#rtDeviceStatus").val(temp.rtDeviceStatus);
+		$(document).find("#rtReplacePeriod").val(temp.rtReplacePeriod);
 	}
 	
 }
@@ -111,6 +148,9 @@ $(document).on("click", "#rtSave", function() {
  	fd.append("rtApprDate", $(cnt).find("[name=rtApprDate]").val());
  	fd.append("rtFactorynum", $(cnt).find("[name=rtFactorynum]").val());
  	fd.append("rtDeviceStatus", $(cnt).find("[name=rtDeviceStatus]").val());
+ 	fd.append("rtReplacePeriod", $(cnt).find("[name=rtReplacePeriod]").val());
+ 	fd.append("rtFilterCleanPeriod", $(cnt).find("[name=rtFilterCleanPeriod]").val());
+ 	fd.append("rtFreqPoint", $(cnt).find("[name=rtFreqPoint]").val());
 	
 	if($(this).attr("mark") == "insert")
 	{
@@ -156,9 +196,8 @@ function repertoryCallback(data) {
 		$(cnt).children().eq(4).text(data.rtApprDateString);
 		$(cnt).children().eq(5).text(data.rtFactorynum);
 		$(cnt).children().eq(6).text(data.rtDeviceStatus);
-		
+		$(cnt).children().eq(7).text(data.rtReplacePeriod + "/小时");
 		$(cnt).attr("rt_id", data.rtId);
-		$(cnt).attr("rt_device", data.rtDevice);
 		$('#rtModal').modal('hide');
 		alert("保存成功！ ");
 
@@ -175,6 +214,7 @@ function updateCallback(data) {
 		$(line).children().eq(4).text(data.rtApprDateString);
 		$(line).children().eq(5).text(data.rtFactorynum);
 		$(line).children().eq(6).text(data.rtDeviceStatus);
+		$(line).children().eq(7).text(data.rtReplacePeriod + "/小时");
 		$('#rtModal').modal('hide');
 		alert("修改成功！ ");
 	}
@@ -247,43 +287,17 @@ function selectDevice() {
 		success : searchCallback
 	});
 }
-/*$(document).on("click", "#rtSearch", function() {
-	// alert($("#rtDevice option:selected").attr("value"));
-	var keyword = $("#repertory_search").serialize();
-	// alert(keyword);
-	$.ajax({
-		url : 'repertory_search',
-		type : 'post',
-		dataType : 'json',
-		data : keyword,
-		success : searchCallback
-	});
-})*/
 
 function searchCallback(data) {
 	if (data.status == "1") {
-		$("#repertory_table tr:not(:first)").remove();
+//		$("#repertory_table tr:not(:first)").remove();
 		$(document).find("#noResult").text("");
-		// $("#repertory_table tr:first").after(data.add_repertory_html);
-		var everylist = data.rtSearch_list;
-		$(document).find("#rtSearchLen").text(everylist.length);
-		$(everylist).each(function(i) {
-			$("#repertory_table").append(data.add_repertory_html);
-			var row = $(document).find("#repertory_table tr:eq(" + (i + 1) + ")");
-			$(row).find("td:eq(0)").text(everylist[i].rtType);
-			$(row).find("td:eq(1)").text(everylist[i].rtNumber);
-			$(row).find("td:eq(2)").text(everylist[i].rtVersion);
-			$(row).find("td:eq(3)").text(everylist[i].rtProdDateString);
-			$(row).find("td:eq(4)").text(everylist[i].rtApprDateString);
-			$(row).find("td:eq(5)").text(everylist[i].rtFactorynum);
-			$(row).find("td:eq(6)").text(everylist[i].rtDeviceStatus);
-			$(row).attr("rt_id", everylist[i].rtId);
-		})
+		$(document).find("#rtSearchLen").text(data.repertory_list.length);
+		$(document).find("#repertoryTableDiv").html(data.repertory_table);
 
 	} else if (data.status == "0") {
 		$(document).find("#rtSearchLen").text(0);
 		$(document).find("#repertory_table tr:not(:first)").remove();
-//		$("#repertory_table tr:not(:first)").remove();
 		$(document).find("#noResult").text("无查询结果");
 	}
 }

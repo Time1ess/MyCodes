@@ -1,7 +1,5 @@
 <%@ include file="/jsp/base/taglib.jsp" %>
 
-
-
 <layout:override name="base_content">
 	
 <a href="/">
@@ -45,53 +43,7 @@
 </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<!-- 
 <div id="envelope"></div>
 <div id="message-list-box" class="hide">
 	<div class="message-list-top">
@@ -104,21 +56,6 @@
 		<span>发信息</span>
 	</div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <div id="message-contacts-box" class="hide">
 	<div class="message-contacts-top">
@@ -171,6 +108,7 @@
 </div>
 
 <script type="text/javascript" src="/js/base/websocket.js"></script>
+ -->
         
  <layout:block name="nav_content">
  
@@ -180,7 +118,6 @@
 	
 	
 </layout:override>
-
 
 <%@ include file="/jsp/base/base.jsp" %>
 

@@ -25,7 +25,7 @@
         <script type='text/javascript' src="/datepicker/js/bootstrap-datetimepicker.min.js"></script>
 		<script type="text/javascript" src="/datepicker/js/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
 		
-				<link rel="stylesheet" type="text/css" media="screen" href="/css/base/table.css" >		
+		<link rel="stylesheet" type="text/css" media="screen" href="/css/base/table.css" >		
 		<link rel="stylesheet" type="text/css" media="screen" href="/css/base/base.css"/> 
 		<link rel="stylesheet" type="text/css" media="screen" href="/css/admin/classroom_manage.css"/>
 		<link rel="stylesheet" type="text/css" media="screen" href="/css/admin/repertory.css"/>

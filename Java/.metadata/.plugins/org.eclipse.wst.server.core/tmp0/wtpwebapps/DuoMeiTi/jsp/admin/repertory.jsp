@@ -14,7 +14,7 @@
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
-						<h2 class="modal-title" id="modal-title">添加设备信息</h2>
+						<h2 class="modal-title" id="modal-title"></h2>
 					</div>
 					<div class="modal-body">
 					<form class="form-inline well" id="repertory_form" method="post">
@@ -84,6 +84,12 @@
 									</span>
 									<input type="text" class="form-control" name="rtFreqPoint" id="rtFreqPoint" value="<s:property value="rtFreqPoint"/>">
 								</div>
+								<div class="input-group" style="display:none" id="filterclean">
+									<span class="input-group-btn">
+										<button type="button" class="btn btn-default" style="width:120px">过滤网更换时间</button>
+									</span>
+									<input type="text" class="form-control" name="rtFilterCleanPeriod" id="rtFilterCleanPeriod" style="width:120px" value="<s:property value="rtFilterCleanPeriod"/>">
+								</div>
 							</div>
 							<div class="text-right" style="color:red">(*为必填项)</div>
 							</div>
@@ -114,8 +120,8 @@
 					</div>
 					<div class="modal-body">
 					<div class="alert alert-danger" role="alert">导入Excel表格要求：
-						<br> &nbsp;&nbsp;&nbsp; 从第一列开始每列设备字段分别为:设备名称（必须与约定设备名称一致）、资产编号、型号、出厂日期（日期格式yyyy-mm-dd）、审批日期、出厂号、使用状态（备用、教室、维修、报废）、教室号。第一行为字段名，第二行开始为数据内容。
-						<br>&nbsp;&nbsp;&nbsp;所有数据必须为文本格式，尤其是日期。 <br>&nbsp;&nbsp;&nbsp;若表中有空行，则空行之后的数据会被舍弃。</div>
+						<br> &nbsp;&nbsp;1.&nbsp; 从第一列开始每列设备字段分别为:<br>设备名称（必须与约定设备名称一致）、<br>资产编号、<br>型号、<br>出厂日期（日期格式yyyy-mm-dd）、<br>审批日期、<br>出厂号、<br>使用状态（备用、教室、维修、报废）、<br>教室号、<br>更换时间、<br>频点、<br>过滤网更换时间。
+						<br>&nbsp;&nbsp;2.&nbsp;只读取Excel表格中第一个工作簿。第一行为字段名，第二行开始为数据内容。所有数据必须为文本格式，尤其是日期。 <br>&nbsp;&nbsp;3.&nbsp;若表中有空行，则空行之后的数据会被舍弃。</div>
 					<form class="form-inline well" id="import_repertory" enctype="multipart/form-data" method="post">
 						<div class="row">
 							<div class="form-group">
@@ -165,33 +171,36 @@
 			<div class="text-right">查询记录共&nbsp;<strong style="color:red" id="rtSearchLen"></strong>&nbsp;条</div>
 		</form>
 
-		<table class="table table-bordered table-hover" id="repertory_table">
-			<tr class="active">
-				<th>设备类型</th>
-				<th>资产编号</th>
-				<th>型号</th>
-				<th>出厂日期</th>
-				<th>审批日期</th>
-				<th>出厂号</th>
-				<th>使用状态</th>
-				<th>删除</th>
-			</tr>
-			
-			<s:iterator value="repertory_list" var="i" status="index">
-				<tr class="success" rt_id="<s:property value="#i.rtId"/>" rt_device="<s:property value="#i.rtDevice"/>">
-					<td class="click_me"> <s:property value="#i.rtType"/> </td>
-					<td class="click_me"> <s:property value="#i.rtNumber"/> </td>
-					<td class="click_me"> <s:property value="#i.rtVersion"/> </td>
-					<td class="click_me"> <s:property value="#i.rtProdDate.toString()"/> </td>
-					<td class="click_me"> <s:property value="#i.rtApprDate.toString()"/> </td>
-					<td class="click_me"> <s:property value="#i.rtFactorynum"/> </td>
-					<td class="click_me"> <s:property value="#i.rtDeviceStatus"/> </td>
-					<td> <button type="button" class="btn btn-danger delete" >删除</button> </td>
-				</tr>
-			</s:iterator>
-			
-			
-		</table>
+		<div id="repertoryTableDiv">
+			<%@ include file="/jsp/admin/widgets/repertoryTable.jsp" %>
+		</div>
+<!-- 		<table class="table table-bordered table-hover" id="repertory_table"> -->
+<!-- 			<tr class="active"> -->
+<!-- 				<th>设备类型</th> -->
+<!-- 				<th>资产编号</th> -->
+<!-- 				<th>型号</th> -->
+<!-- 				<th>出厂日期</th> -->
+<!-- 				<th>审批日期</th> -->
+<!-- 				<th>出厂号</th> -->
+<!-- 				<th>使用状态</th> -->
+<!-- 				<th>更换时间</th> -->
+<!-- 				<th>删除</th> -->
+<!-- 			</tr> -->
+<%-- 			<s:iterator value="repertory_list" var="i" status="index"> --%>
+<%-- 				<tr class="success" rt_id="<s:property value="#i.rtId"/>" rt_device="<s:property value="#i.rtDevice"/>"> --%>
+<%-- 					<td class="click_me"> <s:property value="#i.rtType"/> </td> --%>
+<%-- 					<td class="click_me"> <s:property value="#i.rtNumber"/> </td> --%>
+<%-- 					<td class="click_me"> <s:property value="#i.rtVersion"/> </td> --%>
+<%-- 					<td class="click_me"> <s:property value="#i.rtProdDate.toString()"/> </td> --%>
+<%-- 					<td class="click_me"> <s:property value="#i.rtApprDate.toString()"/> </td> --%>
+<%-- 					<td class="click_me"> <s:property value="#i.rtFactorynum"/> </td> --%>
+<%-- 					<td class="click_me"> <s:property value="#i.rtDeviceStatus"/> </td> --%>
+<%-- 					<td class="click_me"> <s:property value="#i.rtReplacePeriod"/>（小时） </td> --%>
+<!-- 					<td> <button type="button" class="btn btn-danger delete" >删除</button> </td> -->
+<!-- 				</tr> -->
+<%-- 			</s:iterator> --%>
+<!-- 		</table> -->
+		
 		<div id="noResult"></div>
 		
 		<script type='text/javascript' src="/js/admin/repertory.js"></script>

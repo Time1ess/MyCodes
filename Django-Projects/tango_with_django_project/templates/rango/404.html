@@ -3,6 +3,10 @@
 {% block title %}404 ERROR{% endblock %}
 {% block body_block %}
     <h1>Sorry,404 ERROR!</h1>
+    {% if error_message %}
+    <h2>{{ error_message }}</h2>
+    {% else %}
     <h2>Content Does Not Exists!</h2>
+    {% endif %}
     <a href="/rango">Go back to Index</a><br />
 {% endblock %}

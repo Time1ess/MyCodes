@@ -41,7 +41,8 @@
               <li><a href="{% url 'rango:restricted' %}">Restricted Page</a></li>
               <li><a href="{% url 'auth_logout' %}?next=/rango/">Logout</a></li>
               <li><a href="{% url 'rango:add_category' %}">Add a New Category</a></li>
-              <li><a href="{% url 'rango:search' %}">Search</a></li>
+              <li><a href="{% url 'rango:register_profile' %}">Profile Change</a></li>
+              <!--<li><a href="{% url 'rango:search' %}">Search</a></li>-->
               {% else %}
               <li><a href="{% url 'registration_register' %}">Register Here</a></li>
               <li><a href="{% url 'auth_login' %}">Login</a></li>
