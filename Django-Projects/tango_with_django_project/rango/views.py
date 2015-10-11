@@ -261,3 +261,56 @@ def user(request):
 	except:
 		pass
 	return render(request,'rango/user.html',{'user':user})
+@login_required
+def like_category(request):
+
+	cat_id=None
+	if request.method=='GET':
+		cat_id=request.GET['category_id']
+
+	likes=0
+	if cat_id:
+		cat=Category.objects.get(id=int(cat_id))
+		if cat:
+			likes=cat.likes+1
+			cat.likes=likes
+			cat.save()
+	return HttpResponse(likes)
+
+def get_category_list(max_results=0,starts_with=''):
+	cat_list=[]
+	if starts_with:
+		cat_list=Category.objects.filter(name__istartswith=starts_with)
+
+	if max_results>0:
+		if len(cat_list)>max_results:
+			cat_list=cat_list[:max_results]
+	return cat_list
+
+def suggest_category(request):
+
+	cat_list=[]
+	starts_with=''
+	if request.method=='GET':
+		starts_with=request.GET['suggestion']
+
+	cat_list=get_category_list(8,starts_with)
+
+	return render(request,'rango/category_list.html',{'cat_list':cat_list})
+
+def auto_add_page(request):
+	title=None
+	url=None
+	cat_id=None
+
+	if request.method=='GET':
+		title=request.GET['title']
+		url=request.GET['url']
+		cat_id=request.GET['category']
+
+		if title and url and cat_id:
+			category=Category.objects.get(id=int(cat_id))
+			p=Page.objects.get_or_create(category=category,title=title,url=url)
+			
+			return HttpResponse('SUCCESS')
+	return HttpResponse('FAIL')
