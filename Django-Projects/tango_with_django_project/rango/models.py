@@ -20,6 +20,7 @@ class Category(models.Model):
 
 	def save(self,*args,**kwargs):
 		self.slug=slugify(self.name)
+		self.views=self.views if self.views>0 else 0
 		super(Category,self).save(*args,**kwargs)
 
 	def __unicode__(self):
