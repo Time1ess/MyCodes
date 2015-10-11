@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
-
+from django.utils import timezone
+from datetime import datetime
 class UserProfile(models.Model):
 	user=models.OneToOneField(User)
 
@@ -31,6 +32,13 @@ class Page(models.Model):
 	title=models.CharField(max_length=128)
 	url=models.URLField()
 	views=models.IntegerField(default=0)
+	last_visit=models.DateTimeField(default=timezone.now)
+	first_visit=models.DateTimeField(default=timezone.now)
+
+	def save(self,*args,**kwargs):
+		self.last_visit=self.last_visit if self.last_visit<timezone.now() else timezone.now()
+		self.first_visit=self.first_visit if self.first_visit<timezone.now() else timezone.now()
+		super(Page,self).save(*args,**kwargs)
 
 	def __unicode__(self):
 		return self.title

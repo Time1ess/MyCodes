@@ -5,6 +5,7 @@ from rango.forms import CategoryForm,PageForm,UserForm,UserProfileForm
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.utils import timezone
 from datetime import datetime
 from rango.bing_search import run_query
 def index(request):
@@ -97,6 +98,8 @@ def add_page(request,category_name_slug):
 			if cat:
 				page=form.save(commit=False)
 				page.category=cat
+				page.first_visit=timezone.now()
+				page.last_visit=timezone.now()
 				page.views=0
 				page.save()
 
@@ -209,6 +212,9 @@ def track_url(request):
 			try:
 				page=Page.objects.get(pk=page_id)
 				page.views+=1
+				page.last_visit=timezone.now()
+				if not page.first_visit:
+					page.first_visit=timezone.now()
 				page.save()
 				return redirect(page.url)
 			except:
@@ -310,7 +316,7 @@ def auto_add_page(request):
 
 		if title and url and cat_id:
 			category=Category.objects.get(id=int(cat_id))
-			p=Page.objects.get_or_create(category=category,title=title,url=url)
+			p=Page.objects.get_or_create(category=category,title=title,url=url,first_visit=timezone.now(),last_visit=timezone.now())
 			
 			return HttpResponse('SUCCESS')
 	return HttpResponse('FAIL')
