@@ -37,6 +37,7 @@ function searchCallback(data) {
 	    }
 		document.getElementById('search_information').style.display='';
 		search_name.innerText = data.fullName; 
+		search_sex.innerText = data.sex;
 		search_studentid.innerText = data.studentId;
 		search_college.innerText = data.college;
 		search_number.innerText = data.phoneNumber;
@@ -47,6 +48,9 @@ function searchCallback(data) {
 		else{
 			search_isUpgradePrivilege.innerText = "在职学生";
 		}
+		search_bankCard.innerText = data.bankCard;
+		search_idCard.innerText = data.idCard;
+		search_idCard.innerText = "sfdf";
 	}	
 	else{
 		alert("查找的学生不存在！");
@@ -129,11 +133,13 @@ function getInformationCallback(data) {
 	/*alert(data.fullName);
 	alert("getInformationCallback");*/
 	$("#fullName").val(""+data.fullName);
+	$("#sex").val(""+data.sex);
 	$("#studentId").val(""+data.studentId);
 	$("#college").val(""+data.college);
 	$("#phoneNumber").val(""+data.phoneNumber);
 	$("#isUpgradePrivilege").val(""+data.isUpgradePrivilege);
-	
+	$("#bankCard").val(""+data.bankCard);
+	$("#idCard").val(""+data.idCard);
 }
 
 

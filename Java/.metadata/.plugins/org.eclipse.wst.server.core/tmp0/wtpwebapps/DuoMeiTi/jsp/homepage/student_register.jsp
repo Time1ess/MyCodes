@@ -57,6 +57,15 @@
 	  
 	  <br><br>
 	  
+	  <%-- <div class="form-group col-lg-offset-4">
+	  	<label for="profilePhotoPath">上传头像</label>
+	  	<input type="file" class ="pull-right "name="profilePhotoPath" id="file_upload"  placeholder="图片地址">
+	  <br>
+			 <s:fielderror/>
+	  </div>
+	  
+	  <br><br> --%>
+	  
 	  <div class="form-group col-lg-offset-4">
 	  	<label for="studentId">学&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号</label>
 	  	<input type="text" class="form-control" name="studentId" id="studentId" onblur="checkStudentId()" value="<s:property value="studentId"/>" placeholder="">
@@ -187,12 +196,20 @@
     	}
     	else if(data.register_status == "1")
     	{
-    		alert("注册用户名或者密码为空");
+    		alert("有未填项，注册失败");
     	}
     	else if(data.register_status == "2")
    		{
     		alert("注册用户名重复");
    		}
+    	/* else if(data.register_status == "4")
+    	{
+    		alert("姓名不能为空");
+    	}*/
+    	else if(data.register_status == "3")
+    	{
+    		alert("两次密码不一致");
+    	}   
     	else 
    		{
     		alert("error with status" + data.register_status);

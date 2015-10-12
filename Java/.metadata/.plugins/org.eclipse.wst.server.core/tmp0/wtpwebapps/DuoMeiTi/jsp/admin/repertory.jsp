@@ -1,5 +1,5 @@
 <%@ include file="/jsp/base/taglib.jsp"%>
-
+<link rel="stylesheet" type="text/css" media="screen" href="/css/admin/repertory.css"/>
 <layout:override name="main_content">
 	<div class="mycontent">
 

@@ -18,4 +18,6 @@ for i=1:N
     fprintf('%d----%d-----%0.5f\n',i,rightCount,accuracy);
     tmp_accu(i)=accuracy;
     plot(tmp_accu);
+    axis([1 i+1 0 1]);
+    pause;
 end

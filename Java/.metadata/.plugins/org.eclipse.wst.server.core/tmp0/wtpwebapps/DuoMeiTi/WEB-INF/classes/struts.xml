@@ -77,7 +77,6 @@
     
     <include file="/admin/admin.xml"/>	
     <include file="/homepage/homepage.xml"/>
-<!--     <include file="/homepage/homepage.xml"/> -->
     <include file="/student/student.xml"/>
     <include file="/Message/message.xml"/>
 

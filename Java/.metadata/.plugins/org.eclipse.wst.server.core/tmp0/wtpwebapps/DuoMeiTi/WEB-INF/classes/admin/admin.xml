@@ -14,8 +14,7 @@
 				/admin/classroom/teachBuildingAction 
 			</result>
 		</action>
-		
-		
+
 <!-- 		<action name=""> -->
 <!-- 			<result> -->
 <!-- 				/jsp/admin/base.jsp -->
@@ -51,6 +50,13 @@
 			</result>
 		</action>
 		
+		<action name="repertory_*" class="admin.RepertoryAction" method="{1}">
+			<result name="success" type="json">
+<!-- 				<param name="includeProperties">status, rtNumber, rtSave, add_repertory_html</param> -->
+<!-- 				<param name="excludeProperties"> repertory_list</param> -->
+			</result>
+		</action> 
+		
 		<action name="modifypassword" class="admin.ModifyPasswordAction">
 			<result name="success">
 				/jsp/admin/modify_password.jsp
@@ -63,12 +69,7 @@
 			</result>
 		</action>
 
-		<action name="repertory_*" class="admin.RepertoryAction" method="{1}">
-			<result name="success" type="json">
-				<!-- <param name="includeProperties">status, rtNumber, rtSave, add_repertory_html</param> -->
-<!-- 				<param name="excludeProperties"> repertory_list</param> -->
-			</result>
-		</action>        
+		       
 	</package>
 	
 	
@@ -168,18 +169,21 @@
 		</action>
 		
 		<!-- 技术培训 -->
-		<action name="techteach" class="admin.StudentManageAction" method="studentInformation">
+		<action name="training" class="admin.TrainingAction">
 			<result>
-				/jsp/admin/student_manage/student_manage_techteach.jsp
+				/jsp/admin/student_manage/training.jsp
 			</result>
 		</action>
+		<action name="training_*" class="admin.TrainingAction" method="{1}">
+			<result name="success" type="json"></result>
+		</action> 
 	
 	
 	
 		<!-- 获取学生信息 -->
 		<action name="get_student_information" class="admin.StudentManageAction" method="getStudentInformation">
            <result name="success" type="json">
-            	<param name="includeProperties">fullName,studentId,college,phoneNumber,isUpgradePrivilege</param>           
+            	<param name="includeProperties">fullName,sex,studentId,college,phoneNumber,isUpgradePrivilege,bankCard,idCard</param>           
            </result>           
         </action>
 		
@@ -201,7 +205,7 @@
         <!-- 检索学生信息 -->
         <action name="student_information_search" class="admin.StudentManageAction" method="searchStudentInformation">
             <result name="success" type="json">
-            <param name="includeProperties">isEmpty,student_profile_id,fullName,studentId,college,phoneNumber,isUpgradePrivilege</param>
+            <param name="includeProperties">isEmpty,student_profile_id,fullName,studentId,sex,college,phoneNumber,isUpgradePrivilege,bankCard,idCard</param>
 			</result>        
         </action>
         
@@ -320,12 +324,12 @@
 			<result name="success" type="redirect"> /admin/HomepageModify/notice</result>
 		</action>
 		
-		<action name="FileUpload"  class="admin.FileUploadAction">
+		<action name="FileUpload"  class="admin.ResourceFileUploadAction">
 			<result>
 				/jsp/admin/HomepageModify/FileUpload.jsp
 			</result>			
 		</action>
-		<action name="FileUploadInsert"  class="admin.FileUploadAction" method ="insert">
+		<action name="FileUploadInsert"  class="admin.ResourceFileUploadAction" method ="insert">
 			<result type="json">				
 			</result>			
 		</action>
