@@ -28,8 +28,9 @@
 		<link rel="stylesheet" type="text/css" media="screen" href="/css/base/table.css" >		
 		<link rel="stylesheet" type="text/css" media="screen" href="/css/base/base.css"/> 
 		<link rel="stylesheet" type="text/css" media="screen" href="/css/admin/classroom_manage.css"/>
-		<link rel="stylesheet" type="text/css" media="screen" href="/css/admin/repertory.css"/>
+
 		<link rel="stylesheet" type="text/css" media="screen" href="/css/base/websocket.css">
+		
 		
 		
 		

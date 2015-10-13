@@ -13,16 +13,16 @@
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="classroom_json" key="selection"/>
+		<item value="classroomDevice" key="selection"/>
 		<list key="findhistory">
+			<item value="classroomDevice"/>
+			<item value="add_action"/>
+			<item value="classroommanage"/>
+			<item value="checkrecord"/>
+			<item value="check-record-modal"/>
+			<item value="check_record_modal"/>
 			<item value="classroom_json"/>
 			<item value="build_name"/>
-			<item value="&lt;s"/>
-			<item value="classroom"/>
-			<item value="teachbuilding"/>
-			<item value="namespace=&quot;/admin/classroom"/>
-			<item value="classroommanage"/>
-			<item value="hello"/>
 		</list>
 		<list key="replacehistory">
 		</list>

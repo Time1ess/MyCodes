@@ -23,8 +23,8 @@
         	<result>/jsp/homepage/new_home.jsp</result>
         </action>
         
-        <action name="ClassroomFile" class="homepage.HomeAction" method="classroomFile">
-			<result>/jsp/homepage/ClassroomFile.jsp</result>
+        <action name="ResourceFile" class="homepage.HomeAction" method="resourceFile">
+			<result>/jsp/homepage/ResourceFile.jsp</result>
     	</action>
         
     

@@ -6,19 +6,18 @@
 		<br/>
 		
 		
-		<div class="form-group col-lg-offset-1">
-		    <label for="username">用户头像:</label>		
-		    <img src="<s:property value="profilePhotoPath"/>"  width="100" height="100" />
-		    
-		</div>
 		
-		<div class="form-group col-lg-offset-1">
-		    <label for="username">更改头像:</label>
-		 	<input type="file" name="profilePhotoPath" id="file_upload"  placeholder="图片地址"> 
-		</div>
 		
 	
 		<form class="form-inline"  method="POST" id="admin_information_form">
+		
+			<br/>
+			<br/>
+			<br/>		
+			<div class="form-group col-lg-offset-1">
+			    <label for="username">用户头像:</label>		
+			    <img src="<s:property value="profilePhotoPath"/>"  width="100" height="100" />   
+			</div>
 			<br/>
 			<br/>
 			<br/>
@@ -54,18 +53,19 @@
 				<label for="remark">备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注:</label>
 				<input type="text" class="form-control" id="remark" name="remark" value="<s:property value="remark"/>" placeholder=<s:property value="remark"/>>
 			</div>
-			
 			<br>
 			<br>
 			<br>
-			<br>
-			<br>
-			<br>
-			
-		
-			<button type="button" class="btn btn-success col-lg-offset-5" id="change">修改</button>
-		  
 		</form>
+		
+	
+		<div class="form-group col-lg-offset-1">
+		    <label for="username">更改头像:</label>
+		 	<input type="file" name="profilePhotoPath" id="file_upload"  placeholder="图片地址"> 
+		 	<button type="button" class="btn btn-success col-lg-offset-4" id="change">修改</button> 
+		</div>
+			
+		  
 		
 		
 		

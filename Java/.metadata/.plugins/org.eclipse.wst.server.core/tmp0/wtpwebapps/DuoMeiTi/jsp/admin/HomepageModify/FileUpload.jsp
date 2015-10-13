@@ -11,8 +11,8 @@
 		<button class="btn btn-primary" id="file_upload_button" type="button" > 上传</button>
 	</form>
 	
-	<div id="ClassroomFileTableDiv">
-		<%@ include file="/jsp/admin/HomepageModify/ClassroomFileTable.jsp" %>
+	<div id="ResourceFileTableDiv">
+		<%@ include file="/jsp/admin/HomepageModify/ResourceFileTable.jsp" %>
 	</div>
 	
 
@@ -66,7 +66,7 @@
 	function insertCallBack(data)
 	{
 		$("#file_upload").val("");
-		$(document).find("#ClassroomFileTableDiv").html(data.classroom_file_table);
+		$(document).find("#ResourceFileTableDiv").html(data.classroom_file_table);
 		
 // 		window.location.reload() 
 

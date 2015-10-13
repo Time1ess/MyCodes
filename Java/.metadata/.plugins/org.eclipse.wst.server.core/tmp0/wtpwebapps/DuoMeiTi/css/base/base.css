@@ -105,9 +105,17 @@ a:hover,a:focus{
     border:0px ;
     outline:none;
     color:black;   
-    font-size:15px;
+    font-size:16px;
+    font-weight:bold;
     display:block;
     text-align:center;
+}
+.traincss{
+	margin-top:50px;
+}
+.trainbtn{
+	padding:15px;
+/* 	text-align:right; */
 }
 .navbar-button-left{
     /*border-top-left-radius:18px;*/
@@ -149,5 +157,4 @@ a:hover,a:focus{
     background-image: url(/static/images/dh.jpg);
     background-size:cover;
 }
-
 
