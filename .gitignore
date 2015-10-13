@@ -14,6 +14,7 @@
 .metadata
 .recommenders
 /DuoMeiTi/*
+**/DuoMeiTi/
 *.pyc
 *.jsp
 *.ini
