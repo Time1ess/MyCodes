@@ -11,10 +11,9 @@
 *.fdx
 *.fnm
 *.frq
-.metadata
-.recommenders
-/DuoMeiTi/*
-**/DuoMeiTi/
+.metadata/
+.recommenders/
+DuoMeiTi/
 *.pyc
 *.jsp
 *.ini
