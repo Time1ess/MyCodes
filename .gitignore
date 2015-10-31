@@ -15,6 +15,7 @@
 .recommenders/
 DuoMeiTi/
 *.pyc
+.pyc
 *.jsp
 *.ini
 *.json
