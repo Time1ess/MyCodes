@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Look What I Drew</title>
+<meta charset="utf-8">
+<style>
+    canvas {border:1px solid black;}
+</style>
+<script src="tweetshirt.js"></script>
+</head>
+<body>
+<h1>TweetShirt</h1>
+<canvas width="600" height="200" id="tshirtCanvas">
+    <p>Please upgrade your browser to use TweetShirt!</p>
+</canvas>
+<form>
+    <p>
+    <label for="backgroundColor">select background color:</label>
+    <select id="backgroundColor">
+        <option value="white" selected="selected">White</option>
+        <option value="black">Black</option>
+    </select>
+    </p>
+    <p>
+    <label for="shape">Circles or squares?</label>
+    <select id="shape">
+        <option value="none" selected="selected">Neither</option>
+        <option value="circles">Circles</option>
+        <option value="squares">Squares</option>
+    </select>
+    </p>
+    <p>
+    <label for="foregroundColor">select foreground color:</label>
+    <select id="foregroundColor">
+        <option value="black" selected="selected">Black</option>
+        <option value="white">White</option>
+        <option value="lightblue">Light Blue</option>
+    </select>
+    </p>
+    <p>
+    <label for="tweets">Pick a tweet:</label>
+    <select id="tweets">
+        <option value="@startbuzzceo you're on a #shirt #tweetshirt">@startbuzzceo you're on a #shirt #tweetshirt</option>
+        <option value="@taylorswfit13 such amazing selfiiiiiiie">@taylorswfit13 such amazing selfiiiiiiie"</option>
+    </select>
+    </p>
+    <p>
+    <input type="button" id="previewButton" value="Preview">
+    </p>
+</form>
+</body>
+<html>

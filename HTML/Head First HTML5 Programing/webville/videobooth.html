@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Starring YOU Video Booth</title>
+    <link rel="stylesheet" href="videobooth.css" media="all">
+    <script src="videobooth.js"></script>
+</head>
+<body>
+<div id="booth">
+    <div id="console">
+        <div id="videoDiv">
+            <video id="video" width="720" height="480"></video>
+            <canvas id="buffer" width="720" height="480"></canvas>
+            <canvas id="display" width="720" height="480"></canvas>
+        </div>
+        <div id="dashboard">
+            <div id="effects">
+                <a pushed="unpushed" class="effect" id="normal"></a>
+                <a pushed="unpushed" class="effect" id="western"></a>
+                <a pushed="unpushed" class="effect" id="noir"></a>
+                <a pushed="unpushed" class="effect" id="scifi"></a>
+            </div>
+            <div id="controls">
+                <a pushed="unpushed" class="control" id="play"></a>
+                <a pushed="unpushed" class="control" id="pause"></a>
+                <a pushed="unpushed" class="control" id="loop"></a>
+                <a pushed="unpushed" class="control" id="mute"></a>
+            </div>
+            <div id="videoSelection">
+                <a pushed="unpushed" id="video1" class="videoSelection"></a>
+                <a pushed="unpushed" id="video2" class="videoSelection"></a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
