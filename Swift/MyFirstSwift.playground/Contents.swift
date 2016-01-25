@@ -75,4 +75,6 @@ for value in dictionary4.values
 
 Array(dictionary4.keys)
 
-
+let mydict = ["libingbing":"李冰冰","fanbingbing":"范冰冰"]
+print(mydict["libingbing"])
+print(mydict["yangmi"])
