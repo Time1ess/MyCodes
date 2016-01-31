@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="CALayerPlayground" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="8C9-X3-pIf">
+                                <rect key="frame" x="150" y="150" width="300" height="300"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EGX-Uk-ja6">
+                                        <rect key="frame" x="0.0" y="0.0" width="300" height="300"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <gestureRecognizers/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="300" id="N5N-e9-VnR"/>
+                                            <constraint firstAttribute="width" constant="300" id="WeO-Of-IBJ"/>
+                                        </constraints>
+                                        <connections>
+                                            <outletCollection property="gestureRecognizers" destination="ZOh-X2-Ndf" appends="YES" id="oG2-5p-Kzs"/>
+                                            <outletCollection property="gestureRecognizers" destination="0g1-Pj-kqr" appends="YES" id="miF-ug-seE"/>
+                                        </connections>
+                                    </view>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="8C9-X3-pIf" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="8DE-3l-be5"/>
+                            <constraint firstItem="8C9-X3-pIf" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="rWb-8l-Cxd"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="viewForLayer" destination="EGX-Uk-ja6" id="nTS-cL-tSo"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="ZOh-X2-Ndf">
+                    <connections>
+                        <action selector="TapGestureRecognized:" destination="BYZ-38-t0r" id="Scg-dc-p62"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <pinchGestureRecognizer id="0g1-Pj-kqr">
+                    <connections>
+                        <action selector="PinchGestureRecognized:" destination="BYZ-38-t0r" id="fDV-iN-Vvj"/>
+                    </connections>
+                </pinchGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="305" y="340.49999999999994"/>
+        </scene>
+    </scenes>
+</document>
