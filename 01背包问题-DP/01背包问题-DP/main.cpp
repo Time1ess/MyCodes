@@ -30,7 +30,7 @@ int rec(int i, int j)	//递归算法，O(n)=(2^n)
 	{
 		res = 0;
 	}
-	else if (j< w[i])
+	else if (j < w[i])
 	{
 		res = rec(i + 1, j);	//当前物品价值超过上限，从剩余物品中选择
 	}
