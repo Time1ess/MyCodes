@@ -1,0 +1,36 @@
+i 1
+s 5
+i 5
+p
+s 5
+d 5
+p
+i 7
+p
+i 9
+p
+i 13
+i 16
+i 14
+p
+d 7
+p
+s 16
+p
+i 25
+i 6
+s 6
+p
+d 6
+s 6
+p
+i 8
+p
+i 2
+i 16
+i 4
+s 55
+i 38
+i 41
+p
+e
