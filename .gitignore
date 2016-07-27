@@ -22,3 +22,8 @@ DuoMeiTi/
 *.swp
 .DS_Store
 *private*
+*bin/
+*lib/
+*include/
+.*
+!.gitignore
