@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-07-30 15:25
-# Last modified: 2016-08-01 15:54
+# Last modified: 2016-08-02 16:06
 # Filename: searchengine.py
 # Description:
 import urllib2
@@ -11,8 +11,10 @@ from BeautifulSoup import *
 from urlparse import urljoin
 import MySQLdb
 import re
+import nn
 
 ignore_words = set(['the', 'of', 'to', 'and', 'a', 'in', 'is', 'it'])
+mynet = nn.searchnet()
 
 
 class crawler:
@@ -91,7 +93,7 @@ class crawler:
         if from_id == to_id:
             return
         self.cur.execute("insert into link(fromid,toid) values(%d,%d)" %
-            (from_id, to_id))
+                         (from_id, to_id))
         link_id = self.cur.lastrowid
         for word in words:
             if word in ignore_words:
@@ -99,7 +101,6 @@ class crawler:
             word_id = self.get_entry_id('wordlist', 'word', word)
             self.cur.execute("insert into linkwords(linkid,wordid) values \
                     (%d,%d)" % (link_id, word_id))
-
 
     def crawl(self, pages, depth=2):
         for i in xrange(depth):
@@ -185,6 +186,7 @@ class crawler:
 
             self.dbcommit()
 
+
 class searcher:
     def __init__(self, db='PCI', host='localhost', user='root', passwd='root',
                  port=3306):
@@ -255,6 +257,7 @@ class searcher:
         rank_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
         for url_id, score in rank_scores[:10]:
             print '%f\t%s' % (score, self.get_url_name(url_id))
+        return word_ids, [r[0] for r in rank_scores]
 
     def normalize_scores(self, scores, small_better=0):
         vsmall = 0.00001
@@ -321,3 +324,9 @@ class searcher:
                     pr = self.cur.fetchone()[0]
                     link_scores[toid] += pr
         return self.normalize_scores(link_scores)
+
+    def nn_score(self, rows, word_ids):
+        url_ids = [url_id for url_id in set(row[0] for row in rows)]
+        nn_res = mynet.get_result(word_ids, url_ids)
+        scores = {url_ids[i]: nnres[i] for i in xrange(len(url_ids))}
+        return self.normalize_scores(scores)
