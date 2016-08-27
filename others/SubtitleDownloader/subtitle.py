@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-08-27 14:12
-# Last modified: 2016-08-27 17:19
+# Last modified: 2016-08-27 17:35
 # Filename: subtitle.py
 # Description:
 import urllib2
@@ -13,6 +13,7 @@ import json
 import sys
 import os
 import re
+from multiprocessing import Pool
 
 DEBUG = False
 
@@ -28,6 +29,7 @@ tag_pat = re.compile('<.*?>')
 pages_pat = re.compile('class="pages[\w\W]*?</div>')
 pagenum_pat = re.compile('page=(.*?)&')
 download_pat = re.compile('subtitle-links[\w\W]*?字幕下载[\w\W]*?href="(.*?)"[\w\W]*?>(.*?)<')
+
 
 
 def login(username=None, password=None):
@@ -125,8 +127,10 @@ def search(query):
         tar_href = subtitles[0][0]
     html = urlopen(index_url+tar_href)
     data = download_pat.findall(html)
-    download(data[0][1], data[0][0])
+    pool.apply_async(download, args=(data[0][1], data[0][0]))
 
+
+pool = Pool()
 
 def main():
     init()
@@ -136,10 +140,13 @@ def main():
         if DEBUG:
             query = '疑犯追踪 S04 E13'
         else:
-            query = raw_input("请输入搜索内容(q退出):")
-            if query == 'q':
+            try:
+                query = raw_input("请输入搜索内容(q退出):")
+            except EOFError:
                 break
         search(query)
+    pool.close()
+    pool.join()
 
 if __name__ == '__main__':
     main()
