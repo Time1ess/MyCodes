@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-08-27 14:12
-# Last modified: 2016-08-27 17:35
+# Last modified: 2016-08-29 10:12
 # Filename: subtitle.py
 # Description:
 import urllib2
@@ -13,7 +13,7 @@ import json
 import sys
 import os
 import re
-from multiprocessing import Pool
+from multiprocessing.pool import ThreadPool
 
 DEBUG = False
 
@@ -96,8 +96,9 @@ def print_progress(percent, words='当前进度: %s| %d%%'):
     sys.stdout.write((words % (progress, percent))+'\r')
 
 
-def search(query):
-    query = query.replace(' ', '+')
+def search(origin_query):
+    keywords = origin_query.split(' ')
+    query = origin_query.replace(' ', '+')
     print_progress(0)
     html = urlopen(search_url+query)
     subtitles = get_subtitles_data(html)
@@ -110,27 +111,32 @@ def search(query):
             subtitles += _subtitles
     print_progress(100)
     print
+    subtitles = filter(lambda x: all([q in x[1] for q in keywords]), subtitles)
     item_cnts = len(subtitles)
-    if item_cnts > 1:
-        for idx, (url, title) in enumerate(subtitles):
-            print '[', idx+1, ']', title
-        while True:
-            choice = input('找到多个匹配项，请输入序号确认(0退出):')
-            if choice == 0:
-                exit(0)
-            elif 1 <= choice <= item_cnts:
-                break
-            else:
-                print '无效选项，请重新输入!'
-        tar_href = subtitles[choice-1][0]
-    else:
-        tar_href = subtitles[0][0]
+    try:
+        if item_cnts > 1:
+            for idx, (url, title) in enumerate(subtitles, 1):
+                print '[', idx, ']', title
+            while True:
+                choice = input('找到多个匹配项，请输入序号确认(0退出):')
+                if choice == 0:
+                    exit(0)
+                elif 1 <= choice <= item_cnts:
+                    break
+                else:
+                    print '无效选项，请重新输入!'
+            tar_href = subtitles[choice-1][0]
+        else:
+            tar_href = subtitles[0][0]
+    except Exception, e:
+        print '搜索出现错误...'
+        return
     html = urlopen(index_url+tar_href)
     data = download_pat.findall(html)
     pool.apply_async(download, args=(data[0][1], data[0][0]))
 
 
-pool = Pool()
+pool = ThreadPool()
 
 def main():
     init()
