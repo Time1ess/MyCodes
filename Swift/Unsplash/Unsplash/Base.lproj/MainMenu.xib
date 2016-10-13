@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
+        <capability name="system font weights other than Regular or Bold" minToolsVersion="7.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
+            <connections>
+                <outlet property="delegate" destination="Voe-Tx-rLC" id="GzC-gU-4Uq"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Unsplash" customModuleProvider="target"/>
+        <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
+        <customObject id="jgw-TF-XEG" customClass="StatusMenuController" customModule="Unsplash" customModuleProvider="target">
+            <connections>
+                <outlet property="about_window" destination="rGl-kA-yGf" id="qQX-1Y-pWy"/>
+                <outlet property="current_interval" destination="tTz-eI-8vZ" id="HbX-KM-6H1"/>
+                <outlet property="current_resolution" destination="Gtr-Jz-Npm" id="Tbb-pK-kua"/>
+                <outlet property="label_next_update" destination="ThZ-AP-qfl" id="B2Y-d4-Ais"/>
+                <outlet property="statusMenu" destination="slI-Am-scm" id="AGU-Tw-aBj"/>
+            </connections>
+        </customObject>
+        <menu id="slI-Am-scm">
+            <items>
+                <menuItem title="下次更新：现在" id="ThZ-AP-qfl">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="更换当前壁纸" id="lUl-fQ-ErB">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="update_background_now:" target="jgw-TF-XEG" id="oXw-8X-4yo"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="bBS-Nh-3qn"/>
+                <menuItem title="设置壁纸类别" id="bDl-EF-QSO">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="设置壁纸类别" id="Cec-oy-IMN">
+                        <items>
+                            <menuItem title="建筑" id="03g-ZG-Hyj">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="set_category:" target="jgw-TF-XEG" id="bfk-Aj-shc"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="食物" id="aym-HZ-FmY">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="set_category:" target="jgw-TF-XEG" id="pjN-9X-feZ"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="自然" id="YAv-ne-Lkd">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="set_category:" target="jgw-TF-XEG" id="qUJ-Ub-CNW"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="人物" id="f6q-H4-zEM">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="set_category:" target="jgw-TF-XEG" id="k1S-bW-VBk"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="科技" id="091-kd-sO7">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="set_category:" target="jgw-TF-XEG" id="Rku-7P-2K7"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="物体" id="gtl-Kg-NO7">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="set_category:" target="jgw-TF-XEG" id="fRh-3W-hKD"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="更新间隔" id="fYN-pS-ixX">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="更新间隔" id="iF1-8p-Cs3">
+                        <items>
+                            <menuItem title="每10分钟" state="on" id="tTz-eI-8vZ">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="set_interval:" target="jgw-TF-XEG" id="P6d-2f-do7"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="每30分钟" id="Edq-aR-2Ag">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="set_interval:" target="jgw-TF-XEG" id="hq8-cg-R6h"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="每1小时" id="E9C-mG-8l2">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="set_interval:" target="jgw-TF-XEG" id="3NW-Mq-uGa"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="每2小时" id="s3k-fi-zYK">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="set_interval:" target="jgw-TF-XEG" id="xrd-Jn-nbv"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="每5小时" id="My0-we-y09">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="set_interval:" target="jgw-TF-XEG" id="ClQ-cI-hmf"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="每天" id="tmV-mm-KP8">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="set_interval:" target="jgw-TF-XEG" id="Axz-Vm-Tim"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="每周" id="0sg-Df-bk3">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="set_interval:" target="jgw-TF-XEG" id="Iab-y7-5jl"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="壁纸分辨率" id="x2N-gT-n1G">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="壁纸分辨率" id="gIy-7J-c8W">
+                        <items>
+                            <menuItem title="高分辨率(2880*1800)" state="on" id="Gtr-Jz-Npm">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="set_resolution:" target="jgw-TF-XEG" id="XE1-h9-Fiv"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="低分辨率(1920*1080)" id="i2J-zc-ayt">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="set_resolution:" target="jgw-TF-XEG" id="dvp-Cv-eaH"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="vAc-PL-XSk"/>
+                <menuItem title="设置" id="EjR-qL-4ZV">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="反馈" id="QAb-wW-1OV">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="关于" id="5x1-oX-501">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="aboutClicked:" target="jgw-TF-XEG" id="WDm-F0-t75"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="sL9-5N-DbV"/>
+                <menuItem title="退出" id="CGp-b9-ahO" userLabel="Quit">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="quitClickedWithSender:" target="jgw-TF-XEG" id="SJ6-jt-A3m"/>
+                    </connections>
+                </menuItem>
+            </items>
+            <point key="canvasLocation" x="132" y="165.5"/>
+        </menu>
+        <customObject id="xIU-Hm-GEW" customClass="Unsplasher" customModule="Unsplash" customModuleProvider="target"/>
+        <window title="关于 Unsplasher" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="rGl-kA-yGf">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="207" width="394" height="441"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <view key="contentView" id="l9g-0c-Gco">
+                <rect key="frame" x="0.0" y="0.0" width="394" height="441"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OxM-WR-twe">
+                        <rect key="frame" x="129" y="284" width="137" height="137"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="icon" id="F34-QY-PFt"/>
+                    </imageView>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8H0-zp-tSY">
+                        <rect key="frame" x="125" y="242" width="144" height="34"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Unsplasher" id="LWD-qV-R7P">
+                            <font key="font" metaFont="systemSemibold" size="20"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7je-s6-trK">
+                        <rect key="frame" x="24" y="139" width="346" height="85"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="一个如果不是因为我升级了MacOS Sierra 10.12系统导致原来自动下载更换壁纸的APP无法启动、不断崩溃而迫不得已自己用Swift写的功能类似的连APP的icon都是从Photoshop自定义图形里面随便选了一个充数的APP" id="VPI-Lz-lL4">
+                            <font key="font" size="13" name=".PingFangSC-Regular"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9Lf-Cq-NJI">
+                        <rect key="frame" x="169" y="232" width="185" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Ver 1.0.0(也许就这一个版本了)" id="did-Gm-DbZ">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="unc-yy-SQB">
+                        <rect key="frame" x="24" y="53" width="95" height="69"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="特别鸣谢:     Alamofire:      Unsplash: " id="W5n-lz-Shf">
+                            <font key="font" metaFont="titleBar"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Feg-Fs-CCK">
+                        <rect key="frame" x="108" y="82" width="244" height="23"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" state="on" title="https://github.com/Alamofire/Alamofire " id="2Cg-fM-PD9">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LRB-Xs-7xQ">
+                        <rect key="frame" x="108" y="67" width="141" height="22"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" state="on" title="https://unsplash.com" id="RIC-j2-p6U">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="-176" y="21.5"/>
+        </window>
+        <userDefaultsController representsSharedInstance="YES" id="aBB-GL-d1J"/>
+    </objects>
+    <resources>
+        <image name="icon" width="256" height="256"/>
+    </resources>
+</document>
