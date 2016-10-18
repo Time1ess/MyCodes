@@ -59,7 +59,7 @@ class Unsplasher: NSObject {
     static func download_background(url : String, recursive: Bool)
     {
         let destination = DownloadRequest.suggestedDownloadDestination(for: .cachesDirectory)
-        Alamofire.download(url, to: destination).response { response in
+        Alamofire.download(url, to: destination).validate().response { response in
             if(response.error == nil)
             {
                 set_background(file_path: response.destinationURL!)
@@ -70,6 +70,25 @@ class Unsplasher: NSObject {
                     _timestamp = Int(time_interval)+_interval*60
                     StatusMenuController.update_label_time(timestamp: _timestamp)
                     DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(Unsplasher._interval*60), execute: {
+                        Unsplasher.update_background(recursive: true)
+                    })
+                    print("Response received(recursive mode): now: \(Int(time_interval))  next: \(_timestamp)  after:\(Unsplasher._interval*60)")
+                }
+                else
+                {
+                    NSLog("Response received(no recursive mode)")
+                }
+            }
+            else
+            {
+                NSLog("Response Error: %s", response.error!.localizedDescription)
+                if(recursive == true)
+                {
+                    let now = NSDate()
+                    let time_interval:TimeInterval = now.timeIntervalSince1970
+                    _timestamp = Int(time_interval)
+                    StatusMenuController.update_label_time(timestamp: _timestamp)
+                    DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
                         Unsplasher.update_background(recursive: true)
                     })
                 }
