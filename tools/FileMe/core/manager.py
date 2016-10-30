@@ -3,12 +3,17 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-10-29 19:34
-# Last modified: 2016-10-30 11:34
+# Last modified: 2016-10-30 15:25
 # Filename: manager.py
 # Description:
 __metaclass__ = type
 import socket
 import traceback
+import random
+import hashlib
+from multiprocessing.dummy import Pool
+
+DEBUG = True
 
 
 class _Messenger:
@@ -25,7 +30,10 @@ class _Messenger:
         """
         while True:
             msg, addr = self._mp.recvfrom(4096)
-            print '[MSG]:', msg, addr,
+            if msg == 'ACK ACK':
+                print 'IGNORE'
+                continue
+            print '[MSG]:', msg, addr
             ret, addr = yield (msg, addr)
             print '\t\t[RET]:', ret, addr
             self._mp.sendto(ret, addr)
@@ -47,12 +55,86 @@ class _Messenger:
         self._mp.close()
 
 
-class _TransferSession:
-    pass
+class _FileSession:
+    def __init__(self, remote, filename, force):
+        self._target_host = remote
+        self._force = force
+        self._md5 = hashlib.md5()
+        self._md5.update(filename)
+        self._filename = self._md5.hexdigest()+'.'+filename.split('.')[-1]
+
+    def __call__(self, sock, *args):
+        try:
+            while True:
+                client, addr = sock.accept()
+                if addr[0] != self._target_host:
+                    client.send('REJ PUT 301 Source host doesn\'t match')
+                    client.close()
+                else:
+                    with open(self._filename, 'wb') as f:
+                        data = client.recv(4096)
+                        while data:
+                            f.write(data)
+                            data = client.recv(4096)
+                    break
+        except Exception, e:
+            print traceback.print_exc()
+        finally:
+            sock.close()
 
 
 class _SessionManager:
-    pass
+    def __init__(self, session_count):
+        self._maxs = session_count
+        self._curs = 0
+        self._wq = []
+        self._pl = Pool()
+
+    def __call__(self, *args):
+        print 'Maintain Session Pool'
+        if self._wq:
+            args = self._wq.pop(0)
+            self._apply(*args)
+
+
+    def _apply(self, local, remote_ip, msg_port, port, filename, force, delayed):
+        fs = _FileSession(remote_ip, filename, force)
+        while True:
+            try:
+                sock = socket.socket()
+                sock.bind((local, port))
+                sock.listen(1)
+            except Exception, e:
+                print 'Err', e
+                if e.errno == 48 and force:
+                    return (401, port)
+                elif e.errno == 48 and not force:
+                    port = random.randint(10000, 15000)
+                else:
+                    return (403, port)
+            else:
+                break
+        try:
+            self._pl.apply_async(fs, args=(sock,), callback=self)
+        except Exception, e:
+            print 'Err', e
+        if delayed:
+            # Should notify local:msg_port that session has been created.
+            pass
+        return (400, port)
+
+    def apply(self, local, remote, msg_port, port, filename, force):
+        if self._curs >= self._maxs:
+            self._wq.append((local, remote, msg_port, port, filename, force, True))
+        else:
+            return self._apply(local, remote, msg_port, port, filename, force, False)
+        return (402, port)
+
+    def terminate(self):
+        self._pl.close()
+        self._pl.terminate()
+        self._pl.join()
+
 
 
 class TransferManager:
@@ -67,7 +149,7 @@ class TransferManager:
         self._msg_port = msg_port
         self._host_ip = socket.gethostbyname(socket.gethostname())
         self._messenger = _Messenger(msg_port)
-        self._manager = _SessionManager()
+        self._manager = _SessionManager(session_count)
         self.known_hosts = {}  # <host:msg_port>
         self.send_msg = self._messenger.send_msg
         self.receive_msg = self._messenger.receive_msg
@@ -89,15 +171,15 @@ class TransferManager:
         return 'ACK %s' % (cmd,)
 
     def _reg(self, target_host, host, port):
-        if target_host == self._host_ip:
+        if target_host == self._host_ip and not DEBUG:
             return self._rej(
                 mtype='REG',
-                code='1000',
+                code='101',
                 reason='Local host should not be registered.')
         elif target_host != host:
             return self._rej(
                 mtype='REG',
-                code='1001',
+                code='102',
                 reason='Host ip doesn\'t match.')
         elif target_host == host:
             self.known_hosts[host] = int(port)
@@ -108,16 +190,35 @@ class TransferManager:
         if target_host != host:
             return self._rej(
                 mtype='URE',
-                code='2002',
+                code='201',
                 reason='Invalid operation'), port
         port = self.known_hosts.pop(host, None)
         if not port:
             return self._rej(
                 mtype='URE',
-                code='2001',
+                code='001',
                 reason='Invalid host'), port
         else:
             return self._ack('URE'), port
+
+    def _srg(self, msg_port, sender_host):
+        self.known_hosts[sender_host] = int(msg_port)
+        return self._ack('SRG')
+
+    def _put(self, args, sender_host, msg_port):
+        host = args[args.index('-h')+1]
+        if host != self._host_ip:
+            return self._rej(
+                mtype='PUT',
+                code='301',
+                reason='Target host doesn\'t match')
+        port = int(args[args.index('-p')+1])
+        filename = args[args.index('-f')+1]
+        force = '-F' in args
+        code, port = self._manager.apply(
+            self._host_ip, sender_host,
+            msg_port, port, filename, force)
+        return code
 
     def handle_msg(self, msg, sender_host, sender_port):
         """
@@ -127,7 +228,7 @@ class TransferManager:
         margs = msg.split(' ')
         mtype = margs[0]
         if mtype != 'REG' and not self.known_hosts.get(sender_host, None):
-            msg = self._rej(mtype, '0001', 'Invalid host')
+            msg = self._rej(mtype, '001', 'Invalid host')
             return (msg, (sender_host, sender_port))
         elif mtype == 'REG':
             msg = self._reg(margs[1], sender_host, margs[2])
@@ -137,15 +238,22 @@ class TransferManager:
             msg, port = self._ure(margs[1], sender_host, sender_port)
             return (msg, (sender_host, port))
         elif mtype == 'PUT':
-            pass
+            code = self._put(margs, sender_host, sender_port)
+            if code == 400 or code == 402:
+                msg = self._ack('PUT')
+            else:
+                msg = self._rej(
+                    mtype='PUT',
+                    code=str(code),
+                    reason='placeholder')
         elif mtype == 'GET':
             pass
         elif mtype == 'ACK':
-            pass
+            msg = self._ack('ACK')
         elif mtype == 'REJ':
             pass
         elif mtype == 'SRG':
-            pass
+            msg = self._srg(margs[1], sender_host)
         elif mtype == 'SPT':
             pass
         elif mtype == 'SGT':
@@ -153,9 +261,9 @@ class TransferManager:
         elif mtype == 'CGT':
             pass
         else:
-            msg = 'REJ 0000 Unknown reason'
-        port = self.known_hosts.get(host)
-        return (msg, (host, port))
+            msg = 'REJ 002 Unknown reason'
+        port = self.known_hosts.get(sender_host)
+        return (msg, (sender_host, port))
 
     def put(self, file_path, host, port, force=False):
         """
@@ -178,6 +286,7 @@ class TransferManager:
         ure_msg = 'URE %s' % (self._host_ip)
         self.send_msg(ure_msg)
         self._messenger.terminate()
+        self._manager.terminate()
 
 
 def test():
