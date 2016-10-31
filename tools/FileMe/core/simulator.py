@@ -3,8 +3,8 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-10-30 12:36
-# Last modified: 2016-10-30 15:25
-# Filename: sender.py
+# Last modified: 2016-10-31 11:06
+# Filename: simulator.py
 # Description:
 import socket
 
@@ -28,8 +28,8 @@ print '\t\t[RET]:', data, addr
 
 ack_sre = 'ACK SRG'
 ure_msg = 'URE %s' % (host,)
-put_msg = 'PUT -h 192.168.56.53 -p 10000 -f 123.mkv -F'
 filename = '123.mkv'
+put_msg = 'PUT -h %s -p %s -f %s -F' % (host, 10000, filename)
 ack_ack = 'ACK ACK'
 msgs = [ack_sre, ack_ack, put_msg, ack_ack, ure_msg, ack_ack]
 for msg in msgs:
@@ -41,7 +41,7 @@ for msg in msgs:
         continue
     data, addr = rsock.recvfrom(4096)
     print '\t\t[RET]:', data, addr
-    if data == 'ACK PUT':
+    if data.startswith('SPT'):
         s = socket.socket()
         s.connect((host, 10000))
         with open(filename, 'rb') as f:
@@ -51,3 +51,4 @@ for msg in msgs:
                 s.send(fbts)
                 fbts = f.read(4096)
             print 'End session.'
+        s.close()

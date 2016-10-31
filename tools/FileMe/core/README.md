@@ -16,12 +16,12 @@
 |`ACK cmd`|Notify client that `cmd` has been acknowledged
 |`REJ cmd code reason`|Nofity client that `cmd` has been rejected with reject code `code` and reason `reason`
 |`SRG msg_port_num`|Notify client that server messenger is listening at port `msg_port_num`
-|`SPT port_num`|Notify client that server is ready to receive file via port `port_num`
-|`SGT port_num`|Notify client that server is ready to provide file via port `port_num`
+|`SPT host_ip port_num file_name`|Notify client that server is ready to receive file `file_name` via port `port_num`
+|`SGT host_ip port_num`|Notify client that server is ready to provide file via port `port_num`
 |`CGT port_num`|Notify server that client is about to receive file from server port `port_num`
+|`DLY cmd host_ip file_name`|Notify client that server will delay transfering file `file_name` on cmd `cmd`
 
-
-### Reject Code Table
+### Code Table
 
 |Reject Code|Description
 |:---|:---
@@ -31,11 +31,10 @@
 |102|Host ip doesn't match
 |201|Invalid operation
 |301|Target host doesn't match
-|401|Port has been used
-|403|Unknown error in put session
-
-
-|Code|Description
-|:---|:---
 |400|Put session has been created
-|402|Put session pool has full, waitting
+|401|Port has been used
+|402|Remote session pool has full, waitting
+|403|Unknown error in put session
+|500|File transfter has begun
+|501|No such file session with this host
+|502|Local session pool has full, waiting
