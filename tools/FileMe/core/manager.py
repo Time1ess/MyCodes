@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-10-29 19:34
-# Last modified: 2016-11-01 11:19
+# Last modified: 2016-11-01 14:12
 # Filename: manager.py
 # Description:
 __metaclass__ = type
@@ -16,7 +16,7 @@ from multiprocessing.dummy import Pool, Lock
 from threading import Thread
 from random import randint
 
-DEBUG = False
+DEBUG = True
 BUF_SIZE = 4096
 
 
@@ -42,7 +42,7 @@ class _Messenger:
                     continue
                 print '[MSG]:', msg, addr
                 ret, addr = yield (msg, addr)
-                print '\t\t[RET]:', ret, addr
+                print '\t[RET]:', ret, addr
                 self._mp.sendto(ret, addr)
             except socket.timeout:
                 continue
@@ -70,21 +70,22 @@ class _Messenger:
 class _FileMasterSession:
     def __init__(self, remote, filename, put_session):
         self._target_host = remote
-        # self._md5 = hashlib.md5()
-        # self._md5.update(filename)
-        # self._filename = self._md5.hexdigest()+'.'+filename.split('.')[-1]
-        self._filename = 'server' + filename
+        self._md5 = hashlib.md5()
+        self._md5.update(filename)
+        self._filename = self._md5.hexdigest()+'.'+filename.split('.')[-1]
         self._PS = put_session
 
     def __call__(self, sock, *args):
-        print 'File transmission begin:', self._filename, self._target_host
         if self._PS:
             open_type = 'wb'
         else:
             open_type = 'rb'
         try:
             while True:
+                sock.settimeout(10)
                 client, addr = sock.accept()
+                sock.settimeout(None)
+                client.settimeout(None)
                 if addr[0] != self._target_host:
                     client.send('REJ PUT 301 Source host doesn\'t match')
                     client.close()
@@ -108,8 +109,6 @@ class _FileMasterSession:
         except Exception:
             if DEBUG:
                 print traceback.print_exc()
-        else:
-            print 'File transmission end:', self._filename, self._target_host
         finally:
             sock.close()
 
@@ -124,6 +123,7 @@ class _FileSlaveSession:
             sock = socket.socket()
             sock.settimeout(10)
             sock.connect((host, port))
+            sock.settimeout(None)
             with open(file_path, open_type) as f:
                 if put_session:
                     fbts = f.read(BUF_SIZE)
@@ -193,7 +193,7 @@ class _SessionManager:
                 print traceback.print_exc()
             pass
         if delayed:
-            # Should notify local:msg_port that session has been created.
+            # notify remote_ip:msg_port that session has been dispatched.
             msg = self._tm._sgt_m(remote_ip, port, filename)
             self._tm.notify(msg, remote_ip)
         return (600, port)
@@ -600,19 +600,22 @@ class TransferManager:
         self.get(file_name, host, port, force, file_path)
 
     def terminate(self):
-        time.sleep(1)
-        while self._manager._curs > 0:
-            print 'Session Not ended.'
+        while True:
+            self._manager._lock.acquire()
+            if self._manager._curs == 0:
+                self._manager._lock.release()
+                self._manager.terminate()
+                break
+            else:
+                print 'Session Not ended.'
             time.sleep(1)
         ure_msg = 'URE %s' % (self._host_ip)
         for host, port in self._known_hosts.iteritems():
             self.send_msg(ure_msg, port, host)
         self._messenger.terminate()
-        self._manager.terminate()
 
 
-def test_put(port):
-    m = TransferManager(port, 2)
+def test_put(m):
     host = socket.gethostbyname(socket.gethostname())
     filenames = [
         '[APTX4869][CONAN][817][720P][AVC_AAC][CHS](59D42DBF).mp4',
@@ -627,8 +630,7 @@ def test_put(port):
     return 0
 
 
-def test_get(port):
-    m = TransferManager(port, 2)
+def test_get(m):
     host = socket.gethostbyname(socket.gethostname())
     filenames = [
         '[APTX4869][CONAN][817][720P][AVC_AAC][CHS](59D42DBF).mp4',
@@ -643,8 +645,7 @@ def test_get(port):
     return 0
 
 
-def test_all(port):
-    m = TransferManager(port, 2)
+def test_all(m):
     host = socket.gethostbyname(socket.gethostname())
     filenames = [
         '[APTX4869][CONAN][817][720P][AVC_AAC][CHS](59D42DBF).mp4',
@@ -666,14 +667,15 @@ def test_all(port):
 
 
 def test(port=9000):
+    m = TransferManager(port, 2)
     if port == 9000:
-        m = TransferManager(port, 2)
+        pass
     elif port == 9001:
-        test_put(port)
+        test_put(m)
     elif port == 9002:
-        test_get(port)
+        test_get(m)
     elif port == 9003:
-        test_all(port)
+        test_all(m)
     else:
         print 'Unknown usage.'
     raw_input()
@@ -696,14 +698,15 @@ def main(port=9100):
         cmd = ' '.join(sys.argv[1:])
         m = TransferManager(port, 1)
         m.terminal_validation(cmd)
+        time.sleep(1)
         m.terminate()
 
 
 if __name__ == '__main__':
     is_server = False
-    if len(sys.argv) == 2:
+    if len(sys.argv) > 1:
         is_server = sys.argv[1] == 'SERVER'
-    if DEBUG or is_server:
+    if is_server:
         if len(sys.argv) == 3:
             port = int(sys.argv[2])
         else:
