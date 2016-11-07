@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-10-29 19:34
-# Last modified: 2016-11-07 15:54
+# Last modified: 2016-11-07 18:50
 # Filename: manager.py
 # Description: The Core of FileMe
 __metaclass__ = type
@@ -375,7 +375,7 @@ class _SessionManager:
                              callback=self)
         self._curs += 1
         self._lock.release()
-        return 600
+        return 700
 
     def feed_get_session(self, host, port, file_path):
         """
@@ -658,7 +658,7 @@ class TransferManager:
                 code='501',
                 reason='No such file session with this host')
         code = self._manager.feed_get_session(host, port, file_path)
-        if code == 600:
+        if code == 700:
             return self._ack_m('SGT')
         elif code == 502:
             return self._delay_m('SGT', host, filename)

@@ -1,4 +1,4 @@
-##  Request Usage
+## Request Usage
 
 ### Request Format
 
@@ -17,7 +17,7 @@
 |`REJ cmd code reason`|Nofity client that `cmd` has been rejected with reject code `code` and reason `reason`
 |`SRG msg_port_num`|Notify client that server messenger is listening at port `msg_port_num`
 |`SPT host_ip port_num file_name`|Notify client that server is ready to receive file `file_name` via port `port_num`
-|`SGT host_ip port_num`|Notify client that server is ready to provide file via port `port_num`
+|`SGT host_ip port_num file_name`|Notify client that server is ready to provide file `file_name` via port `port_num`
 |`DLY cmd host_ip file_name`|Notify client that server will delay transfering file `file_name` on cmd `cmd`
 
 ### Code Table
@@ -34,9 +34,9 @@
 |401|Port has been used
 |402|Master session pool has full, waitting
 |403|Unknown error in master put session
-|500|Master put session is ready
+|500|Slave put session is ready
 |501|No such file session with this host
 |502|Local session pool has full, waitting
 |600|Master get session is ready
 |603|Unknown error in master get session
-
+|700|Slave get session is ready
