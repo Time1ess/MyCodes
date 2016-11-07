@@ -3,9 +3,9 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-10-29 19:34
-# Last modified: 2016-11-01 14:12
+# Last modified: 2016-11-07 15:54
 # Filename: manager.py
-# Description:
+# Description: The Core of FileMe
 __metaclass__ = type
 import socket
 import sys
@@ -21,7 +21,21 @@ BUF_SIZE = 4096
 
 
 class _Messenger:
+    """
+    Messenger is designed to receive and send message with other Messenger.
+    UDP protocol is used.
+    """
     def __init__(self, msg_port=9000, port_range=10):
+        """
+        Author: David
+        Desc:
+                msg_port defines which port to communicate with this
+                messenger.  port_range defines the range of ports to send
+                message to other messenger when port is not specified.
+                A timeout is given to the socket so that messenger will
+                not block when there is no other messengers connect to
+                this messenger.
+        """
         self._base_port = 9000
         self._msg_port = msg_port
         self._port_range = 10
@@ -31,8 +45,13 @@ class _Messenger:
 
     def receive_msg(self):
         """
-        Messenger is responsible for receiving all requests.
-        And all requests should be handled by Manager.
+        Author: David
+        Desc:
+                receive_msg returns a generator which will try to receive
+                message, and will raise timeout error if reach the specified
+                timeout. When a msg is received, it will be yield and hopes
+                to receive a return message from its caller and sends to
+                original sender.
         """
         while True:
             try:
@@ -51,6 +70,14 @@ class _Messenger:
         yield ('TER', None)
 
     def send_msg(self, msg, msg_port=None, host='<broadcast>'):
+        """
+        Author: David
+        Desc:
+                send_msg will send given message to host:msg_port, when
+                msg_port is not given, port_range which defines in __init__
+                will be used.  when host is not given, the message will be
+                broadcasted to all hosts in LAN.
+        """
         if not msg_port:
             ports = [self._base_port+i for i in xrange(self._port_range)]
         else:
@@ -64,11 +91,29 @@ class _Messenger:
             sock.sendto(msg, broad_addr)
 
     def terminate(self):
+        """
+        Author: David
+        Desc:
+                Close the Messenger socket.
+        """
         self._mp.close()
 
 
 class _FileMasterSession:
+    """
+    FileMasterSession is initialized by SERVER during a file session.
+    The session is suggested to run on a separated thread rather than
+    main thread.
+    """
+
     def __init__(self, remote, filename, put_session):
+        """
+        Author: David
+        Desc:
+                Set the prerequisites for this transmission session.
+                target_host is to verify connected host.
+                PS is to indicate whether a PUT_SESSION or GET_SESSION.
+        """
         self._target_host = remote
         self._md5 = hashlib.md5()
         self._md5.update(filename)
@@ -76,6 +121,13 @@ class _FileMasterSession:
         self._PS = put_session
 
     def __call__(self, sock, *args):
+        """
+        Author: David
+        Desc:
+                Waitting a client to connect and verify its identity.
+                Finish the file session with the verified client over TCP.
+                The session will be aborted when reaching the timeout.
+        """
         if self._PS:
             open_type = 'wb'
         else:
@@ -114,7 +166,19 @@ class _FileMasterSession:
 
 
 class _FileSlaveSession:
+    """
+    FileSlaveSession is initialized by CLIENT during a file session.
+    The session is suggested to run on a separated thread rather than
+    main thread.
+    """
+
     def __call__(self, host, port, file_path, put_session):
+        """
+        Author: David
+        Desc:
+                Connect to host:port and to PUT or GET specified file.
+                The session will be aborted when reaching the timeout.
+        """
         if put_session:
             open_type = 'rb'
         else:
@@ -146,7 +210,17 @@ class _FileSlaveSession:
 
 
 class _SessionManager:
+    """
+    SessionManager is in charge of creating and maintaining session pool.
+    """
     def __init__(self, transfermanager, session_count):
+        """
+        Author: David
+        Desc:
+                maxs defines how much sessions run concurrently.
+                curs defines how much sessions are running now.
+                wq is for storing delayed jobs due to given maxs.
+        """
         self._tm = transfermanager
         self._maxs = session_count
         self._curs = 0
@@ -155,7 +229,13 @@ class _SessionManager:
         self._lock = Lock()
 
     def __call__(self, *args):
-        # print 'Maintain Session Manager.'
+        """
+        Author: David
+        Desc:
+                When a SessionManager instance is called, it will maintain
+                the current session count and fetch another job from wq if
+                wq is not empty.
+        """
         self._lock.acquire()
         self._curs -= 1
         self._lock.release()
@@ -165,6 +245,14 @@ class _SessionManager:
 
     def _get_session(self, local, remote_ip, msg_port, port,
                      filename, force, delayed):
+        """
+        Author: David
+        Desc:
+                Init a GET session on SERVER, it will try to bind to local ip
+                and given port, it will try another port if given port has been
+                used and force is not set to True, or it will return reject
+                message when force is set to True.
+        """
         fms = _FileMasterSession(remote_ip, filename, False)
         while True:
             try:
@@ -199,6 +287,12 @@ class _SessionManager:
         return (600, port)
 
     def get_session(self, local, remote, msg_port, port, filename, force):
+        """
+        Author: David
+        Desc:
+                Check if curs of SessionManager is reached its maxs, if True
+                then put the job in wq, else run it now.
+        """
         if self._curs >= self._maxs:
             self._wq.append(
                 (self._get_session, local, remote,
@@ -210,6 +304,16 @@ class _SessionManager:
 
     def _put_session(self, local, remote_ip, msg_port, port,
                      filename, force, delayed):
+        """
+        Author: David
+        Desc:
+                Init a PUT session on SERVER, it will try to bind to local ip
+                and given port, it will try another port if given port has been
+                used and force is not set to True, or it will return reject
+                message when force is set to True.
+
+                [TODO]: merge _put_session and _get_session
+        """
         fms = _FileMasterSession(remote_ip, filename, True)
         while True:
             try:
@@ -244,6 +348,12 @@ class _SessionManager:
         return (400, port)
 
     def put_session(self, local, remote, msg_port, port, filename, force):
+        """
+        Author: David
+        Desc:
+                Check if curs of SessionManager is reached its maxs, if True
+                then put the job in wq, else run it now.
+        """
         if self._curs >= self._maxs:
             self._wq.append(
                 (self._put_session, local, remote,
@@ -254,6 +364,11 @@ class _SessionManager:
         return (402, port)
 
     def _feed_get_session(self, host, port, file_path):
+        """
+        Author: David
+        Desc:
+                Init a GET session on CLIENT and run it.
+        """
         fss = _FileSlaveSession()
         self._lock.acquire()
         self._pl.apply_async(fss, args=(host, port, file_path, False),
@@ -263,6 +378,12 @@ class _SessionManager:
         return 600
 
     def feed_get_session(self, host, port, file_path):
+        """
+        Author: David
+        Desc:
+                Check if curs of SessionManager is reached its maxs, if True
+                then put the job in wq, else run it now.
+        """
         if self._curs >= self._maxs:
             self._wq.append((self._feed_get_session, host, port, file_path))
         else:
@@ -270,6 +391,11 @@ class _SessionManager:
         return 502
 
     def _feed_put_session(self, host, port, file_path):
+        """
+        Author: David
+        Desc:
+                Init a PUT session on CLIENT and run it.
+        """
         fss = _FileSlaveSession()
         self._lock.acquire()
         self._pl.apply_async(fss, args=(host, port, file_path, True),
@@ -279,6 +405,12 @@ class _SessionManager:
         return 500
 
     def feed_put_session(self, host, port, file_path):
+        """
+        Author: David
+        Desc:
+                Check if curs of SessionManager is reached its maxs, if True
+                then put the job in wq, else run it now.
+        """
         if self._curs >= self._maxs:
             self._wq.append((self._feed_put_session, host, port, file_path))
         else:
@@ -286,6 +418,11 @@ class _SessionManager:
         return 502
 
     def terminate(self):
+        """
+        Author: David
+        Desc:
+                Close session pool.
+        """
         self._lock.acquire()
         self._pl.close()
         self._pl.terminate()
@@ -295,12 +432,18 @@ class _SessionManager:
 
 class TransferManager:
     """
-    A manager to handle file transfer.
+    TransferManager is designed to handle file transfer.
+    it contains a SessionManager and a Messenger.
     """
     def __init__(self, msg_port=9000, session_count=10):
         """
-        msg_port should be a range and every time udp msg should be
-        sent from each port.
+        Author: David
+        Desc:
+                Init TransferManager. Create a new thread to receive message
+                and process it.
+                known_hosts defines known hosts and its messenger port.
+                file_paths defines jobs on this TransferManager waitting to
+                be done.
         """
         self._exit_flag = False
         self._msg_port = msg_port
@@ -317,6 +460,12 @@ class TransferManager:
         time.sleep(0.2)
 
     def run(self):
+        """
+        Author: David
+        Desc:
+                Register itself at the beginning, then receive message and
+                return response to its source continously.
+        """
         messenger = self.receive_msg()
         reg_msg = 'REG %s %s' % (self._host_ip, self._msg_port)
         self.send_msg(reg_msg)
@@ -328,19 +477,40 @@ class TransferManager:
                 break
 
     def notify(self, msg, host):
+        """
+        Author: David
+        Desc:
+                A shortcut for sending message to a known host.
+        """
         port = self._known_hosts.get(host, None)
         if not port:
             print 'Host %s is down.' % (host,)
         self.send_msg(msg, port, host)
 
     def _rej_m(self, mtype, code, reason):
+        """
+        Author: David
+        Desc:
+                Generate rejected message.
+        """
         ret = 'REJ %s %s %s' % (mtype, code, reason)
         return ret
 
     def _ack_m(self, cmd):
+        """
+        Author: David
+        Desc:
+                Generate acknowledged message.
+        """
         return 'ACK %s' % (cmd,)
 
     def _reg(self, target_host, host, port):  # Register a host
+        """
+        Author: David
+        Desc:
+                Respond to register and verify it. send server register message
+                to a host if it has been verified.
+        """
         port = int(port)
         if target_host == self._host_ip and self._msg_port == port:
             return self._rej_m(
@@ -358,10 +528,21 @@ class TransferManager:
             return srg_msg
 
     def _srg_m(self, port):  # SRG message
+        """
+        Author: David
+        Desc:
+                Generate server register message.
+        """
         msg = 'SRG %s' % (port,)
         return msg
 
     def _ure(self, target_host, host, port):  # Unregister a host
+        """
+        Author: David
+        Desc:
+                Respond to unregister message, verify its source
+                before delete from known_hosts.
+        """
         if target_host != host:
             return self._rej_m(
                 mtype='URE',
@@ -377,12 +558,26 @@ class TransferManager:
             return self._ack_m('URE'), port
 
     def _srg(self, msg_port, sender_host):  # Server Register
+        """
+        Author: David
+        Desc:
+                Respond to server register message.
+        """
         msg_port = int(msg_port)
         if sender_host != self._host_ip or msg_port != self._msg_port:
             self._known_hosts[sender_host] = msg_port
         return self._ack_m('SRG')
 
     def _put(self, args, sender_host, msg_port):  # Put a file
+        """
+        Author: David
+        Desc:
+                Respond to PUT message. Verify message source
+                and message content, pass args to SessionManager
+                and try to create new session, generate message and
+                send to message source based on return code from
+                SessionManager.
+        """
         host = args[args.index('-h')+1]
         if host != self._host_ip:
             return self._rej_m(
@@ -411,10 +606,21 @@ class TransferManager:
                 reason='Unknown Reason in master put session')
 
     def _spt_m(self, host, port, filename):  # SPT message
+        """
+        Author: David
+        Desc:
+                Generate server put ready message.
+        """
         msg = 'SPT %s %s %s' % (host, port, filename)
         return msg
 
     def _spt(self, host, port, filename):
+        """
+        Author: David
+        Desc:
+                Respond to server PUT ready message. Verify the job content
+                first, reject if no related file job in local job queue.
+        """
         port = int(port)
         try:
             file_path = self._file_paths.pop((host, filename, 'PUT'))
@@ -435,6 +641,14 @@ class TransferManager:
                 reason='Local session pool has full, waitting')
 
     def _sgt(self, host, port, filename):
+        """
+        Author: David
+        Desc:
+                Respond to server GET ready message. Verify the job content
+                first, reject if no related file job in local job queue.
+
+                [TODO]: Merge _sgt and _spt
+        """
         port = int(port)
         try:
             file_path = self._file_paths.pop((host, filename, 'GET'))
@@ -454,7 +668,13 @@ class TransferManager:
                 code=str(code),
                 reason='Local session pool has full, waitting')
 
-    def _get(self, args, sender_host, msg_port):  # Put a file
+    def _get(self, args, sender_host, msg_port):  # GET a file
+        """
+        Author: David
+        Desc:
+                Respond to GET message, FileMasterSession will be created
+                if everything is fine, or request will be rejected.
+        """
         host = args[args.index('-h')+1]
         if host != self._host_ip:
             return self._rej_m(
@@ -483,16 +703,30 @@ class TransferManager:
                 reason='Unknown Reason in master get session')
 
     def _sgt_m(self, host, port, filename):  # SGT message
+        """
+        Author: David
+        Desc:
+                Generate server GET ready message.
+        """
         msg = 'SGT %s %s %s' % (host, port, filename)
         return msg
 
     def _delay_m(self, mtype, host, filename):  # DLY message
+        """
+        Author: David
+        Desc:
+                Generate delay job message.
+        """
         msg = 'DLY %s %s %s' % (mtype, host, filename)
         return msg
 
     def handle_msg(self, msg, sender_host, sender_port):
         """
-        Handle message.
+        Author: David
+        Desc:
+                Parse the message received by Messenger, Call funcs
+                based on its content, and return the reply to the right
+                address.
         """
         msg = msg.strip('\r\n')
         margs = msg.split(' ')
@@ -539,7 +773,12 @@ class TransferManager:
 
     def put(self, file_path, host, port, force=False):
         """
-        Send local file to the remote host.
+        Author: David
+        Desc:
+                Request to send a file which is specified by file_path to
+                host:port. If force is True, then port should not be changed
+                by remote server and rejected message will be given, or port
+                will be changed if remote port has been used.
         """
         msg_port = self._known_hosts.get(host, None)
         if msg_port is None:
@@ -554,6 +793,12 @@ class TransferManager:
         self.send_msg(msg, msg_port, host)
 
     def terminal_put(self, cmd):
+        """
+        Author: David
+        Desc:
+                Request to send a file based on terminal input. The inputs
+                will be parsed into args and will be used by put method.
+        """
         args = cmd.split(' ')
         host = args[args.index('-h')+1]
         port = int(args[args.index('-p')+1])
@@ -563,7 +808,14 @@ class TransferManager:
 
     def get(self, file_name, host, port, force=False, file_path=None):
         """
-        Request file from a remote host.
+        Author: David
+        Desc:
+                Request to receive a file which is specified by file_name from
+                host:port. If force is True, then port should not be changed
+                by remote server and rejected message will be given, or port
+                will be changed if remote port has been used. If file_path is
+                given, then the recevied file will be saved with the specified
+                path, else it will be saved at current working directory.
         """
         msg_port = self._known_hosts.get(host, None)
         if msg_port is None:
@@ -581,16 +833,13 @@ class TransferManager:
         self._file_paths.setdefault((host, file_name, 'GET'), file_path)
         self.send_msg(msg, msg_port, host)
 
-    def terminal_validation(self, cmd):
-        """
-        Validate the command get from terminal.
-        """
-        if cmd.startswith('PUT'):
-            self.terminal_put(cmd)
-        elif cmd.startswith('GET'):
-            self.terminal_get(cmd)
-
     def terminal_get(self, cmd):
+        """
+        Author: David
+        Desc:
+                Request to receive a file based on terminal input. The inputs
+                will be parsed into args and will be used by get method.
+        """
         args = cmd.split(' ')
         host = args[args.index('-h')+1]
         port = int(args[args.index('-p')+1])
@@ -599,7 +848,26 @@ class TransferManager:
         force = '-F' in args
         self.get(file_name, host, port, force, file_path)
 
+    def terminal_validation(self, cmd):
+        """
+        Author: David
+        Desc:
+                [TODO]:  Validate terminal inputs and pass the inputs to the
+                right method.
+        """
+        if cmd.startswith('PUT'):
+            self.terminal_put(cmd)
+        elif cmd.startswith('GET'):
+            self.terminal_get(cmd)
+
     def terminate(self):
+        """
+        Author: David
+        Desc:
+                Terminate the TransferManager. Before that, SessionManager
+                should be terminated, and unregister message should be sent
+                to all known_hosts, then the messenger will be terminated.
+        """
         while True:
             self._manager._lock.acquire()
             if self._manager._curs == 0:
@@ -616,6 +884,11 @@ class TransferManager:
 
 
 def test_put(m):
+    """
+    Author: David
+    Desc:
+            Test PUT operations in parallel.
+    """
     host = socket.gethostbyname(socket.gethostname())
     filenames = [
         '[APTX4869][CONAN][817][720P][AVC_AAC][CHS](59D42DBF).mp4',
@@ -631,6 +904,11 @@ def test_put(m):
 
 
 def test_get(m):
+    """
+    Author: David
+    Desc:
+            Test GET operations in parallel.
+    """
     host = socket.gethostbyname(socket.gethostname())
     filenames = [
         '[APTX4869][CONAN][817][720P][AVC_AAC][CHS](59D42DBF).mp4',
@@ -646,6 +924,13 @@ def test_get(m):
 
 
 def test_all(m):
+    """
+    Author: David
+    Desc:
+            Test PUT and GET operations in parallel together. Notice that
+            force is not given so that port will be changed by remote
+            server when the given port has been used.
+    """
     host = socket.gethostbyname(socket.gethostname())
     filenames = [
         '[APTX4869][CONAN][817][720P][AVC_AAC][CHS](59D42DBF).mp4',
@@ -667,6 +952,11 @@ def test_all(m):
 
 
 def test(port=9000):
+    """
+    Author: David
+    Desc:
+            Interface to start test function based on given message port.
+    """
     m = TransferManager(port, 2)
     if port == 9000:
         pass
@@ -683,6 +973,16 @@ def test(port=9000):
 
 
 def main(port=9100):
+    """
+    Author: David
+    Desc:
+            Interface to use terminal_get and terminal_put in terminal, Notice
+            that everytime a terminal command on PUT or GET to transfer a
+            file, the TransferManager will be instanced once, so it is not
+            recommend to use in this way.
+
+            [TODO]: Continous inputs support.
+    """
     if len(sys.argv) == 1:
         print 'Usage:'
         print '\tPUT -h host_ip -p port_num -f file_path [-F]'
