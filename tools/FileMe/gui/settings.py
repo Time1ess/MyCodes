@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 15:56
-# Last modified: 2016-11-08 16:36
+# Last modified: 2016-11-08 21:18
 # Filename: settings.py
 # Description:
 __metaclass__ = type
@@ -11,8 +11,6 @@ __metaclass__ = type
 import wx
 import os
 
-
-os.chdir('..')
 
 LOG_DIR = os.path.join(os.getcwd(), 'logs')
 FILE_DIR = os.path.join(os.getcwd(), 'files')

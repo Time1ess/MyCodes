@@ -3,13 +3,15 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 09:11
-# Last modified: 2016-11-08 09:23
+# Last modified: 2016-11-09 09:51
 # Filename: tests.py
 # Description:
 __metaclass__ = type
 
 import socket
 import sys
+import time
+import os
 
 from random import randint
 
@@ -33,6 +35,7 @@ def test_put(m):
             in filenames]
     for cmd in cmds:
         m.terminal_put(cmd)
+    raw_input('Press Enter to exit.')
     m.terminate()
     return 0
 
@@ -54,6 +57,7 @@ def test_get(m):
             in filenames]
     for cmd in cmds:
         m.terminal_get(cmd)
+    raw_input('Press Enter to exit.')
     m.terminate()
     return 0
 
@@ -83,6 +87,7 @@ def test_all(m):
             in filenames]
     for cmd in cmds:
         m.terminal_get(cmd)
+    raw_input('Press Enter to exit.')
     m.terminate()
     return 0
 
@@ -93,7 +98,7 @@ def test(port=9000):
     Desc:
             Interface to start test function based on given message port.
     """
-    m = TransferManager(port, 2)
+    m = TransferManager(port, 2, files_dir='files')
     if port == 9000:
         raw_input('Server is listening.')
     elif port == 9001:
@@ -106,5 +111,6 @@ def test(port=9000):
         print 'Unknown usage.'
 
 if __name__ == '__main__':
+    os.chdir('..')
     port = int(sys.argv[1])
     test(port)

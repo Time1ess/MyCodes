@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 08:58
-# Last modified: 2016-11-08 09:24
+# Last modified: 2016-11-09 08:38
 # Filename: sessions.py
 # Description:
 __metaclass__ = type
@@ -12,6 +12,9 @@ import hashlib
 import socket
 import traceback
 import time
+import os
+
+from threading import current_thread
 
 from multiprocessing.dummy import Pool, Lock
 from random import randint
@@ -26,7 +29,7 @@ class _FileMasterSession:
     main thread.
     """
 
-    def __init__(self, remote, filename, put_session):
+    def __init__(self, remote, filename, files_dir, put_session):
         """
         Author: David
         Desc:
@@ -37,6 +40,7 @@ class _FileMasterSession:
         self._target_host = remote
         self._md5 = hashlib.md5()
         self._md5.update(filename)
+        self._files_dir = files_dir
         self._filename = self._md5.hexdigest()+'.'+filename.split('.')[-1]
         self._PS = put_session
 
@@ -62,7 +66,8 @@ class _FileMasterSession:
                     client.send('REJ PUT 301 Source host doesn\'t match')
                     client.close()
                 else:
-                    with open(self._filename, open_type) as f:
+                    with open(os.path.join(self._files_dir, self._filename),
+                              open_type) as f:
                         # If session is put session then receive bytes.
                         if self._PS:
                             fbts = client.recv(BUF_SIZE)
@@ -77,7 +82,6 @@ class _FileMasterSession:
                     break
         except socket.timeout:
             print 'File master session timeout.'
-            pass
         except Exception:
             if DEBUG:
                 print traceback.print_exc()
@@ -121,7 +125,6 @@ class _FileSlaveSession:
                         fbts = sock.recv(BUF_SIZE)
         except socket.timeout:
             print 'File slave session timeout.'
-            pass
         except Exception:
             if DEBUG:
                 print traceback.print_exc()
@@ -133,7 +136,7 @@ class _SessionManager:
     """
     SessionManager is in charge of creating and maintaining session pool.
     """
-    def __init__(self, transfermanager, session_count):
+    def __init__(self, transfermanager, session_count, files_dir=''):
         """
         Author: David
         Desc:
@@ -144,6 +147,7 @@ class _SessionManager:
         self._tm = transfermanager
         self._maxs = session_count
         self._curs = 0
+        self._files_dir = files_dir
         self._wq = []
         self._pl = Pool()
         self._lock = Lock()
@@ -173,7 +177,7 @@ class _SessionManager:
                 used and force is not set to True, or it will return reject
                 message when force is set to True.
         """
-        fms = _FileMasterSession(remote_ip, filename, False)
+        fms = _FileMasterSession(remote_ip, filename, self._files_dir, False)
         while True:
             try:
                 sock = socket.socket()
@@ -199,7 +203,6 @@ class _SessionManager:
         except Exception, e:
             if DEBUG:
                 print traceback.print_exc()
-            pass
         if delayed:
             # notify remote_ip:msg_port that session has been dispatched.
             msg = self._tm._sgt_m(remote_ip, port, filename)
@@ -234,7 +237,7 @@ class _SessionManager:
 
                 [TODO]: merge _put_session and _get_session
         """
-        fms = _FileMasterSession(remote_ip, filename, True)
+        fms = _FileMasterSession(remote_ip, filename, self._files_dir, True)
         while True:
             try:
                 sock = socket.socket()
@@ -260,7 +263,6 @@ class _SessionManager:
         except Exception, e:
             if DEBUG:
                 print traceback.print_exc()
-            pass
         if delayed:
             # Should notify local:msg_port that session has been created.
             msg = self._tm._spt_m(remote_ip, port, filename)
@@ -291,6 +293,7 @@ class _SessionManager:
         """
         fss = _FileSlaveSession()
         self._lock.acquire()
+        file_path = os.path.join(self._files_dir, file_path)
         self._pl.apply_async(fss, args=(host, port, file_path, False),
                              callback=self)
         self._curs += 1
@@ -318,8 +321,12 @@ class _SessionManager:
         """
         fss = _FileSlaveSession()
         self._lock.acquire()
-        self._pl.apply_async(fss, args=(host, port, file_path, True),
-                             callback=self)
+        try:
+            self._pl.apply_async(fss, args=(host, port, file_path, True),
+                                 callback=self)
+        except Exception, e:
+            print e.errno, e, dir(e)
+            print traceback.print_tb()
         self._curs += 1
         self._lock.release()
         return 500

@@ -3,13 +3,13 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 09:05
-# Last modified: 2016-11-08 09:08
+# Last modified: 2016-11-09 08:30
 # Filename: messenger.py
 # Description:
 __metaclass__ = type
 import socket
 
-BUF_SIZE = 4096
+from settings import *
 
 
 class _Messenger:

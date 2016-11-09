@@ -26,6 +26,7 @@
 |:---|:---
 |001|Invalid host
 |002|Unknown reason
+|003|User reject
 |101|Local host should not be registered
 |102|Host ip doesn't match
 |201|Invalid operation

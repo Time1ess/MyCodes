@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-10-29 19:34
-# Last modified: 2016-11-08 09:21
+# Last modified: 2016-11-09 10:17
 # Filename: manager.py
 # Description: The Core of FileMe
 __metaclass__ = type
@@ -11,7 +11,7 @@ import socket
 import sys
 import time
 
-from threading import Thread
+from threading import Thread, current_thread
 
 from settings import *
 from messenger import _Messenger
@@ -23,7 +23,7 @@ class TransferManager:
     TransferManager is designed to handle file transfer.
     it contains a SessionManager and a Messenger.
     """
-    def __init__(self, msg_port=9000, session_count=10):
+    def __init__(self, msg_port=9000, session_count=10, files_dir=''):
         """
         Author: David
         Desc:
@@ -35,17 +35,38 @@ class TransferManager:
         """
         self._exit_flag = False
         self._msg_port = msg_port
+        self._session_count = session_count
         self._host_ip = socket.gethostbyname(socket.gethostname())
         self._messenger = _Messenger(msg_port)
-        self._manager = _SessionManager(self, session_count)
         self._known_hosts = {}  # <host:msg_port>
         self.send_msg = self._messenger.send_msg
         self.receive_msg = self._messenger.receive_msg
         self._file_paths = {}
+        self._hooks = []
+        self._confirms = {}
+        self._files_dir = files_dir
         self._main_thread = Thread(target=self.run)
         self._main_thread.setDaemon(True)
         self._main_thread.start()
         time.sleep(0.2)
+
+    def add_hook(self, hook):
+        """
+        Author: David
+        Desc:
+                Add listener on message transmission.
+        """
+        self._hooks.append(hook)
+
+    def add_user_confirm_func(self, on_func, confirm_func):
+        """
+        Author: David
+        Desc:
+                Add a confirm func before finally accepted.
+        """
+        func_name = '_'+on_func.lower()
+        self._confirms.setdefault(func_name, [])
+        self._confirms[func_name].append(confirm_func)
 
     def run(self):
         """
@@ -54,6 +75,7 @@ class TransferManager:
                 Register itself at the beginning, then receive message and
                 return response to its source continously.
         """
+        self._manager = _SessionManager(self, self._session_count, self._files_dir)
         messenger = self.receive_msg()
         reg_msg = 'REG %s %s' % (self._host_ip, self._msg_port)
         self.send_msg(reg_msg)
@@ -175,6 +197,12 @@ class TransferManager:
         port = int(args[args.index('-p')+1])
         filename = args[args.index('-f')+1]
         force = '-F' in args
+        for func in self._confirms.get('_put', []):
+            if func(args) is not True:
+                return self._rej_m(
+                    mtype='PUT',
+                    code='003',
+                    reason='User reject')
         code, port = self._manager.put_session(
             self._host_ip, sender_host,
             msg_port, port, filename, force)
@@ -272,6 +300,12 @@ class TransferManager:
         port = int(args[args.index('-p')+1])
         filename = args[args.index('-f')+1]
         force = '-F' in args
+        for func in self._confirms.get('_get', []):
+            if func(args) is not True:
+                return self._rej_m(
+                    mtype='PUT',
+                    code='003',
+                    reason='User reject')
         code, port = self._manager.get_session(
             self._host_ip, sender_host,
             msg_port, port, filename, force)
@@ -316,25 +350,30 @@ class TransferManager:
                 based on its content, and return the reply to the right
                 address.
         """
-        msg = msg.strip('\r\n')
-        margs = msg.split(' ')
+        old_msg = msg.strip('\r\n')
+        margs = old_msg.split(' ')
         mtype = margs[0]
         if (mtype != 'REG' and mtype != 'SRG') and \
                 not self._known_hosts.get(sender_host, None):
             msg = self._rej_m(mtype, '001', 'Invalid host')
+            for hook in self._hooks:
+                hook(old_msg, msg)
             return (msg, (sender_host, sender_port))
         elif mtype == 'REG':
             msg = self._reg(margs[1], sender_host, margs[2])
             port = self._known_hosts.get(sender_host, sender_port)
+            for hook in self._hooks:
+                hook(old_msg, msg)
             return (msg, (sender_host, port))
         elif mtype == 'URE':
             msg, port = self._ure(margs[1], sender_host, sender_port)
+            for hook in self._hooks:
+                hook(old_msg, msg)
             return (msg, (sender_host, port))
         elif mtype == 'PUT':
             msg = self._put(margs, sender_host, sender_port)
         elif mtype == 'GET':
             msg = self._get(margs, sender_host, sender_port)
-            pass
         elif mtype == 'ACK':
             msg = self._ack_m('ACK')
         elif mtype == 'REJ':
@@ -357,6 +396,8 @@ class TransferManager:
                 code='002',
                 reason='Unknown reason')
         port = self._known_hosts.get(sender_host)
+        for hook in self._hooks:
+            hook(old_msg, msg)
         return (msg, (sender_host, port))
 
     def put(self, file_path, host, port, force=False):

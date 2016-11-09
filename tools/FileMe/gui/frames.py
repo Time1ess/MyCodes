@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 09:33
-# Last modified: 2016-11-08 16:39
+# Last modified: 2016-11-09 10:17
 # Filename: frames.py
 # Description:
 __metaclass__ = type
@@ -12,6 +12,9 @@ import wx
 import sys
 import os
 import hashlib
+import time
+
+from wx.lib.pubsub import pub
 
 from settings import *
 
@@ -34,12 +37,13 @@ class ConsFrame(wx.Frame):
         self.addrs_panel = wx.ScrolledWindow(self, size=(200, 400))
         self.addrs_layout = wx.GridSizer(0, 1, 3, 0)
         self.main_layout.Add(self.addrs_panel, 1, wx.EXPAND)
-        for i in xrange(40):
-            msg = "button "+str(i)
-            btn = wx.Button(self.addrs_panel, -1, msg, style=wx.NO_BORDER)
-            btn.SetBackgroundColour(ADDRS_BTN_BG)
-            self.Bind(wx.EVT_BUTTON, self.on_target_user, btn)
-            self.addrs_layout.Add(btn, 0, wx.EXPAND)
+#        for i in xrange(40):
+#            msg = "button "+str(i)
+#            btn = wx.Button(self.addrs_panel, -1, msg, style=wx.NO_BORDER,
+#                            size=(-1, 40))
+#            btn.SetBackgroundColour(ADDRS_BTN_BG)
+#            self.Bind(wx.EVT_BUTTON, self.on_target_user, btn)
+#            self.addrs_layout.Add(btn, 0, wx.EXPAND)
         self.addrs_panel.SetSizer(self.addrs_layout)
         self.addrs_panel.SetScrollbars(0, 20, 0, 50)
         self.addrs_panel.SetBackgroundColour(ADDRS_PANEL_BG)
@@ -150,10 +154,9 @@ class ConsFrame(wx.Frame):
         self.main_layout.Fit(self)
 
     def on_send(self, e):
-        """ Open a file"""
         self.dirname = ''
         dlg = wx.FileDialog(
-            self, "Choose a file", self.dirname, "", "*.*", wx.OPEN)
+            self, u'选择文件', self.dirname, "", "*.*", wx.OPEN)
         if dlg.ShowModal() == wx.ID_OK:
             filename = dlg.GetFilename()
             dirname = dlg.GetDirectory()
@@ -161,7 +164,16 @@ class ConsFrame(wx.Frame):
         dlg.Destroy()
 
     def append_new_addr(self, addr):
-        pass
+        labels = map(lambda x: x.GetWindow().GetLabel(),
+                     self.addrs_layout.GetChildren())
+        if addr not in labels:
+            btn = wx.Button(self.addrs_panel, -1, addr, style=wx.NO_BORDER,
+                            size=(-1, 40))
+            btn.SetBackgroundColour(ADDRS_BTN_BG)
+            self.Bind(wx.EVT_BUTTON, self.on_target_user, btn)
+            self.addrs_layout.Add(btn, 0, wx.SHAPED)
+            self.main_layout.Layout()
+            self.Fit()
 
     def delete_addr(self, addr):
         for _btn in self.addrs_layout.GetChildren():
@@ -171,8 +183,31 @@ class ConsFrame(wx.Frame):
                 btn.Destroy()
                 break
 
+    def confirm_dlg(self, msg):
+        dlg = wx.MessageDialog(self, message=msg,
+                               caption=u'确认操作')
+        self.choice = dlg.ShowModal()
+        dlg.Destroy()
+
+    def confirm_action(self, args):
+        msg = ' '.join(args)
+
+        self.choice = None
+        wx.CallAfter(self.confirm_dlg, msg)
+
+        while self.choice is None:
+            time.sleep(0.1)
+
+        if self.choice == wx.ID_OK:
+            return True
+        else:
+            return False
+
+def main():
+    app = wx.App(False)
+    frame = ConsFrame(None, 'FileMe')
+    app.MainLoop()
+
 
 if __name__ == '__main__':
-    app = wx.App(False)
-    frame = ConsFrame(None, 'Connections')
-    app.MainLoop()
+    main()
