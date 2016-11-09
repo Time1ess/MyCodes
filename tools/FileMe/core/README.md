@@ -15,7 +15,7 @@
 |:---|:---
 |`ACK cmd`|Notify client that `cmd` has been acknowledged
 |`REJ cmd code reason`|Nofity client that `cmd` has been rejected with reject code `code` and reason `reason`
-|`SRG msg_port_num`|Notify client that server messenger is listening at port `msg_port_num`
+|`SRG msg_port_num host`|Notify client that server `host` messenger is listening at port `msg_port_num`
 |`SPT host_ip port_num file_name`|Notify client that server is ready to receive file `file_name` via port `port_num`
 |`SGT host_ip port_num file_name`|Notify client that server is ready to provide file `file_name` via port `port_num`
 |`DLY cmd host_ip file_name`|Notify client that server will delay transfering file `file_name` on cmd `cmd`

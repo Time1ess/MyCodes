@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-10-29 19:34
-# Last modified: 2016-11-09 10:17
+# Last modified: 2016-11-09 16:57
 # Filename: manager.py
 # Description: The Core of FileMe
 __metaclass__ = type
@@ -23,7 +23,7 @@ class TransferManager:
     TransferManager is designed to handle file transfer.
     it contains a SessionManager and a Messenger.
     """
-    def __init__(self, msg_port=9000, session_count=10, files_dir=''):
+    def __init__(self, msg_port=9000, session_count=10, files_dir='', hook=None):
         """
         Author: David
         Desc:
@@ -34,6 +34,9 @@ class TransferManager:
                 be done.
         """
         self._exit_flag = False
+        self._hooks = []
+        if hook:
+            self._hooks.append(hook)
         self._msg_port = msg_port
         self._session_count = session_count
         self._host_ip = socket.gethostbyname(socket.gethostname())
@@ -42,7 +45,6 @@ class TransferManager:
         self.send_msg = self._messenger.send_msg
         self.receive_msg = self._messenger.receive_msg
         self._file_paths = {}
-        self._hooks = []
         self._confirms = {}
         self._files_dir = files_dir
         self._main_thread = Thread(target=self.run)
@@ -134,16 +136,16 @@ class TransferManager:
                 reason='Host ip doesn\'t match.')
         elif target_host == host:
             self._known_hosts[host] = port
-            srg_msg = self._srg_m(self._msg_port)
+            srg_msg = self._srg_m(self._msg_port, host)
             return srg_msg
 
-    def _srg_m(self, port):  # SRG message
+    def _srg_m(self, port, host):  # SRG message
         """
         Author: David
         Desc:
                 Generate server register message.
         """
-        msg = 'SRG %s' % (port,)
+        msg = 'SRG %s %s' % (port, host)
         return msg
 
     def _ure(self, target_host, host, port):  # Unregister a host

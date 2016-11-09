@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 09:33
-# Last modified: 2016-11-09 10:17
+# Last modified: 2016-11-09 16:57
 # Filename: frames.py
 # Description:
 __metaclass__ = type
@@ -37,13 +37,6 @@ class ConsFrame(wx.Frame):
         self.addrs_panel = wx.ScrolledWindow(self, size=(200, 400))
         self.addrs_layout = wx.GridSizer(0, 1, 3, 0)
         self.main_layout.Add(self.addrs_panel, 1, wx.EXPAND)
-#        for i in xrange(40):
-#            msg = "button "+str(i)
-#            btn = wx.Button(self.addrs_panel, -1, msg, style=wx.NO_BORDER,
-#                            size=(-1, 40))
-#            btn.SetBackgroundColour(ADDRS_BTN_BG)
-#            self.Bind(wx.EVT_BUTTON, self.on_target_user, btn)
-#            self.addrs_layout.Add(btn, 0, wx.EXPAND)
         self.addrs_panel.SetSizer(self.addrs_layout)
         self.addrs_panel.SetScrollbars(0, 20, 0, 50)
         self.addrs_panel.SetBackgroundColour(ADDRS_PANEL_BG)
@@ -75,6 +68,7 @@ class ConsFrame(wx.Frame):
         wx.Frame.__init__(self, parent, title=title, size=(1000, 600),
                           style= wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX)
         self._last_btn = None
+        self.Bind(wx.EVT_CLOSE, self.on_close)
 
         self.CreateStatusBar()
         self._init_menus()
@@ -88,6 +82,9 @@ class ConsFrame(wx.Frame):
         self.main_layout.Fit(self)
         self.delete_addr('button 26')
         self.Show(True)
+
+    def set_coordinator(self, coo):
+        self.coo = coo
 
     def menu_event(self, event):
         print 'menu item selected.'
@@ -103,17 +100,28 @@ class ConsFrame(wx.Frame):
     def on_exit(self, e):
         self.Close(True)
 
-    def on_target_user(self, e):
-        btn = e.GetEventObject()
+    def on_close(self, e):
+        print 'Exit'
         if self._last_btn:
             self._last_btn.SetBackgroundColour(ADDRS_BTN_BG)
             addr = self._last_btn.GetLabel()
-            self.write_log(addr, self.control.GetValue())
+            self.write_logfile(addr, self.control.GetValue())
+        self.Destroy()
+
+    def change_user(self, btn):
+        if self._last_btn:
+            self._last_btn.SetBackgroundColour(ADDRS_BTN_BG)
+            addr = self._last_btn.GetLabel()
+            self.write_logfile(addr, self.control.GetValue())
             self._last_btn.Refresh()
         self._last_btn = btn
         btn.SetBackgroundColour(ADDRS_BTN_FOCUS_BG)
         addr = btn.GetLabel()
-        self.read_log(addr)
+        self.read_logfile(addr)
+
+    def on_target_user(self, e):
+        btn = e.GetEventObject()
+        self.change_user(btn)
 
     @staticmethod
     def _hash(msg):
@@ -121,20 +129,19 @@ class ConsFrame(wx.Frame):
         h.update(msg)
         return h.hexdigest()
 
-    def write_log(self, addr, log):
+    def write_logfile(self, addr, log):
         filename = self._hash(addr)+'.log'
         filepath = os.path.join(LOG_DIR, filename)
         with open(filepath, 'wb') as f:
             f.write(log)
 
-    def read_log(self, addr):
+    def read_logfile(self, addr):
         filename = self._hash(addr)+'.log'
         filepath = os.path.join(LOG_DIR, filename)
         try:
             with open(filepath, 'rb') as f:
                 self.clear_log()
-                for line in f:
-                    self.append_log(line)
+                self.set_log(''.join(f.readlines()))
         except IOError:
             pass
 
@@ -142,10 +149,10 @@ class ConsFrame(wx.Frame):
         self.control.SetValue('')
 
     def append_log(self, log):
-        self.control.AppendText(log+'\n')
+        wx.CallAfter(self.control.AppendText, log)
 
     def set_log(self, log):
-        self.control.SetValue(log+'\n')
+        self.control.SetValue(log)
 
     def on_clear(self, e):
         self.clear_log()
@@ -153,14 +160,25 @@ class ConsFrame(wx.Frame):
     def on_request(self, e):
         self.main_layout.Fit(self)
 
+    def alert(self, msg):
+        dlg = wx.MessageDialog(self, message=msg,
+                               style=wx.OK,
+                               caption=u'警告')
+        dlg.ShowModal()
+        dlg.Destroy()
+
     def on_send(self, e):
-        self.dirname = ''
+        if not self._last_btn:
+            msg = u'请先选择发送对象'
+            self.alert(msg)
+            return
         dlg = wx.FileDialog(
-            self, u'选择文件', self.dirname, "", "*.*", wx.OPEN)
+            self, u'选择文件', '', "", "*.*", wx.OPEN)
         if dlg.ShowModal() == wx.ID_OK:
             filename = dlg.GetFilename()
             dirname = dlg.GetDirectory()
-            self.control.SetValue(dirname+'\n'+filename)
+            path = os.path.join(dirname, filename)
+            self.coo.send_file(path, self._last_btn.GetLabel())
         dlg.Destroy()
 
     def append_new_addr(self, addr):
@@ -174,6 +192,7 @@ class ConsFrame(wx.Frame):
             self.addrs_layout.Add(btn, 0, wx.SHAPED)
             self.main_layout.Layout()
             self.Fit()
+            self.change_user(btn)
 
     def delete_addr(self, addr):
         for _btn in self.addrs_layout.GetChildren():
@@ -191,13 +210,10 @@ class ConsFrame(wx.Frame):
 
     def confirm_action(self, args):
         msg = ' '.join(args)
-
         self.choice = None
         wx.CallAfter(self.confirm_dlg, msg)
-
         while self.choice is None:
             time.sleep(0.1)
-
         if self.choice == wx.ID_OK:
             return True
         else:
