@@ -3,23 +3,39 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 09:33
-# Last modified: 2016-11-09 16:57
+# Last modified: 2016-11-10 20:38
 # Filename: frames.py
 # Description:
 __metaclass__ = type
 
 import wx
-import sys
 import os
 import hashlib
 import time
 
-from wx.lib.pubsub import pub
+from random import randint
 
 from settings import *
 
 
 class ConsFrame(wx.Frame):
+    def __init__(self, parent, title):
+        wx.Frame.__init__(self, parent, title=title, size=(800, 600),
+                          style=wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX)
+        self._last_btn = None
+        self.Bind(wx.EVT_CLOSE, self.on_close)
+
+        self.main_layout = wx.BoxSizer(wx.HORIZONTAL)
+        self.CreateStatusBar()
+        self._init_menus()
+        self._init_addrs()
+        self._init_right_panel()
+
+        self.SetSizer(self.main_layout)
+        self.SetAutoLayout(1)
+        self.main_layout.Fit(self)
+        self.Show(True)
+
     def _init_menus(self):
         filemenu = wx.Menu()
         menu_about = filemenu.Append(
@@ -34,27 +50,49 @@ class ConsFrame(wx.Frame):
         self.SetMenuBar(menuBar)
 
     def _init_addrs(self):
-        self.addrs_panel = wx.ScrolledWindow(self, size=(200, 400))
+        self.addrs_panel = wx.ScrolledWindow(
+            self, size=(200, 600),
+            style=wx.VSCROLL | wx.BORDER_RAISED,
+            name="addrs_panel")
         self.addrs_layout = wx.GridSizer(0, 1, 3, 0)
-        self.main_layout.Add(self.addrs_panel, 1, wx.EXPAND)
         self.addrs_panel.SetSizer(self.addrs_layout)
         self.addrs_panel.SetScrollbars(0, 20, 0, 50)
-        self.addrs_panel.SetBackgroundColour(ADDRS_PANEL_BG)
 
-    def _init_logs(self):
-        self.control = wx.TextCtrl(
-            self, style=wx.TE_MULTILINE | wx.TE_READONLY, size=(400, 400))
-        self.right_panel_layout = wx.BoxSizer(wx.VERTICAL)
-        self.right_panel_layout.Add(self.control, 0,
-                                    wx.EXPAND | wx.ALL, border=10)
-        self.main_layout.Add(self.right_panel_layout, 0, wx.EXPAND)
+        self.main_layout.Add(self.addrs_panel, 0, wx.SHAPED | wx.ALL)
 
-    def _init_btns(self):
+    def _init_right_panel(self):
+        self.right_panel = wx.Panel(
+            self, size=(600, 600), name="right_panel")
+        self.right_layout = wx.BoxSizer(wx.VERTICAL)
+        self.right_panel.SetSizer(self.right_layout)
+
+        self.main_layout.Add(self.right_panel, 0, wx.SHAPED | wx.ALL)
+
+        self._init_progress_panel()
+        self._init_right_btns()
+
+    def _init_progress_panel(self):
+        self.progress_panel = wx.ScrolledWindow(
+            self.right_panel, size=(600, 550),
+            style=wx.VSCROLL | wx.BORDER_SUNKEN,
+            name="progress_panel")
+        self.progress_panel_layout = wx.BoxSizer(wx.VERTICAL)
+        self.progress_panel.SetSizer(self.progress_panel_layout)
+        self.progress_panel.SetScrollbars(0, 20, 0, 50)
+
+        self.right_layout.Add(self.progress_panel, 0, wx.ALL)
+
+    def _init_right_btns(self):
+        btns_panel = wx.Panel(
+            self.right_panel, size=(600, 50), name="btns_panel")
         btns_layout = wx.BoxSizer(wx.HORIZONTAL)
-        self.right_panel_layout.Add(btns_layout, 0, wx.ALIGN_RIGHT)
-        send_btn = wx.Button(self, -1, u'发送')
-        request_btn = wx.Button(self, -1, u'请求')
-        clear_btn = wx.Button(self, -1, u'清空日志')
+        btns_panel.SetSizer(btns_layout)
+
+        self.right_layout.Add(btns_panel, 0, wx.ALL)
+
+        send_btn = wx.Button(btns_panel, -1, u'发送', size=(100, 50))
+        request_btn = wx.Button(btns_panel, -1, u'请求', size=(100, 50))
+        clear_btn = wx.Button(btns_panel, -1, u'清空日志', size=(100, 50))
 
         self.Bind(wx.EVT_BUTTON, self.on_clear, clear_btn)
         self.Bind(wx.EVT_BUTTON, self.on_send, send_btn)
@@ -62,26 +100,59 @@ class ConsFrame(wx.Frame):
 
         btns = [send_btn, request_btn, clear_btn]
         for btn in btns:
-            btns_layout.Add(btn, flag=wx.ALL, border=10)
+            btns_layout.Add(btn, 0, wx.LEFT, border=70)
 
-    def __init__(self, parent, title):
-        wx.Frame.__init__(self, parent, title=title, size=(1000, 600),
-                          style= wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX)
-        self._last_btn = None
-        self.Bind(wx.EVT_CLOSE, self.on_close)
+        self.main_layout.Layout()
+        self.Fit()
 
-        self.CreateStatusBar()
-        self._init_menus()
-        self.main_layout = wx.BoxSizer(wx.HORIZONTAL)
-        self._init_addrs()
-        self._init_logs()
-        self._init_btns()
+    def add_new_progress_bar(self, uuid, filename=u'未知',
+                             speed=u'未知', eta=u'未知'):
+        status = filter(lambda x: isinstance(x, wx.Panel) and
+                        uuid == x.GetName(),
+                        self.progress_panel.GetChildren())
+        if status:
+            return
 
-        self.SetSizer(self.main_layout)
-        self.SetAutoLayout(1)
-        self.main_layout.Fit(self)
-        self.delete_addr('button 26')
-        self.Show(True)
+        panel = wx.Panel(self.progress_panel, size=(600, 50), name=uuid)
+        _title = wx.StaticText(panel, label=filename,
+                               size=(450, -1), pos=(0, 5))
+        _prog = wx.Gauge(panel, size=(450, -1), pos=(0, 25))
+        _speed = wx.StaticText(panel, label=speed,
+                               size=(150, -1), pos=(500, 5))
+        _eta = wx.StaticText(panel, label=eta,
+                             size=(150, -1), pos=(500, 25))
+        panel.title = _title
+        panel.progress = _prog
+        panel.speed = _speed
+        panel.eta = _eta
+        self.progress_panel_layout.Add(panel, 0, wx.BOTTOM, border=10)
+        self.main_layout.Layout()
+        self.Fit()
+
+    def update_progress(self, uuid, progress=None, speed=None, eta=None):
+        status = filter(lambda x: isinstance(x, wx.Panel) and
+                        uuid == x.GetName(),
+                        self.progress_panel.GetChildren())
+        if status:
+            status = status[0]
+            if progress:
+                _progress = status.progress
+                _progress.SetValue(progress % 100)
+            if speed:
+                _speed = status.speed
+                _speed.SetLabel(speed)
+            if eta:
+                _eta = status.eta
+                _eta.SetLabel(eta)
+
+    def delete_progress_bar(self, uuid):
+        status = filter(lambda x: isinstance(x, wx.Panel) and
+                        uuid == x.GetName(),
+                        self.progress_panel.GetChildren())
+        if status:
+            status[0].Destroy()
+            self.main_layout.Layout()
+            self.Fit()
 
     def set_coordinator(self, coo):
         self.coo = coo
@@ -101,64 +172,24 @@ class ConsFrame(wx.Frame):
         self.Close(True)
 
     def on_close(self, e):
-        print 'Exit'
-        if self._last_btn:
-            self._last_btn.SetBackgroundColour(ADDRS_BTN_BG)
-            addr = self._last_btn.GetLabel()
-            self.write_logfile(addr, self.control.GetValue())
         self.Destroy()
 
     def change_user(self, btn):
         if self._last_btn:
             self._last_btn.SetBackgroundColour(ADDRS_BTN_BG)
-            addr = self._last_btn.GetLabel()
-            self.write_logfile(addr, self.control.GetValue())
             self._last_btn.Refresh()
         self._last_btn = btn
         btn.SetBackgroundColour(ADDRS_BTN_FOCUS_BG)
-        addr = btn.GetLabel()
-        self.read_logfile(addr)
 
     def on_target_user(self, e):
         btn = e.GetEventObject()
         self.change_user(btn)
 
-    @staticmethod
-    def _hash(msg):
-        h = hashlib.md5()
-        h.update(msg)
-        return h.hexdigest()
-
-    def write_logfile(self, addr, log):
-        filename = self._hash(addr)+'.log'
-        filepath = os.path.join(LOG_DIR, filename)
-        with open(filepath, 'wb') as f:
-            f.write(log)
-
-    def read_logfile(self, addr):
-        filename = self._hash(addr)+'.log'
-        filepath = os.path.join(LOG_DIR, filename)
-        try:
-            with open(filepath, 'rb') as f:
-                self.clear_log()
-                self.set_log(''.join(f.readlines()))
-        except IOError:
-            pass
-
-    def clear_log(self):
-        self.control.SetValue('')
-
-    def append_log(self, log):
-        wx.CallAfter(self.control.AppendText, log)
-
-    def set_log(self, log):
-        self.control.SetValue(log)
-
     def on_clear(self, e):
-        self.clear_log()
+        pass
 
     def on_request(self, e):
-        self.main_layout.Fit(self)
+        pass
 
     def alert(self, msg):
         dlg = wx.MessageDialog(self, message=msg,
@@ -218,6 +249,7 @@ class ConsFrame(wx.Frame):
             return True
         else:
             return False
+
 
 def main():
     app = wx.App(False)

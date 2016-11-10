@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-09 16:07
-# Last modified: 2016-11-09 16:57
+# Last modified: 2016-11-10 20:35
 # Filename: controllers.py
 # Description:
 __metaclass__ = type
@@ -64,11 +64,15 @@ class Coordinator:
         elif cli_type == 'URE' and svr_type == 'ACK':
             self.gui.delete_addr(cli_args[1])
         elif cli_type == 'PUT' and svr_type == 'SPT':
-            self.gui.append_log(cli_msg+'\n')
+            pass
         elif cli_type == 'GET' and svr_type == 'SGT':
-            self.gui.append_log(cli_msg+'\n')
+            pass
         elif cli_type == 'SRG' and svr_type == 'ACK':
             self.gui.append_new_addr(cli_args[2])
+        elif cli_type == 'SPT' and svr_type == 'ACK':
+            pass
+        elif cli_type == 'SGT' and svr_type == 'ACK':
+            pass
         return True
 
     def send_file(self, path, host):
