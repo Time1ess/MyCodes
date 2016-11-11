@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 20:15
-# Last modified: 2016-11-09 18:09
+# Last modified: 2016-11-11 11:34
 # Filename: main.py
 # Description:
 __metaclass__ = type
@@ -15,6 +15,7 @@ from threading import Thread
 
 from gui.frames import ConsFrame
 from core.manager import TransferManager
+from core.sessions import SessionManager
 from controllers import Coordinator
 
 
@@ -28,6 +29,9 @@ def main():
     # coo = Coordinator(m, frame)
     frame.set_coordinator(coo)
     # m.add_hook(hook)
+    sm = SessionManager(m, 10, m._files_dir, coo)
+    m.add_session_manager(sm)
+    m.start()
     m.add_user_confirm_func('PUT', frame.confirm_action)
     m.add_user_confirm_func('GET', frame.confirm_action)
     app.MainLoop()

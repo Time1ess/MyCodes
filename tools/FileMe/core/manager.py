@@ -3,19 +3,20 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-10-29 19:34
-# Last modified: 2016-11-09 18:09
+# Last modified: 2016-11-11 10:53
 # Filename: manager.py
 # Description: The Core of FileMe
 __metaclass__ = type
 import socket
 import sys
 import time
+import traceback
 
 from threading import Thread, current_thread
 
 from settings import *
 from messenger import _Messenger
-from sessions import _SessionManager
+from sessions import SessionManager
 
 
 class TransferManager:
@@ -47,6 +48,8 @@ class TransferManager:
         self._file_paths = {}
         self._confirms = {}
         self._files_dir = files_dir
+
+    def start(self):
         self._main_thread = Thread(target=self.run)
         self._main_thread.setDaemon(True)
         self._main_thread.start()
@@ -59,6 +62,12 @@ class TransferManager:
                 Add listener on message transmission.
         """
         self._hooks.append(hook)
+
+    def add_session_manager(self, manager):
+        if isinstance(manager, SessionManager):
+            self._manager = manager
+        else:
+            print 'Wrong session manager'
 
     def add_user_confirm_func(self, on_func, confirm_func):
         """
@@ -77,7 +86,9 @@ class TransferManager:
                 Register itself at the beginning, then receive message and
                 return response to its source continously.
         """
-        self._manager = _SessionManager(self, self._session_count, self._files_dir)
+        if not self._manager:
+            self._manager = SessionManager(
+                self, self._session_count, self._files_dir)
         messenger = self.receive_msg()
         reg_msg = 'REG %s %s' % (self._host_ip, self._msg_port)
         self.send_msg(reg_msg)

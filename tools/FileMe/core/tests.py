@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 09:11
-# Last modified: 2016-11-09 09:51
+# Last modified: 2016-11-11 10:53
 # Filename: tests.py
 # Description:
 __metaclass__ = type
@@ -16,6 +16,7 @@ import os
 from random import randint
 
 from manager import TransferManager
+from sessions import SessionManager
 
 
 def test_put(m):
@@ -31,7 +32,7 @@ def test_put(m):
         '[APTX4869][CONAN][819][720P][AVC_AAC][CHS](0B98AFC4).mp4',
         '[APTX4869][CONAN][820][720P][AVC_AAC][CHS](B8255B71).mp4']
     cmd_fmt = 'PUT -h %s -p %s -f /Users/youchen/Movies/%s'
-    cmds = [cmd_fmt % (host, 10000+randint(0, 0), x) for x
+    cmds = [cmd_fmt % (host, 10000+randint(0, 10), x) for x
             in filenames]
     for cmd in cmds:
         m.terminal_put(cmd)
@@ -99,6 +100,9 @@ def test(port=9000):
             Interface to start test function based on given message port.
     """
     m = TransferManager(port, 2, files_dir='files')
+    sm = SessionManager(m, 10, m._files_dir)
+    m.add_session_manager(sm)
+    m.start()
     if port == 9000:
         raw_input('Server is listening.')
     elif port == 9001:

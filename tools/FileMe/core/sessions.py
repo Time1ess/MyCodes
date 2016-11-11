@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 08:58
-# Last modified: 2016-11-09 08:38
+# Last modified: 2016-11-11 11:34
 # Filename: sessions.py
 # Description:
 __metaclass__ = type
@@ -29,7 +29,7 @@ class _FileMasterSession:
     main thread.
     """
 
-    def __init__(self, remote, filename, files_dir, put_session):
+    def __init__(self, remote, filename, files_dir, put_session, coo=None):
         """
         Author: David
         Desc:
@@ -41,8 +41,10 @@ class _FileMasterSession:
         self._md5 = hashlib.md5()
         self._md5.update(filename)
         self._files_dir = files_dir
+        self._origin_filename = filename
         self._filename = self._md5.hexdigest()+'.'+filename.split('.')[-1]
         self._PS = put_session
+        self._coo = coo
 
     def __call__(self, sock, *args):
         """
@@ -66,18 +68,89 @@ class _FileMasterSession:
                     client.send('REJ PUT 301 Source host doesn\'t match')
                     client.close()
                 else:
-                    with open(os.path.join(self._files_dir, self._filename),
-                              open_type) as f:
+                    md5 = hashlib.md5()
+                    start = time.time()
+                    received_bytes = 0
+                    duration_bytes = 0
+                    _file = os.path.join(self._files_dir, self._filename)
+                    with open(_file, open_type) as f:
                         # If session is put session then receive bytes.
                         if self._PS:
-                            fbts = client.recv(BUF_SIZE)
-                            while fbts:
+                            if self._coo:
+                                self._coo.create_session_bar(
+                                    to_local=True,
+                                    source=addr,
+                                    filename=self._origin_filename)
+                            while True:
+                                try:
+                                    fbts = client.recv(BUF_SIZE)
+                                    size = int(fbts)
+                                    break
+                                except Exception:
+                                    client.send('False')
+                            client.send('True')
+                            file_over = False
+                            while True:
+                                while True:
+                                    fbts = client.recv(BUF_SIZE)
+                                    if not fbts:
+                                        file_over = True
+                                        break
+                                    tmd5 = md5.copy()
+                                    tmd5.update(fbts)
+                                    client.send('True')
+                                    rmd5 = client.recv(BUF_SIZE)
+                                    if rmd5 == tmd5.hexdigest():
+                                        break
+                                    client.send('False')
+                                if file_over:
+                                    break
+                                client.send('True')
+                                md5.update(fbts)
+                                duration_bytes += len(fbts)
                                 f.write(fbts)
-                                fbts = client.recv(BUF_SIZE)
+                                if self._coo:
+                                    now = time.time()
+                                    duration = now-start
+                                    if duration < 1:
+                                        continue
+                                    start = now
+                                    received_bytes += duration_bytes
+                                    progress = 100.0*received_bytes/size
+                                    speed = 1.0*duration_bytes/duration
+                                    eta = (size-received_bytes)/speed
+                                    duration_bytes = 0
+                                    self._coo.update_session_bar(
+                                        to_local=True,
+                                        source=addr,
+                                        filename=self._origin_filename,
+                                        progress=progress,
+                                        speed=speed,
+                                        eta=eta)
+                            if self._coo:
+                                self._coo.delete_session_bar(
+                                    to_local=True,
+                                    source=addr,
+                                    filename=self._origin_filename)
                         else:
+                            size = os.path.getsize(_file)
+                            while True:
+                                client.send(str(size))
+                                checked = client.recv(BUF_SIZE)
+                                if checked == 'True':
+                                    break
                             fbts = f.read(BUF_SIZE)
                             while fbts:
-                                client.send(fbts)
+                                md5.update(fbts)
+                                while True:
+                                    client.send(fbts)
+                                    checked = client.recv(BUF_SIZE)
+                                    if checked != 'True':
+                                        continue
+                                    client.send(md5.hexdigest())
+                                    checked = client.recv(BUF_SIZE)
+                                    if checked == 'True':
+                                        break
                                 fbts = f.read(BUF_SIZE)
                     break
         except socket.timeout:
@@ -96,7 +169,7 @@ class _FileSlaveSession:
     main thread.
     """
 
-    def __call__(self, host, port, file_path, put_session):
+    def __call__(self, host, port, file_path, put_session, coo=None):
         """
         Author: David
         Desc:
@@ -113,16 +186,56 @@ class _FileSlaveSession:
             sock.connect((host, port))
             sock.settimeout(None)
             with open(file_path, open_type) as f:
+                md5 = hashlib.md5()
                 if put_session:
+                    size = os.path.getsize(file_path)
+                    while True:
+                        sock.send(str(size))
+                        checked = sock.recv(BUF_SIZE)
+                        if checked == 'True':
+                            break
                     fbts = f.read(BUF_SIZE)
                     while fbts:
-                        sock.send(fbts)
+                        md5.update(fbts)
+                        while True:
+                            sock.send(fbts)
+                            checked = sock.recv(BUF_SIZE)
+                            if checked != 'True':
+                                continue
+                            sock.send(md5.hexdigest())
+                            checked = sock.recv(BUF_SIZE)
+                            if checked == 'True':
+                                break
                         fbts = f.read(BUF_SIZE)
                 else:
-                    fbts = sock.recv(BUF_SIZE)
-                    while fbts:
+                    while True:
+                        try:
+                            fbts = sock.recv(BUF_SIZE)
+                            size = int(fbts)
+                            break
+                        except Exception:
+                            sock.send('False')
+                    sock.send('True')
+                    file_over = False
+                    while True:
+                        while True:
+                            fbts = sock.recv(BUF_SIZE)
+                            if not fbts:
+                                file_over = True
+                                break
+                            tmd5 = md5.copy()
+                            tmd5.update(fbts)
+                            sock.send('True')
+                            rmd5 = sock.recv(BUF_SIZE)
+                            if rmd5 == tmd5.hexdigest():
+                                break
+                            sock.send('False')
+                        if file_over:
+                            break
+                        sock.send('True')
+                        md5.update(fbts)
                         f.write(fbts)
-                        fbts = sock.recv(BUF_SIZE)
+
         except socket.timeout:
             print 'File slave session timeout.'
         except Exception:
@@ -132,11 +245,11 @@ class _FileSlaveSession:
             sock.close()
 
 
-class _SessionManager:
+class SessionManager:
     """
     SessionManager is in charge of creating and maintaining session pool.
     """
-    def __init__(self, transfermanager, session_count, files_dir=''):
+    def __init__(self, transfermanager, session_count, files_dir='', coo=None):
         """
         Author: David
         Desc:
@@ -151,6 +264,7 @@ class _SessionManager:
         self._wq = []
         self._pl = Pool()
         self._lock = Lock()
+        self._coo = coo
 
     def __call__(self, *args):
         """
@@ -177,7 +291,8 @@ class _SessionManager:
                 used and force is not set to True, or it will return reject
                 message when force is set to True.
         """
-        fms = _FileMasterSession(remote_ip, filename, self._files_dir, False)
+        fms = _FileMasterSession(remote_ip, filename,
+                                 self._files_dir, False, self._coo)
         while True:
             try:
                 sock = socket.socket()
@@ -237,7 +352,8 @@ class _SessionManager:
 
                 [TODO]: merge _put_session and _get_session
         """
-        fms = _FileMasterSession(remote_ip, filename, self._files_dir, True)
+        fms = _FileMasterSession(remote_ip, filename,
+                                 self._files_dir, True, self._coo)
         while True:
             try:
                 sock = socket.socket()
@@ -294,8 +410,10 @@ class _SessionManager:
         fss = _FileSlaveSession()
         self._lock.acquire()
         file_path = os.path.join(self._files_dir, file_path)
-        self._pl.apply_async(fss, args=(host, port, file_path, False),
-                             callback=self)
+        self._pl.apply_async(
+            fss,
+            args=(host, port, file_path, False, self._coo),
+            callback=self)
         self._curs += 1
         self._lock.release()
         return 700
@@ -321,12 +439,10 @@ class _SessionManager:
         """
         fss = _FileSlaveSession()
         self._lock.acquire()
-        try:
-            self._pl.apply_async(fss, args=(host, port, file_path, True),
-                                 callback=self)
-        except Exception, e:
-            print e.errno, e, dir(e)
-            print traceback.print_tb()
+        self._pl.apply_async(
+            fss,
+            args=(host, port, file_path, True, self._coo),
+            callback=self)
         self._curs += 1
         self._lock.release()
         return 500

@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 09:33
-# Last modified: 2016-11-10 20:38
+# Last modified: 2016-11-11 11:34
 # Filename: frames.py
 # Description:
 __metaclass__ = type
@@ -112,7 +112,6 @@ class ConsFrame(wx.Frame):
                         self.progress_panel.GetChildren())
         if status:
             return
-
         panel = wx.Panel(self.progress_panel, size=(600, 50), name=uuid)
         _title = wx.StaticText(panel, label=filename,
                                size=(450, -1), pos=(0, 5))

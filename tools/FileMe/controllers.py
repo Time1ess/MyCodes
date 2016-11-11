@@ -3,10 +3,12 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-09 16:07
-# Last modified: 2016-11-10 20:35
+# Last modified: 2016-11-11 11:34
 # Filename: controllers.py
 # Description:
 __metaclass__ = type
+
+import wx
 
 from random import randint
 from multiprocessing import Lock
@@ -32,6 +34,55 @@ class Coordinator:
         else:
             print 'Already has a gui'
         self.unhandled_message()
+
+    def create_session_bar(self, to_local=False, *args, **kwargs):
+        if to_local:
+            source = kwargs['source'][0]
+            filename = kwargs['filename'][:50]
+            uuid = source+':'+filename
+            name = filename
+            wx.CallAfter(self.gui.add_new_progress_bar, uuid, name)
+        else:
+            pass
+
+    def update_session_bar(self, to_local=False, *args, **kwargs):
+        if to_local:
+            source = kwargs['source'][0]
+            filename = kwargs['filename'][:50]
+            uuid = source+':'+filename
+        else:
+            uuid = 'temp'
+        progress = kwargs.get('progress', None)
+        if progress:
+            progress = int(progress)
+        speed = kwargs.get('speed', None)
+        if speed:
+            speed = int(speed)
+            if speed > 1024**2:
+                speed = str(speed/(1024**2))+'MB/s'
+            elif speed > 1024:
+                speed = str(speed/1024)+'KB/s'
+            else:
+                speed = str(speed)+'B/s'
+        eta = kwargs.get('eta', None)
+        if eta:
+            eta = int(eta)
+            if eta > 24*(60**2):
+                eta = u'超出一天'
+            elif eta > 60**2:
+                eta = str(eta/(60**2))+u'小时'
+            elif eta > 60:
+                eta = str(eta/60)+u'分钟'
+            else:
+                eta = str(eta)+u'秒'
+        wx.CallAfter( self.gui.update_progress, uuid, progress, speed, eta)
+
+    def delete_session_bar(self, to_local=False, *args, **kwargs):
+        if to_local:
+            source = kwargs['source'][0]
+            filename = kwargs['filename'][:50]
+            uuid = source+':'+filename
+            wx.CallAfter(self.gui.delete_progress_bar, uuid)
 
     def message_hook(self, cli_msg, svr_msg):
         self.msg_lock.acquire()
