@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-10-29 19:34
-# Last modified: 2016-11-11 10:53
+# Last modified: 2016-11-12 14:20
 # Filename: manager.py
 # Description: The Core of FileMe
 __metaclass__ = type

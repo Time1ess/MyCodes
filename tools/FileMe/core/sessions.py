@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 08:58
-# Last modified: 2016-11-11 11:34
+# Last modified: 2016-11-12 18:06
 # Filename: sessions.py
 # Description:
 __metaclass__ = type
@@ -13,6 +13,7 @@ import socket
 import traceback
 import time
 import os
+import logging
 
 from threading import current_thread
 
@@ -56,8 +57,10 @@ class _FileMasterSession:
         """
         if self._PS:
             open_type = 'wb'
+            file_ext = '.downloading'
         else:
             open_type = 'rb'
+            file_ext = ''
         try:
             while True:
                 sock.settimeout(10)
@@ -73,6 +76,8 @@ class _FileMasterSession:
                     received_bytes = 0
                     duration_bytes = 0
                     _file = os.path.join(self._files_dir, self._filename)
+                    _file += file_ext
+                    logging.debug('Master session: %s' % _file)
                     with open(_file, open_type) as f:
                         # If session is put session then receive bytes.
                         if self._PS:
@@ -133,7 +138,15 @@ class _FileMasterSession:
                                     source=addr,
                                     filename=self._origin_filename)
                         else:
+                            if self._coo:
+                                self._coo.create_session_bar(
+                                    to_local=False,
+                                    target=addr,
+                                    filename=self._origin_filename)
                             size = os.path.getsize(_file)
+                            start = time.time()
+                            send_bytes = 0
+                            duration_bytes = 0
                             while True:
                                 client.send(str(size))
                                 checked = client.recv(BUF_SIZE)
@@ -151,11 +164,40 @@ class _FileMasterSession:
                                     checked = client.recv(BUF_SIZE)
                                     if checked == 'True':
                                         break
+                                duration_bytes += len(fbts)
                                 fbts = f.read(BUF_SIZE)
+                                if self._coo:
+                                    now = time.time()
+                                    duration = now-start
+                                    if duration < 1:
+                                        continue
+                                    start = now
+                                    send_bytes += duration_bytes
+                                    progress = 100.0*send_bytes/size
+                                    speed = 1.0*duration_bytes/duration
+                                    eta = (size-send_bytes)/speed
+                                    duration_bytes = 0
+                                    self._coo.update_session_bar(
+                                        to_local=False,
+                                        target=addr,
+                                        filename=self._origin_filename,
+                                        progress=progress,
+                                        speed=speed,
+                                        eta=eta)
+                            if self._coo:
+                                self._coo.delete_session_bar(
+                                    to_local=False,
+                                    target=addr,
+                                    filename=self._origin_filename)
+                    os.rename(_file, _file.replace(file_ext, ''))
                     break
         except socket.timeout:
-            print 'File master session timeout.'
-        except Exception:
+            logging.warning('File master session timeout.')
+        except IOError:
+            # TODO: send terminate signal
+            logging.error("No such file: %s" % (_file))
+        except Exception, e:
+            logging.error("Error: %s" % e)
             if DEBUG:
                 print traceback.print_exc()
         finally:
@@ -185,9 +227,11 @@ class _FileSlaveSession:
             sock.settimeout(10)
             sock.connect((host, port))
             sock.settimeout(None)
+            logging.debug('open file: %s' % file_path)
             with open(file_path, open_type) as f:
                 md5 = hashlib.md5()
                 if put_session:
+                    logging.debug('put session')
                     size = os.path.getsize(file_path)
                     while True:
                         sock.send(str(size))
@@ -208,6 +252,7 @@ class _FileSlaveSession:
                                 break
                         fbts = f.read(BUF_SIZE)
                 else:
+                    logging.debug('get session')
                     while True:
                         try:
                             fbts = sock.recv(BUF_SIZE)

@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 20:15
-# Last modified: 2016-11-11 11:34
+# Last modified: 2016-11-12 18:06
 # Filename: main.py
 # Description:
 __metaclass__ = type
@@ -14,6 +14,7 @@ import time
 from threading import Thread
 
 from gui.frames import ConsFrame
+from core.settings import *
 from core.manager import TransferManager
 from core.sessions import SessionManager
 from controllers import Coordinator

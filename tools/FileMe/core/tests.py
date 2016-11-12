@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 09:11
-# Last modified: 2016-11-11 10:53
+# Last modified: 2016-11-12 18:05
 # Filename: tests.py
 # Description:
 __metaclass__ = type
@@ -54,7 +54,7 @@ def test_get(m):
         '[APTX4869][CONAN][819][720P][AVC_AAC][CHS](0B98AFC4).mp4',
         '[APTX4869][CONAN][820][720P][AVC_AAC][CHS](B8255B71).mp4']
     cmd_fmt = 'GET -h %s -p %s -f %s'
-    cmds = [cmd_fmt % (host, 10000+randint(0, 0), x) for x
+    cmds = [cmd_fmt % (host, 10000+randint(0, 10), x) for x
             in filenames]
     for cmd in cmds:
         m.terminal_get(cmd)
@@ -63,7 +63,7 @@ def test_get(m):
     return 0
 
 
-def test_all(m):
+def test_all(m, pn=4, gn=4):
     """
     Author: David
     Desc:
@@ -78,15 +78,19 @@ def test_all(m):
         '[APTX4869][CONAN][819][720P][AVC_AAC][CHS](0B98AFC4).mp4',
         '[APTX4869][CONAN][820][720P][AVC_AAC][CHS](B8255B71).mp4']
     cmd_fmt = 'PUT -h %s -p %s -f /Users/youchen/Movies/%s'
-    cmds = [cmd_fmt % (host, 10000+randint(0, 0), x) for x
+    cmds = [cmd_fmt % (host, 10000+randint(0, 10), x) for x
             in filenames]
-    for cmd in cmds:
+    for idx, cmd in enumerate(cmds, 1):
+        if idx > pn:
+            break
         m.terminal_put(cmd)
 
     cmd_fmt = 'GET -h %s -p %s -f %s'
-    cmds = [cmd_fmt % (host, 10000+randint(0, 0), x) for x
+    cmds = [cmd_fmt % (host, 10000+randint(0, 10), x) for x
             in filenames]
-    for cmd in cmds:
+    for idx, cmd in enumerate(cmds, 1):
+        if idx > gn:
+            break
         m.terminal_get(cmd)
     raw_input('Press Enter to exit.')
     m.terminate()
@@ -110,7 +114,15 @@ def test(port=9000):
     elif port == 9002:
         test_get(m)
     elif port == 9003:
-        test_all(m)
+        if len(sys.argv) == 3:
+            pn = int(sys.argv[2])
+            test_all(m, pn)
+        elif len(sys.argv) == 4:
+            pn = int(sys.argv[2])
+            gn = int(sys.argv[3])
+            test_all(m, pn, gn)
+        else:
+            test_all(m)
     else:
         print 'Unknown usage.'
 

@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-09 16:07
-# Last modified: 2016-11-11 11:34
+# Last modified: 2016-11-12 14:09
 # Filename: controllers.py
 # Description:
 __metaclass__ = type
@@ -39,19 +39,25 @@ class Coordinator:
         if to_local:
             source = kwargs['source'][0]
             filename = kwargs['filename'][:50]
-            uuid = source+':'+filename
-            name = filename
+            uuid = '0'+source+':'+filename
+            name = u'下载:'+filename
             wx.CallAfter(self.gui.add_new_progress_bar, uuid, name)
         else:
-            pass
+            target = kwargs['target'][0]
+            filename = kwargs['filename'][:50]
+            uuid = '1'+target+':'+filename
+            name = u'上传:'+filename
+            wx.CallAfter(self.gui.add_new_progress_bar, uuid, name)
 
     def update_session_bar(self, to_local=False, *args, **kwargs):
         if to_local:
             source = kwargs['source'][0]
             filename = kwargs['filename'][:50]
-            uuid = source+':'+filename
+            uuid = '0'+source+':'+filename
         else:
-            uuid = 'temp'
+            target = kwargs['target'][0]
+            filename = kwargs['filename'][:50]
+            uuid = '1'+target+':'+filename
         progress = kwargs.get('progress', None)
         if progress:
             progress = int(progress)
@@ -75,13 +81,18 @@ class Coordinator:
                 eta = str(eta/60)+u'分钟'
             else:
                 eta = str(eta)+u'秒'
-        wx.CallAfter( self.gui.update_progress, uuid, progress, speed, eta)
+        wx.CallAfter(self.gui.update_progress, uuid, progress, speed, eta)
 
     def delete_session_bar(self, to_local=False, *args, **kwargs):
         if to_local:
             source = kwargs['source'][0]
             filename = kwargs['filename'][:50]
-            uuid = source+':'+filename
+            uuid = '0'+source+':'+filename
+            wx.CallAfter(self.gui.delete_progress_bar, uuid)
+        else:
+            target = kwargs['target'][0]
+            filename = kwargs['filename'][:50]
+            uuid = '1'+target+':'+filename
             wx.CallAfter(self.gui.delete_progress_bar, uuid)
 
     def message_hook(self, cli_msg, svr_msg):
