@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 20:15
-# Last modified: 2016-11-12 18:06
+# Last modified: 2016-11-13 14:50
 # Filename: main.py
 # Description:
 __metaclass__ = type
@@ -38,6 +38,4 @@ def main():
     app.MainLoop()
     m.terminate()
 
-
-if __name__ == '__main__':
-    main()
+main()

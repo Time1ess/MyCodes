@@ -27,3 +27,8 @@ DuoMeiTi/
 *include/
 .*
 !.gitignore
+*.mp4
+*.mkv
+*.mp3
+*logs/
+*.framework

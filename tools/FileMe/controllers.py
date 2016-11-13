@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-09 16:07
-# Last modified: 2016-11-12 14:09
+# Last modified: 2016-11-13 14:38
 # Filename: controllers.py
 # Description:
 __metaclass__ = type
@@ -40,13 +40,13 @@ class Coordinator:
             source = kwargs['source'][0]
             filename = kwargs['filename'][:50]
             uuid = '0'+source+':'+filename
-            name = u'下载:'+filename
+            name = u'接收: '+filename
             wx.CallAfter(self.gui.add_new_progress_bar, uuid, name)
         else:
             target = kwargs['target'][0]
             filename = kwargs['filename'][:50]
             uuid = '1'+target+':'+filename
-            name = u'上传:'+filename
+            name = u'发送: '+filename
             wx.CallAfter(self.gui.add_new_progress_bar, uuid, name)
 
     def update_session_bar(self, to_local=False, *args, **kwargs):

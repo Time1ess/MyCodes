@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 09:33
-# Last modified: 2016-11-11 11:34
+# Last modified: 2016-11-13 14:37
 # Filename: frames.py
 # Description:
 __metaclass__ = type
@@ -91,16 +91,17 @@ class ConsFrame(wx.Frame):
         self.right_layout.Add(btns_panel, 0, wx.ALL)
 
         send_btn = wx.Button(btns_panel, -1, u'发送', size=(100, 50))
-        request_btn = wx.Button(btns_panel, -1, u'请求', size=(100, 50))
-        clear_btn = wx.Button(btns_panel, -1, u'清空日志', size=(100, 50))
+        # request_btn = wx.Button(btns_panel, -1, u'请求', size=(100, 50))
+        # clear_btn = wx.Button(btns_panel, -1, u'清空日志', size=(100, 50))
 
-        self.Bind(wx.EVT_BUTTON, self.on_clear, clear_btn)
+        #self.Bind(wx.EVT_BUTTON, self.on_clear, clear_btn)
         self.Bind(wx.EVT_BUTTON, self.on_send, send_btn)
-        self.Bind(wx.EVT_BUTTON, self.on_request, request_btn)
+        # self.Bind(wx.EVT_BUTTON, self.on_request, request_btn)
 
-        btns = [send_btn, request_btn, clear_btn]
-        for btn in btns:
-            btns_layout.Add(btn, 0, wx.LEFT, border=70)
+        # btns = [send_btn, clear_btn]
+        # for btn in btns:
+        #    btns_layout.Add(btn, 0, wx.LEFT, border=130)
+        btns_layout.Add(send_btn, 0, wx.LEFT, border=450)
 
         self.main_layout.Layout()
         self.Fit()
