@@ -3,11 +3,12 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 09:05
-# Last modified: 2016-11-09 08:30
+# Last modified: 2016-11-13 18:29
 # Filename: messenger.py
 # Description:
 __metaclass__ = type
 import socket
+import logging
 
 from settings import *
 
@@ -57,8 +58,10 @@ class _Messenger:
                 self._mp.sendto(ret, addr)
             except socket.timeout:
                 continue
-            except Exception:
-                break
+            except Exception, e:
+                if e.errno != 10054:
+                    logging.error(e)
+                continue
         yield ('TER', None)
 
     def send_msg(self, msg, msg_port=None, host='<broadcast>'):

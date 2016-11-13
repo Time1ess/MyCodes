@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 08:58
-# Last modified: 2016-11-13 14:37
+# Last modified: 2016-11-13 19:05
 # Filename: sessions.py
 # Description:
 __metaclass__ = type
@@ -91,8 +91,12 @@ class _FileMasterSession:
                                     fbts = client.recv(BUF_SIZE)
                                     size = int(fbts)
                                     break
-                                except Exception:
+                                except ValueError:
                                     client.send('False')
+                                except Exception, e:
+                                    logging.error(e)
+                            logging.debug("Receive: "+_file+
+                                          " Size: "+str(size))
                             client.send('True')
                             file_over = False
                             while True:
@@ -103,10 +107,10 @@ class _FileMasterSession:
                                         break
                                     tmd5 = md5.copy()
                                     tmd5.update(fbts)
-                                    client.send('True')
                                     rmd5 = client.recv(BUF_SIZE)
                                     if rmd5 == tmd5.hexdigest():
                                         break
+                                    logging.warning(_file+" md5 check failed")
                                     client.send('False')
                                 if file_over:
                                     break
@@ -121,6 +125,7 @@ class _FileMasterSession:
                                         continue
                                     start = now
                                     received_bytes += duration_bytes
+                                    logging.debug(_file+" received:"+str(size))
                                     progress = 100.0*received_bytes/size
                                     speed = 1.0*duration_bytes/duration
                                     eta = (size-received_bytes)/speed
@@ -152,14 +157,12 @@ class _FileMasterSession:
                                 checked = client.recv(BUF_SIZE)
                                 if checked == 'True':
                                     break
+                            logging.debug("Send: "+_file+" Size: "+str(size))
                             fbts = f.read(BUF_SIZE)
                             while fbts:
                                 md5.update(fbts)
                                 while True:
                                     client.send(fbts)
-                                    checked = client.recv(BUF_SIZE)
-                                    if checked != 'True':
-                                        continue
                                     client.send(md5.hexdigest())
                                     checked = client.recv(BUF_SIZE)
                                     if checked == 'True':
@@ -173,6 +176,7 @@ class _FileMasterSession:
                                         continue
                                     start = now
                                     send_bytes += duration_bytes
+                                    logging.debug(_file+" sended:"+str(size))
                                     progress = 100.0*send_bytes/size
                                     speed = 1.0*duration_bytes/duration
                                     eta = (size-send_bytes)/speed
@@ -197,9 +201,7 @@ class _FileMasterSession:
             # TODO: send terminate signal
             logging.error("No such file: %s" % (_file))
         except Exception, e:
-            logging.error("Error: %s" % e)
-            if DEBUG:
-                print traceback.print_exc()
+            logging.error(e)
         finally:
             sock.close()
 
@@ -227,40 +229,40 @@ class _FileSlaveSession:
             sock.settimeout(10)
             sock.connect((host, port))
             sock.settimeout(None)
-            logging.debug('open file: %s' % file_path)
+            logging.debug('Slave Session: %s' % file_path)
             with open(file_path, open_type) as f:
                 md5 = hashlib.md5()
                 if put_session:
-                    logging.debug('put session')
                     size = os.path.getsize(file_path)
                     while True:
                         sock.send(str(size))
                         checked = sock.recv(BUF_SIZE)
                         if checked == 'True':
                             break
+                    logging.debug("Send: "+file_path+" Size: "+str(size))
                     fbts = f.read(BUF_SIZE)
                     while fbts:
                         md5.update(fbts)
                         while True:
                             sock.send(fbts)
-                            checked = sock.recv(BUF_SIZE)
-                            if checked != 'True':
-                                continue
                             sock.send(md5.hexdigest())
                             checked = sock.recv(BUF_SIZE)
                             if checked == 'True':
                                 break
+                            logging.warning(file_path+" md5 check failed")
                         fbts = f.read(BUF_SIZE)
                 else:
-                    logging.debug('get session')
                     while True:
                         try:
                             fbts = sock.recv(BUF_SIZE)
                             size = int(fbts)
                             break
-                        except Exception:
+                        except ValueError:
                             sock.send('False')
+                        except Exception, e:
+                            logging.error(e)
                     sock.send('True')
+                    logging.debug("Receive: "+file_path+" Size: "+str(size))
                     file_over = False
                     while True:
                         while True:
@@ -270,11 +272,11 @@ class _FileSlaveSession:
                                 break
                             tmd5 = md5.copy()
                             tmd5.update(fbts)
-                            sock.send('True')
                             rmd5 = sock.recv(BUF_SIZE)
                             if rmd5 == tmd5.hexdigest():
                                 break
                             sock.send('False')
+                            logging.warning(file_path+" md5 check failed")
                         if file_over:
                             break
                         sock.send('True')
@@ -283,9 +285,8 @@ class _FileSlaveSession:
 
         except socket.timeout:
             print 'File slave session timeout.'
-        except Exception:
-            if DEBUG:
-                print traceback.print_exc()
+        except Exception, e:
+            logging.error(e)
         finally:
             sock.close()
 

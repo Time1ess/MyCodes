@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-10-29 19:34
-# Last modified: 2016-11-12 14:20
+# Last modified: 2016-11-13 18:29
 # Filename: manager.py
 # Description: The Core of FileMe
 __metaclass__ = type
@@ -147,7 +147,7 @@ class TransferManager:
                 reason='Host ip doesn\'t match.')
         elif target_host == host:
             self._known_hosts[host] = port
-            srg_msg = self._srg_m(self._msg_port, host)
+            srg_msg = self._srg_m(self._msg_port, self._host_ip)
             return srg_msg
 
     def _srg_m(self, port, host):  # SRG message
@@ -220,7 +220,7 @@ class TransferManager:
             self._host_ip, sender_host,
             msg_port, port, filename, force)
         if code == 400:
-            return self._spt_m(sender_host, port, filename)
+            return self._spt_m(self._host_ip, port, filename)
         elif code == 402:
             return self._delay_m('PUT', sender_host, filename)
         elif code == 401:

@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 09:33
-# Last modified: 2016-11-13 14:37
+# Last modified: 2016-11-13 18:31
 # Filename: frames.py
 # Description:
 __metaclass__ = type
@@ -39,10 +39,10 @@ class ConsFrame(wx.Frame):
     def _init_menus(self):
         filemenu = wx.Menu()
         menu_about = filemenu.Append(
-            102, "关于", u'关于本程序')
+            102, u"关于", u'关于本程序')
         filemenu.AppendSeparator()
         menu_exit = filemenu.Append(
-            103, "退出", u'结束程序')
+            103, u"退出", u'结束程序')
         self.Bind(wx.EVT_MENU, self.on_about, menu_about)
         self.Bind(wx.EVT_MENU, self.on_exit, menu_exit)
         menuBar = wx.MenuBar()

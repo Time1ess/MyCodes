@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-09 16:07
-# Last modified: 2016-11-13 14:38
+# Last modified: 2016-11-13 18:36
 # Filename: controllers.py
 # Description:
 __metaclass__ = type
@@ -122,7 +122,7 @@ class Coordinator:
         cli_type = cli_args[0]
         svr_type = svr_args[0]
         if cli_type == 'REG' and svr_type == 'SRG':
-            self.gui.append_new_addr(cli_args[1])
+            wx.CallAfter(self.gui.append_new_addr, cli_args[1])
         elif cli_type == 'URE' and svr_type == 'ACK':
             self.gui.delete_addr(cli_args[1])
         elif cli_type == 'PUT' and svr_type == 'SPT':
@@ -130,7 +130,7 @@ class Coordinator:
         elif cli_type == 'GET' and svr_type == 'SGT':
             pass
         elif cli_type == 'SRG' and svr_type == 'ACK':
-            self.gui.append_new_addr(cli_args[2])
+            wx.CallAfter(self.gui.append_new_addr, cli_args[2])
         elif cli_type == 'SPT' and svr_type == 'ACK':
             pass
         elif cli_type == 'SGT' and svr_type == 'ACK':
