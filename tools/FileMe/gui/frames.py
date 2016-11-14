@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 09:33
-# Last modified: 2016-11-13 18:31
+# Last modified: 2016-11-14 16:27
 # Filename: frames.py
 # Description:
 __metaclass__ = type
@@ -52,9 +52,10 @@ class ConsFrame(wx.Frame):
     def _init_addrs(self):
         self.addrs_panel = wx.ScrolledWindow(
             self, size=(200, 600),
-            style=wx.VSCROLL | wx.BORDER_RAISED,
+            style=wx.VSCROLL,
             name="addrs_panel")
-        self.addrs_layout = wx.GridSizer(0, 1, 3, 0)
+        # self.addrs_layout = wx.GridSizer(0, 1, 3, 0)
+        self.addrs_layout = wx.BoxSizer(wx.VERTICAL)
         self.addrs_panel.SetSizer(self.addrs_layout)
         self.addrs_panel.SetScrollbars(0, 20, 0, 50)
 
@@ -74,7 +75,7 @@ class ConsFrame(wx.Frame):
     def _init_progress_panel(self):
         self.progress_panel = wx.ScrolledWindow(
             self.right_panel, size=(600, 550),
-            style=wx.VSCROLL | wx.BORDER_SUNKEN,
+            style=wx.VSCROLL,
             name="progress_panel")
         self.progress_panel_layout = wx.BoxSizer(wx.VERTICAL)
         self.progress_panel.SetSizer(self.progress_panel_layout)
@@ -91,16 +92,9 @@ class ConsFrame(wx.Frame):
         self.right_layout.Add(btns_panel, 0, wx.ALL)
 
         send_btn = wx.Button(btns_panel, -1, u'发送', size=(100, 50))
-        # request_btn = wx.Button(btns_panel, -1, u'请求', size=(100, 50))
-        # clear_btn = wx.Button(btns_panel, -1, u'清空日志', size=(100, 50))
 
-        #self.Bind(wx.EVT_BUTTON, self.on_clear, clear_btn)
         self.Bind(wx.EVT_BUTTON, self.on_send, send_btn)
-        # self.Bind(wx.EVT_BUTTON, self.on_request, request_btn)
 
-        # btns = [send_btn, clear_btn]
-        # for btn in btns:
-        #    btns_layout.Add(btn, 0, wx.LEFT, border=130)
         btns_layout.Add(send_btn, 0, wx.LEFT, border=450)
 
         self.main_layout.Layout()
@@ -125,7 +119,7 @@ class ConsFrame(wx.Frame):
         panel.progress = _prog
         panel.speed = _speed
         panel.eta = _eta
-        self.progress_panel_layout.Add(panel, 0, wx.BOTTOM, border=10)
+        self.progress_panel_layout.Add(panel, 0, wx.BOTTOM | wx.LEFT, border=10)
         self.main_layout.Layout()
         self.Fit()
 
@@ -217,10 +211,10 @@ class ConsFrame(wx.Frame):
                      self.addrs_layout.GetChildren())
         if addr not in labels:
             btn = wx.Button(self.addrs_panel, -1, addr, style=wx.NO_BORDER,
-                            size=(-1, 40))
+                            size=(200, 80))
             btn.SetBackgroundColour(ADDRS_BTN_BG)
             self.Bind(wx.EVT_BUTTON, self.on_target_user, btn)
-            self.addrs_layout.Add(btn, 0, wx.SHAPED)
+            self.addrs_layout.Add(btn, 0, wx.SHAPED | wx.TOP, 5)
             self.main_layout.Layout()
             self.Fit()
             self.change_user(btn)

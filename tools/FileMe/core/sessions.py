@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 08:58
-# Last modified: 2016-11-13 19:05
+# Last modified: 2016-11-14 16:15
 # Filename: sessions.py
 # Description:
 __metaclass__ = type
@@ -39,11 +39,8 @@ class _FileMasterSession:
                 PS is to indicate whether a PUT_SESSION or GET_SESSION.
         """
         self._target_host = remote
-        self._md5 = hashlib.md5()
-        self._md5.update(filename)
         self._files_dir = files_dir
-        self._origin_filename = filename
-        self._filename = self._md5.hexdigest()+'.'+filename.split('.')[-1]
+        self._filename = filename.rsplit('\\', 1)[-1]
         self._PS = put_session
         self._coo = coo
 
@@ -63,7 +60,7 @@ class _FileMasterSession:
             file_ext = ''
         try:
             while True:
-                sock.settimeout(10)
+                sock.settimeout(30)
                 client, addr = sock.accept()
                 sock.settimeout(None)
                 client.settimeout(None)
@@ -71,13 +68,12 @@ class _FileMasterSession:
                     client.send('REJ PUT 301 Source host doesn\'t match')
                     client.close()
                 else:
-                    md5 = hashlib.md5()
-                    start = time.time()
-                    received_bytes = 0
-                    duration_bytes = 0
                     _file = os.path.join(self._files_dir, self._filename)
                     _file += file_ext
                     logging.debug('Master session: %s' % _file)
+                    if os.path.exists(_file) and self._PS:
+                        logging.warning(_file+" already exists")
+                        break
                     with open(_file, open_type) as f:
                         # If session is put session then receive bytes.
                         if self._PS:
@@ -85,10 +81,15 @@ class _FileMasterSession:
                                 self._coo.create_session_bar(
                                     to_local=True,
                                     source=addr,
-                                    filename=self._origin_filename)
+                                    filename=self._filename)
+                            start = time.time()
+                            received_bytes = 0
+                            duration_bytes = 0
                             while True:
                                 try:
                                     fbts = client.recv(BUF_SIZE)
+                                    logging.debug(
+                                        "receive msg for file size: "+fbts)
                                     size = int(fbts)
                                     break
                                 except ValueError:
@@ -98,24 +99,10 @@ class _FileMasterSession:
                             logging.debug("Receive: "+_file+
                                           " Size: "+str(size))
                             client.send('True')
-                            file_over = False
                             while True:
-                                while True:
-                                    fbts = client.recv(BUF_SIZE)
-                                    if not fbts:
-                                        file_over = True
-                                        break
-                                    tmd5 = md5.copy()
-                                    tmd5.update(fbts)
-                                    rmd5 = client.recv(BUF_SIZE)
-                                    if rmd5 == tmd5.hexdigest():
-                                        break
-                                    logging.warning(_file+" md5 check failed")
-                                    client.send('False')
-                                if file_over:
+                                fbts = client.recv(BUF_SIZE)
+                                if not fbts:
                                     break
-                                client.send('True')
-                                md5.update(fbts)
                                 duration_bytes += len(fbts)
                                 f.write(fbts)
                                 if self._coo:
@@ -125,7 +112,6 @@ class _FileMasterSession:
                                         continue
                                     start = now
                                     received_bytes += duration_bytes
-                                    logging.debug(_file+" received:"+str(size))
                                     progress = 100.0*received_bytes/size
                                     speed = 1.0*duration_bytes/duration
                                     eta = (size-received_bytes)/speed
@@ -133,7 +119,7 @@ class _FileMasterSession:
                                     self._coo.update_session_bar(
                                         to_local=True,
                                         source=addr,
-                                        filename=self._origin_filename,
+                                        filename=self._filename,
                                         progress=progress,
                                         speed=speed,
                                         eta=eta)
@@ -141,13 +127,13 @@ class _FileMasterSession:
                                 self._coo.delete_session_bar(
                                     to_local=True,
                                     source=addr,
-                                    filename=self._origin_filename)
+                                    filename=self._filename)
                         else:
                             if self._coo:
                                 self._coo.create_session_bar(
                                     to_local=False,
                                     target=addr,
-                                    filename=self._origin_filename)
+                                    filename=self._filename)
                             size = os.path.getsize(_file)
                             start = time.time()
                             send_bytes = 0
@@ -160,13 +146,7 @@ class _FileMasterSession:
                             logging.debug("Send: "+_file+" Size: "+str(size))
                             fbts = f.read(BUF_SIZE)
                             while fbts:
-                                md5.update(fbts)
-                                while True:
-                                    client.send(fbts)
-                                    client.send(md5.hexdigest())
-                                    checked = client.recv(BUF_SIZE)
-                                    if checked == 'True':
-                                        break
+                                client.send(fbts)
                                 duration_bytes += len(fbts)
                                 fbts = f.read(BUF_SIZE)
                                 if self._coo:
@@ -176,7 +156,6 @@ class _FileMasterSession:
                                         continue
                                     start = now
                                     send_bytes += duration_bytes
-                                    logging.debug(_file+" sended:"+str(size))
                                     progress = 100.0*send_bytes/size
                                     speed = 1.0*duration_bytes/duration
                                     eta = (size-send_bytes)/speed
@@ -184,7 +163,7 @@ class _FileMasterSession:
                                     self._coo.update_session_bar(
                                         to_local=False,
                                         target=addr,
-                                        filename=self._origin_filename,
+                                        filename=self._filename,
                                         progress=progress,
                                         speed=speed,
                                         eta=eta)
@@ -192,16 +171,18 @@ class _FileMasterSession:
                                 self._coo.delete_session_bar(
                                     to_local=False,
                                     target=addr,
-                                    filename=self._origin_filename)
-                    os.rename(_file, _file.replace(file_ext, ''))
+                                    filename=self._filename)
+                    if self._PS:
+                        new_name = _file.replace(file_ext, '')
+                        os.rename(_file, new_name)
                     break
         except socket.timeout:
-            logging.warning('File master session timeout.')
+            logging.warning('FileMasterSession timeout.')
         except IOError:
-            # TODO: send terminate signal
-            logging.error("No such file: %s" % (_file))
-        except Exception, e:
-            logging.error(e)
+            logging.error(traceback.format_exc())
+            # logging.error("No such file: %s" % (_file))
+        except Exception:
+            logging.error(traceback.format_exc())
         finally:
             sock.close()
 
@@ -229,29 +210,77 @@ class _FileSlaveSession:
             sock.settimeout(10)
             sock.connect((host, port))
             sock.settimeout(None)
-            logging.debug('Slave Session: %s' % file_path)
+            addr = (host, port)
+            logging.debug('Slave Session: %s %d' % (file_path, put_session))
+            if os.path.exists(file_path) and  not put_session:
+                logging.warning(_file+" already exists")
+                sock.close()
+                return
             with open(file_path, open_type) as f:
-                md5 = hashlib.md5()
                 if put_session:
+                    start = time.time()
+                    send_bytes = 0
+                    duration_bytes = 0
+                    if coo:
+                        coo.create_session_bar(
+                            to_local=False,
+                            target=addr,
+                            filename=file_path)
+                        coo.update_session_bar(
+                            to_local=False,
+                            target=addr,
+                            filename=file_path,
+                            progress=100)
                     size = os.path.getsize(file_path)
-                    while True:
-                        sock.send(str(size))
-                        checked = sock.recv(BUF_SIZE)
-                        if checked == 'True':
-                            break
                     logging.debug("Send: "+file_path+" Size: "+str(size))
-                    fbts = f.read(BUF_SIZE)
-                    while fbts:
-                        md5.update(fbts)
-                        while True:
-                            sock.send(fbts)
-                            sock.send(md5.hexdigest())
+                    logging.debug('send file size')
+                    while True:
+                        try:
+                            sock.send(str(size))
                             checked = sock.recv(BUF_SIZE)
                             if checked == 'True':
                                 break
-                            logging.warning(file_path+" md5 check failed")
+                        except Exception, e:
+                            continue
+                    fbts = f.read(BUF_SIZE)
+                    while fbts:
+                        sock.send(fbts)
+                        duration_bytes += len(fbts)
                         fbts = f.read(BUF_SIZE)
+#                        if coo:
+#                            now = time.time()
+#                            duration = now-start
+#                            if duration < 1:
+#                                continue
+#                            start = now
+#                            send_bytes += duration_bytes
+#                            progress = 100.0*send_bytes/size
+#                            speed = 1.0*duration_bytes/duration
+#                            eta = (size-send_bytes)/speed
+#                            duration_bytes = 0
+#                            coo.update_session_bar(
+#                                to_local=False,
+#                                target=addr,
+#                                filename=file_path,
+#                                progress=progress,
+#                                speed=speed,
+#                                eta=eta)
+                        if coo:
+                            coo.delete_session_bar(
+                                to_local=False,
+                                target=addr,
+                                filename=file_path)
                 else:
+                    if coo:
+                        coo.create_session_bar(
+                            to_local=True,
+                            source=addr,
+                            filename=file_path)
+                    start = time.time()
+                    received_bytes = 0
+                    duration_bytes = 0
+                    logging.debug("Receive: "+file_path+" Size: "+str(size))
+                    logging.debug('receive file size')
                     while True:
                         try:
                             fbts = sock.recv(BUF_SIZE)
@@ -262,31 +291,39 @@ class _FileSlaveSession:
                         except Exception, e:
                             logging.error(e)
                     sock.send('True')
-                    logging.debug("Receive: "+file_path+" Size: "+str(size))
-                    file_over = False
                     while True:
-                        while True:
-                            fbts = sock.recv(BUF_SIZE)
-                            if not fbts:
-                                file_over = True
-                                break
-                            tmd5 = md5.copy()
-                            tmd5.update(fbts)
-                            rmd5 = sock.recv(BUF_SIZE)
-                            if rmd5 == tmd5.hexdigest():
-                                break
-                            sock.send('False')
-                            logging.warning(file_path+" md5 check failed")
-                        if file_over:
+                        fbts = sock.recv(BUF_SIZE)
+                        if not fbts:
                             break
-                        sock.send('True')
-                        md5.update(fbts)
+                        duration_bytes += len(fbts)
                         f.write(fbts)
-
+                        if coo:
+                            now = time.time()
+                            duration = now-start
+                            if duration < 1:
+                                continue
+                            start = now
+                            received_bytes += duration_bytes
+                            progress = 100.0*received_bytes/size
+                            speed = 1.0*duration_bytes/duration
+                            eta = (size-received_bytes)/speed
+                            duration_bytes = 0
+                            coo.update_session_bar(
+                                to_local=True,
+                                source=addr,
+                                filename=file_path,
+                                progress=progress,
+                                speed=speed,
+                                eta=eta)
+                        if coo:
+                            coo.delete_session_bar(
+                                to_local=True,
+                                source=addr,
+                                filename=file_path)
         except socket.timeout:
-            print 'File slave session timeout.'
+            logging.warning("FileSlaveSession timeout")
         except Exception, e:
-            logging.error(e)
+            logging.error(traceback.format_exc())
         finally:
             sock.close()
 

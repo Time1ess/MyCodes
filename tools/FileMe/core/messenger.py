@@ -3,11 +3,12 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-08 09:05
-# Last modified: 2016-11-13 18:29
+# Last modified: 2016-11-14 16:08
 # Filename: messenger.py
 # Description:
 __metaclass__ = type
 import socket
+import traceback
 import logging
 
 from settings import *
@@ -49,18 +50,25 @@ class _Messenger:
         while True:
             try:
                 msg, addr = self._mp.recvfrom(BUF_SIZE)
+                msg = msg.decode('utf-8')
                 if msg == 'ACK ACK' or msg == 'ACK REJ':
                     # print msg, 'IGNORE'
                     continue
+                logging.info('[MSG]: '+msg+' '+addr[0])
                 print '[MSG]:', msg, addr
                 ret, addr = yield (msg, addr)
+                logging.info('\t[RET]: '+ret+' '+addr[0])
                 print '\t[RET]:', ret, addr
+                ret = ret.encode('utf-8')
                 self._mp.sendto(ret, addr)
             except socket.timeout:
                 continue
-            except Exception, e:
+            except socket.error, e:
                 if e.errno != 10054:
                     logging.error(e)
+                continue
+            except Exception:
+                logging.error(traceback.format_exc())
                 continue
         yield ('TER', None)
 
@@ -73,6 +81,7 @@ class _Messenger:
                 will be used.  when host is not given, the message will be
                 broadcasted to all hosts in LAN.
         """
+        msg = msg.encode('utf-8')
         if not msg_port:
             ports = [self._base_port+i for i in xrange(self._port_range)]
         else:
