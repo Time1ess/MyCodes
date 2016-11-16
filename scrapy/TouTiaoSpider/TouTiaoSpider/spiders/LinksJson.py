@@ -3,12 +3,14 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-16 10:28
-# Last modified: 2016-11-16 16:09
+# Last modified: 2016-11-16 17:53
 # Filename: LinksJson.py
 # Description:
 # -*- coding: utf-8 -*-
 import scrapy
 import json
+import random
+import time
 
 from scrapy.loader import ItemLoader
 
@@ -24,8 +26,12 @@ class LinksJsonSpider(scrapy.Spider):
     )
 
     def parse(self, response):
-        js = json.loads(response.body)
-        if js['message'] == 'success':
+        data_flag = True
+        try:
+            js = json.loads(response.body)
+        except Exception:
+            data_flag = False
+        if data_flag and js['message'] == 'success':
             for di in js['data']:
                 il = ItemLoader(item=NewsItem())
                 il.add_value('chinese_tag', di.get('chinese_tag'))
@@ -51,5 +57,10 @@ class LinksJsonSpider(scrapy.Spider):
                 il.add_value('is_diversion_page', di.get('is_diversion_page'))
                 il.add_value('media_url', di.get('media_url'))
                 yield il.load_item()
-        if js['has_more'] is True:
+        if data_flag and js['has_more'] is True:
             pass
+        feed_url = 'http://www.toutiao.com/api/article/feed/?'+gen_payload()
+        sleep_time = random.randint(5, 20) 
+        print 'Sleep:', sleep_time
+        time.sleep(sleep_time)
+        yield scrapy.Request(feed_url, callback=self.parse)
