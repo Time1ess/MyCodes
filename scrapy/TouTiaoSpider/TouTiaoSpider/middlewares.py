@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-16 15:09
-# Last modified: 2016-11-16 16:09
+# Last modified: 2016-11-17 11:11
 # Filename: middlewares.py
 # Description:
 __metaclass__ = type
@@ -27,5 +27,4 @@ class RandomUserAgentMiddleware():
 class ProxyMiddleware():
     def process_request(self, request, spider):
         proxy = random.choice(PROXIES)
-        print 'PROXY:', proxy
         request.meta['proxy'] = proxy

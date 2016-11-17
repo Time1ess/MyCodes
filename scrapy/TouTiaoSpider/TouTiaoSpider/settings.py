@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-16 10:36
-# Last modified: 2016-11-16 17:16
+# Last modified: 2016-11-17 14:53
 # Filename: settings.py
 # Description:
 # -*- coding: utf-8 -*-
@@ -35,7 +35,7 @@ CONCURRENT_REQUESTS = 10
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-#DOWNLOAD_DELAY = 10
+DOWNLOAD_DELAY = 5
 # The download delay setting will honor only one of:
 # CONCURRENT_REQUESTS_PER_DOMAIN = 16
 # CONCURRENT_REQUESTS_PER_IP = 16
@@ -62,7 +62,7 @@ CONCURRENT_REQUESTS = 10
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
     'TouTiaoSpider.middlewares.RandomUserAgentMiddleware': 543,
-    'TouTiaoSpider.middlewares.ProxyMiddleware': 544,
+#    'TouTiaoSpider.middlewares.ProxyMiddleware': 544,
 }
 
 # Enable or disable extensions
@@ -74,7 +74,9 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'TouTiaoSpider.pipelines.TouTiaoSpiderPipeline': 300,
+    'TouTiaoSpider.pipelines.CleanUpPipeline': 300,
+    'TouTiaoSpider.pipelines.MySQLPipeline': 301,
+
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -97,3 +99,11 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+
+# Database Settings
+MYSQL_HOST = '127.0.0.1'
+MYSQL_DBNAME = 'scrapy'
+MYSQL_PORT = 3306
+MYSQL_USER = 'root'
+MYSQL_PASS = 'root'

@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-16 10:42
-# Last modified: 2016-11-16 11:07
+# Last modified: 2016-11-17 15:01
 # Filename: items.py
 # Description:
 # -*- coding: utf-8 -*-
@@ -38,3 +38,24 @@ class NewsItem(scrapy.Item):
     group_id = scrapy.Field()
     is_diversion_page = scrapy.Field()
     media_url = scrapy.Field()
+
+    def prop(self, key):
+        vals = self.get(key, [''])
+        return vals[0]
+
+
+class ArticleItem(scrapy.Item):
+    to_group_id = scrapy.Field()
+    url = scrapy.Field()
+    title = scrapy.Field()
+    source = scrapy.Field()
+    ctime = scrapy.Field()
+    text = scrapy.Field()
+    labels = scrapy.Field()
+
+    def prop(self, key, join=False):
+        vals = self.get(key, [''])
+        if join:
+            return ' '.join(vals)
+        else:
+            return vals[0]
