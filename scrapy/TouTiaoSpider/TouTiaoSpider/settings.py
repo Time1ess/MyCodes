@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-16 10:36
-# Last modified: 2016-11-17 14:53
+# Last modified: 2016-11-17 15:07
 # Filename: settings.py
 # Description:
 # -*- coding: utf-8 -*-
@@ -62,7 +62,7 @@ DOWNLOAD_DELAY = 5
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
     'TouTiaoSpider.middlewares.RandomUserAgentMiddleware': 543,
-#    'TouTiaoSpider.middlewares.ProxyMiddleware': 544,
+    'TouTiaoSpider.middlewares.ProxyMiddleware': 544,
 }
 
 # Enable or disable extensions

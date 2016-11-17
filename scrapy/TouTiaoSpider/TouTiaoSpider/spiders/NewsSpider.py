@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-16 10:28
-# Last modified: 2016-11-17 15:01
+# Last modified: 2016-11-17 15:05
 # Filename: NewsSpider.py
 # Description:
 import scrapy
