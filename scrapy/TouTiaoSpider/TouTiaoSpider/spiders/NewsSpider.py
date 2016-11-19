@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-16 10:28
-# Last modified: 2016-11-17 15:05
+# Last modified: 2016-11-19 13:16
 # Filename: NewsSpider.py
 # Description:
 import scrapy
@@ -62,14 +62,8 @@ class NewsSpider(scrapy.Spider):
                             callback=self.parse_news)
                         request.meta['group_id'] = di.get('group_id', '0')
                         yield request
-        if USER_DELAY:
-            if data_flag and js['has_more'] is True:
-                sleep_time = random.randint(5, 20)
-            elif data_flag and js['has_more'] is False:
-                sleep_time = random.randint(180, 300)
-            else:
-                sleep_time = random.randint(30, 60)
-            time.sleep(sleep_time)
+        if response.status != 200:
+            time.sleep(random.randint(10, 50))
         feed_url = 'http://www.toutiao.com/api/article/feed/?'+gen_payload()
         yield scrapy.Request(feed_url, callback=self.parse)
 
