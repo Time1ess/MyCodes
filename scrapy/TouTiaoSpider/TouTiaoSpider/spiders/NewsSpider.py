@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2016-11-16 10:28
-# Last modified: 2016-11-19 13:16
+# Last modified: 2016-11-19 13:19
 # Filename: NewsSpider.py
 # Description:
 import scrapy
@@ -94,3 +94,5 @@ class NewsSpider(scrapy.Spider):
             il.add_value('text', text)
             il.add_value('labels', labels)
             yield il.load_item()
+        else:
+            return
