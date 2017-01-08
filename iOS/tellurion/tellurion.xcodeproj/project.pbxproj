@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B3670FF21DD9E9B2007FA97F /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3670FF11DD9E9B2007FA97F /* opencv2.framework */; };
 		B3CD2B0A1DD82B1100C689F1 /* tellurion.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3CD2B091DD82B1100C689F1 /* tellurion.mm */; };
-		B3CD2B0C1DD82B2100C689F1 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CD2B0B1DD82B2100C689F1 /* opencv2.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,13 +24,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B3670FF11DD9E9B2007FA97F /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
+		B3B1CF0B1DEAB77E00CD5F39 /* libsvm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libsvm.h; sourceTree = "<group>"; };
 		B3CD2AF91DD82AC700C689F1 /* libtellurion.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libtellurion.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CD2B051DD82B1100C689F1 /* IUnityGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IUnityGraphics.h; sourceTree = "<group>"; };
 		B3CD2B061DD82B1100C689F1 /* IUnityInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IUnityInterface.h; sourceTree = "<group>"; };
 		B3CD2B071DD82B1100C689F1 /* MLBasic */ = {isa = PBXFileReference; lastKnownFileType = folder; path = MLBasic; sourceTree = "<group>"; };
 		B3CD2B081DD82B1100C689F1 /* tellurion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tellurion.h; sourceTree = "<group>"; };
 		B3CD2B091DD82B1100C689F1 /* tellurion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = tellurion.mm; sourceTree = "<group>"; };
-		B3CD2B0B1DD82B2100C689F1 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,7 +39,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3CD2B0C1DD82B2100C689F1 /* opencv2.framework in Frameworks */,
+				B3670FF21DD9E9B2007FA97F /* opencv2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -48,7 +49,7 @@
 		B3CD2AF01DD82AC700C689F1 = {
 			isa = PBXGroup;
 			children = (
-				B3CD2B0B1DD82B2100C689F1 /* opencv2.framework */,
+				B3670FF11DD9E9B2007FA97F /* opencv2.framework */,
 				B3CD2AFB1DD82AC700C689F1 /* tellurion */,
 				B3CD2AFA1DD82AC700C689F1 /* Products */,
 			);
@@ -69,6 +70,7 @@
 				B3CD2B061DD82B1100C689F1 /* IUnityInterface.h */,
 				B3CD2B071DD82B1100C689F1 /* MLBasic */,
 				B3CD2B081DD82B1100C689F1 /* tellurion.h */,
+				B3B1CF0B1DEAB77E00CD5F39 /* libsvm.h */,
 				B3CD2B091DD82B1100C689F1 /* tellurion.mm */,
 			);
 			path = tellurion;
@@ -274,6 +276,7 @@
 				B3CD2B041DD82AC700C689F1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

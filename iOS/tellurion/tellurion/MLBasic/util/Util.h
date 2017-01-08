@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #ifndef UTIL_H
 #define UTIL_H
 
@@ -57,16 +57,38 @@ public:
 		cv::medianBlur(unified_image, unified_image, 3);
 		return unified_image;
 	}
+    static Mat ImageCut(const Mat &origin) {
+        Mat img = ImageUtil::ImageReSize(origin, 400, 400, false);
+        int row_start = (int)((float)img.rows / 2 - 120);
+        int row_end = (int)((float)img.rows / 2  + 120);
+        int col_start = (int)((float)img.cols / 2 - 120);
+        int col_end = (int)((float)img.cols / 2 + 120);
+        Range row_range(row_start, row_end);
+        Range col_range(col_start, col_end);
+        return Mat(img, row_range, col_range);
+    }
 	static cv::Mat load(std::string image_file_path) {
 		cv::Mat image;
 		if (image_file_path.find(".jpg")) 
 			image = cv::imread(image_file_path);
 		return image;
 	}
+    static Mat ImageSmooth(const Mat &src, const int height, const int width) {
+        Mat smooth_image;
+        GaussianBlur(src, smooth_image, Size(height, width), 0, 0);
+        return smooth_image;
+    }
 };
 
 class Util {
 public:
+    static double FindMax(const double array[], const int lenght) {
+        double max_element = -1;
+        for (int i = 0; i < lenght; i++) {
+            if (array[i] > max_element) max_element = array[i];
+        }
+        return max_element;
+    }
 	static void writeMat(const Mat &mat, const string &fileName)
 	{
 		int n = mat.rows;
