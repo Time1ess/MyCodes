@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-01-11 20:10
-# Last modified: 2017-01-11 22:02
+# Last modified: 2017-01-12 07:52
 # Filename: settings.py
 # Description:
 # -*- coding: utf-8 -*-
@@ -30,7 +30,7 @@ NEWSPIDER_MODULE = 'RenRen.spiders'
 ROBOTSTXT_OBEY = True
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 20
+CONCURRENT_REQUESTS = 400
 
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
