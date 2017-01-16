@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-01-11 18:54
-# Last modified: 2017-01-11 22:02
+# Last modified: 2017-01-16 08:24
 # Filename: spiders.py
 # Description:
 import scrapy
@@ -36,7 +36,8 @@ class RenRenSpider(scrapy.Spider):
         return scrapy.FormRequest(
                 self.login_url,
                 formdata={'email': username, 'password': password},
-                callback=self.logged_in)
+                callback=self.logged_in,
+                dont_filter=True)
 
     def start_requests(self):
         return [self._login_request(username, password)]
@@ -45,7 +46,7 @@ class RenRenSpider(scrapy.Spider):
         forbidden = response.xpath("//div[@class='error']").extract()
         if forbidden:
             return
-        next_page = response.xpath("//div[@class='list']/div[@class='l']\
+        next_page = response.xpath(u"//div[@class='list']/div[@class='l']\
             /a[@title='下一页']/@href").extract_first()
         friends = response.xpath("//div[@class='list']//\
             a[@class='p']").extract()
@@ -54,13 +55,14 @@ class RenRenSpider(scrapy.Spider):
         # for each friend
         for url, name in friends:
             iid = self.find_id(url)
-            print('爬取对象: ', name)
+            # print('爬取对象: ', name)
             yield scrapy.Request(self.detail_url % iid,
                                  callback=self.parse_detail, priority=1)
             yield scrapy.Request(self.friend_list_url % iid)
 
         # if next friends list page exists
-        yield scrapy.Request(next_page)
+        if next_page:
+            yield scrapy.Request(next_page, dont_filter=True)
 
     def parse_detail(self, response):
         iid = response.url[response.url.find('id')+3:]
@@ -69,6 +71,9 @@ class RenRenSpider(scrapy.Spider):
         if infos:
             infos = infos[1:]
         infos = ' '.join(infos)
+        iid = iid.encode('utf-8')
+        name = name.encode('utf-8')
+        infos = infos.encode('utf-8')
         yield UserInfo(iid=iid, name=name, info=infos)
 
     def captcha(self, response):
@@ -82,10 +87,12 @@ class RenRenSpider(scrapy.Spider):
     def logged_in(self, response):
         capt = response.xpath("//div[@class='sec']//img/@src").extract_first()
         if False:
-            print('Captcha: ', capt)
-            return scrapy.Request(capt, callback=self.captcha)
+            # print('Captcha: ', capt)
+            yield scrapy.Request(capt, callback=self.captcha, dont_filter=True)
+            return
         else:
-            print('No captcha')
+            # print('No captcha')
+            pass
         href = response.xpath("//div[@class='sec nav']/a/@href").extract()[1]
         my_id = self.id_pat.findall(href)[0]
-        yield scrapy.Request(self.friend_list_url % my_id)
+        yield scrapy.Request(self.friend_list_url % my_id, dont_filter=True)

@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-01-12 07:58
-# Last modified: 2017-01-12 08:24
+# Last modified: 2017-01-14 17:19
 # Filename: parse.py
 # Description:
 import re
@@ -11,7 +11,7 @@ from collections import defaultdict, namedtuple
 
 iid_name_pat = re.compile('^(.*?) (.*?) ')
 sex_pat = re.compile('性别：(.*?) ')
-birth_pat = re.compile('生日：(\d*)年(\d*)月(\d*)日 ')
+birth_pat = re.compile('生日：(\d*).*?(\d*).*?(\d*).*? ')
 sign_pat = re.compile(' (.*?)座')
 hometown_pat = re.compile('家乡：(.*?) (.*?) ')
 
