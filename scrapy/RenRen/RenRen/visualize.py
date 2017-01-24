@@ -3,17 +3,19 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-01-12 07:58
-# Last modified: 2017-01-14 21:36
+# Last modified: 2017-01-24 11:03
 # Filename: visualize.py
 # Description:
 import re
 import os
 import pickle
+import sys
 import matplotlib.pyplot as plt
 
 from collections import defaultdict, namedtuple
 from functools import partial
 
+from matplotlib.backends.backend_pdf import PdfPages
 
 data_file = 'users_infos.dat'
 start_year = 2012
@@ -47,7 +49,12 @@ def get(line, pat, n=1):
 def get_users():
     users = []
     with open('user_infos.txt') as f:
+        idx = 0
         for line in f:
+            idx += 1
+            if idx % 50000 == 0:
+                sys.stdout.flush()
+                sys.stdout.write('Total read : {0:10} lines.\r'.format(idx))
             line = line.strip('\r\n')
             find = iid_name_pat.findall(line)
             if find:
@@ -63,11 +70,12 @@ def get_users():
                     continue
                 person = Person(*ud)
                 users.append(person)
+    sys.stdout.flush()
     return users
 
 
 def draw_losing_rate(users):
-    plt.figure(dpi=100)
+    f = plt.figure(dpi=100)
 
     # last_online
     cnts = defaultdict(partial(defaultdict, int))
@@ -100,10 +108,12 @@ def draw_losing_rate(users):
     r = range(1, len(indices)//5+1)
     p4.set_xticks([l*5 for l in r])
     p4.set_xticklabels(indices[::5])
+    
+    return f
 
 
 def draw_birth(users):
-    plt.figure(dpi=100)
+    f = plt.figure(dpi=100)
 
     # birth - year
     year_cnt = defaultdict(int)
@@ -201,9 +211,11 @@ def draw_birth(users):
     p4.set_xticks([1.4, 2.4])
     p4.set_xticklabels(['男', '女'])
 
+    return f
+
 
 def draw_geo(users):
-    plt.figure(dpi=100)
+    f = plt.figure(dpi=100)
 
     pros_cnt = defaultdict(int)
     for user in users:
@@ -231,6 +243,8 @@ def draw_geo(users):
     plt.axis('equal')
     plt.legend()
 
+    return f
+
 
 def main():
     if not FORCE_REGEN and os.path.exists(data_file):
@@ -241,11 +255,20 @@ def main():
         with open(data_file, 'wb') as f:
             pickle.dump(users, f)
 
-    draw_birth(users)
-    draw_losing_rate(users)
-    draw_geo(users)
+    print('Draw birth')
+    f1 = draw_birth(users)
+    print('Draw losing rate')
+    f2 = draw_losing_rate(users)
+    print('Draw geo')
+    f3 = draw_geo(users)
 
-    plt.show()
+    pp = PdfPages('results.pdf')
+    pp.savefig(f1)
+    pp.savefig(f2)
+    pp.savefig(f3)
+    pp.close()
+
+    # plt.show()
 
 
 if __name__ == '__main__':
