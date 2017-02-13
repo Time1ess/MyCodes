@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-02-13 09:54
-# Last modified: 2017-02-13 09:54
+# Last modified: 2017-02-13 10:25
 # Filename: solution2.py
 # Description:
 # Definition for a binary tree node.
@@ -29,7 +29,6 @@ class Solution(object):
             s = root.val+sub_sum(root.left)+sub_sum(root.right)
             c[s] += 1
             return s
-        s = root.val+sub_sum(root.left)+sub_sum(root.right)
-        c[s] += 1
+        sub_sum(root)
         mc_key, mc_cnt = c.most_common(1)[0]
         return [key for key, cnt in c.items() if cnt == mc_cnt]
