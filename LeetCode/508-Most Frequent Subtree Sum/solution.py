@@ -2,11 +2,10 @@
 # coding: UTF-8
 # Author: David
 # Email: youchen.du@gmail.com
-# Created: 2017-02-13 09:45
-# Last modified: 2017-02-13 09:45
+# Created: 2017-02-13 10:22
+# Last modified: 2017-02-13 10:22
 # Filename: solution.py
 # Description:
-# Definition for a binary tree node.
 # class TreeNode(object):
 #     def __init__(self, x):
 #         self.val = x
@@ -23,9 +22,7 @@ class Solution(object):
             return []
         from collections import defaultdict
         d = defaultdict(int)
-        s = root.val+self.subtree_sum(root.left, d)+\
-            self.subtree_sum(root.right, d)
-        d[s] += 1
+        self.subtree_sum(root, d);
         result = []
         for new_idx, new_cnt in d.items():
             if not result:
