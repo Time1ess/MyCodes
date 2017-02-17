@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-02-16 20:21
-# Last modified: 2017-02-17 14:34
+# Last modified: 2017-02-17 14:43
 # Filename: shoes.py
 # Description:
 # -*- coding: utf-8 -*-
@@ -65,7 +65,12 @@ class ShoesSpider(Spider):
     def parse_comment(self, response):
         iid = response.meta['iid']
         page = int(response.meta['page'])
-        json_data = json.loads(response.text)
+        try:
+            json_data = json.loads(response.text)
+        except Exception as e:
+            json_data = {}
+            json_data['comments'] = []
+
         if not json_data['comments']:
             return
         for cd in json_data['comments']:
