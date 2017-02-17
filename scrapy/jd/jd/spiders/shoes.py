@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-02-16 20:21
-# Last modified: 2017-02-17 16:16
+# Last modified: 2017-02-17 21:32
 # Filename: shoes.py
 # Description:
 # -*- coding: utf-8 -*-
@@ -17,10 +17,15 @@ from scrapy.http import Request
 
 from jd.items import ShoeCommentItem, ShoeDetailItem
 
-shoe_cates= ['鞋', '男鞋', '女鞋', '鞋 男', '鞋 女', '运动鞋', '休闲鞋',
-             '正装鞋', '商务休闲鞋', '男靴', '工装鞋', '增高鞋', '帆布鞋',
-             '传统布鞋', '功能鞋', '定制鞋', '拖鞋', '人字拖鞋', '凉鞋',
-             '沙滩鞋']
+shoe_cates = [
+    '女深口单鞋', '工装鞋', '女鞋', '正装鞋', '平底鞋', '平底女鞋',
+    '功能鞋', '中跟单鞋', '女拖鞋', '凉鞋', '拖鞋', '帆布鞋', '人字拖',
+    '马丁靴', '商务休闲鞋', '传统布鞋', '休闲鞋', '鞋', '棉鞋', '定制鞋',
+    '男靴', '坡跟单鞋', '短靴', '雨鞋', '平板鞋', '尖头单鞋', '军靴', '女靴',
+    '皮鞋', '小白鞋', '雪地靴', '女豆豆鞋', '妈妈鞋', '增高鞋', '劳保鞋',
+    '豆豆鞋', '踝靴', '沙滩鞋', '鞋 女', '深口单鞋', '板鞋', '高帮鞋',
+    '人字拖鞋', '内增高', '发光鞋', '运动鞋', '高跟鞋', '雨靴', '鞋 男',
+    '乐福鞋', '内增高休闲鞋', '老人鞋', '男鞋', '平底单鞋', '浅口单鞋', '单鞋']
 shoe_list_url = 'https://search.jd.com/Search?keyword={}&enc=utf-8&page={}'
 comment_url_api = 'https://club.jd.com/comment/productPageComments.action?productId={}&score=0&sortType=5&page={}&pageSize=10&isShadowSku=0'
 num_pat = re.compile('(\d*?)')
