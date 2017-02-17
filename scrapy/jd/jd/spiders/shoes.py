@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-02-16 20:21
-# Last modified: 2017-02-17 14:43
+# Last modified: 2017-02-17 14:50
 # Filename: shoes.py
 # Description:
 # -*- coding: utf-8 -*-
@@ -25,7 +25,7 @@ num_pat = re.compile('(\d*?)')
 class ShoesSpider(Spider):
     name = 'shoes'
     allowed_domains = ['jd.com']
-    start_urls = [shoe_list_url.format(page) for page in range(1, 2)]
+    start_urls = [shoe_list_url.format(page) for page in range(1, 101)]
 
     def parse(self, response):
         item_urls = response.xpath('//li[@class="gl-item"]/div')
