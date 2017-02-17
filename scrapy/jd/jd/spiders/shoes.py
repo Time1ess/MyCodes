@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-02-16 20:21
-# Last modified: 2017-02-17 14:50
+# Last modified: 2017-02-17 14:52
 # Filename: shoes.py
 # Description:
 # -*- coding: utf-8 -*-
@@ -39,13 +39,11 @@ class ShoesSpider(Spider):
             yield Request(
                 detail_url,
                 callback=self.parse_detail,
-                meta={'iid': iid},
-                priority=2)
+                meta={'iid': iid})
             yield Request(
                 comment_url_api.format(iid, 1),
                 callback=self.parse_comment,
-                meta={'page': 1, 'iid': iid},
-                priority=1)
+                meta={'page': 1, 'iid': iid})
 
     def parse_detail(self, response):
         iid = int(response.meta['iid'])
@@ -89,5 +87,4 @@ class ShoesSpider(Spider):
         yield Request(
             comment_url_api.format(iid, page+1),
             callback=self.parse_comment,
-            meta={'page': page+1, 'iid': iid},
-            priority=1)
+            meta={'page': page+1, 'iid': iid})
