@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-02-16 20:21
-# Last modified: 2017-02-17 08:54
+# Last modified: 2017-02-17 14:34
 # Filename: shoes.py
 # Description:
 # -*- coding: utf-8 -*-
@@ -15,7 +15,7 @@ import scrapy
 from scrapy.spiders import Spider
 from scrapy.http import Request
 
-from jd.items import ShoeCommentItem
+from jd.items import ShoeCommentItem, ShoeDetailItem
 
 shoe_list_url = 'https://search.jd.com/Search?keyword=鞋&enc=utf-8&page={}'
 comment_url_api = 'https://club.jd.com/comment/productPageComments.action?productId={}&score=0&sortType=5&page={}&pageSize=10&isShadowSku=0'
@@ -25,19 +25,42 @@ num_pat = re.compile('(\d*?)')
 class ShoesSpider(Spider):
     name = 'shoes'
     allowed_domains = ['jd.com']
-    start_urls = [shoe_list_url.format(page) for page in range(1, 101)]
+    start_urls = [shoe_list_url.format(page) for page in range(1, 2)]
 
     def parse(self, response):
-        item_urls = response.xpath('//li[@class="gl-item"]//div'
-                                   '[@class="p-img"]/a/@href').extract()
-        item_urls = [x for x in item_urls if 'ccc-x' not in x]
-        item_ids = [x[x.rfind('/')+1:-5] for x in item_urls]
-        for iid in item_ids:
+        item_urls = response.xpath('//li[@class="gl-item"]/div')
+        for item_xpath in item_urls:
+            url = item_xpath.xpath('div[@class="p-img"]/a'
+                                   '/@href').extract_first()
+            if not url or 'ccc-x' in url:
+                continue
+            iid = url[url.rfind('/')+1:-5]
+            detail_url = 'http:' + url
+            yield Request(
+                detail_url,
+                callback=self.parse_detail,
+                meta={'iid': iid},
+                priority=2)
             yield Request(
                 comment_url_api.format(iid, 1),
                 callback=self.parse_comment,
                 meta={'page': 1, 'iid': iid},
                 priority=1)
+
+    def parse_detail(self, response):
+        iid = int(response.meta['iid'])
+        name = response.xpath('//div[@class="sku-name"]'
+                              '/text()').extract_first()
+        xpath_aside = response.xpath('//div[@class="aside"]')
+        shop = xpath_aside.xpath('//div[@class="mt"]/'
+                                 'h3/a/@title').extract_first()
+        scores = xpath_aside.xpath('//div[@class="mc"]/div/'
+                                   'a//text()').extract()
+        scores = [s for s in scores if s.strip('\n ')][::2]
+
+        sd = ShoeDetailItem(iid=iid, name=name, shop=shop,
+                            scores='|'.join(scores))
+        yield sd
 
     def parse_comment(self, response):
         iid = response.meta['iid']

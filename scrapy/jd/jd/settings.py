@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-02-16 20:20
-# Last modified: 2017-02-17 09:25
+# Last modified: 2017-02-17 14:34
 # Filename: settings.py
 # Description:
 # -*- coding: utf-8 -*-
@@ -30,12 +30,12 @@ NEWSPIDER_MODULE = 'jd.spiders'
 ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 10
+CONCURRENT_REQUESTS = 50
 
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 0.3
+DOWNLOAD_DELAY = 0.05
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16
@@ -75,6 +75,7 @@ DOWNLOADER_MIDDLEWARES = {
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     'jd.pipelines.ShoeCommentPipeline': 300,
+    'jd.pipelines.ShoeDetailPipeline': 301,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

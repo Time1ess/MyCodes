@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-02-17 08:24
-# Last modified: 2017-02-17 08:32
+# Last modified: 2017-02-17 14:26
 # Filename: items.py
 # Description:
 # -*- coding: utf-8 -*-
@@ -28,3 +28,9 @@ class ShoeCommentItem(scrapy.Item):
     user_level = scrapy.Field()
     color = scrapy.Field()
     size = scrapy.Field()
+
+class ShoeDetailItem(scrapy.Item):
+    iid = scrapy.Field()
+    name = scrapy.Field()
+    shop = scrapy.Field()
+    scores = scrapy.Field()
