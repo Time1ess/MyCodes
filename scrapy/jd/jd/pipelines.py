@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-02-17 08:32
-# Last modified: 2017-02-17 09:10
+# Last modified: 2017-02-17 09:25
 # Filename: pipelines.py
 # Description:
 # -*- coding: utf-8 -*-
@@ -13,6 +13,7 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 import re
+import os
 
 from scrapy.exceptions import DropItem
 
@@ -33,6 +34,8 @@ class ShoeCommentPipeline(object):
     @classmethod
     def from_crawler(cls, crawler):
         pipe = cls()
+        if not os.path.exists('shoe_comments.csv'):
+            return pipe
         pat = re.compile('^\d+?,')
         with open('shoe_comments.csv', 'r') as f:
             for line in f:
