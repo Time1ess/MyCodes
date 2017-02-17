@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-02-16 20:21
-# Last modified: 2017-02-17 14:52
+# Last modified: 2017-02-17 16:16
 # Filename: shoes.py
 # Description:
 # -*- coding: utf-8 -*-
@@ -17,7 +17,11 @@ from scrapy.http import Request
 
 from jd.items import ShoeCommentItem, ShoeDetailItem
 
-shoe_list_url = 'https://search.jd.com/Search?keyword=鞋&enc=utf-8&page={}'
+shoe_cates= ['鞋', '男鞋', '女鞋', '鞋 男', '鞋 女', '运动鞋', '休闲鞋',
+             '正装鞋', '商务休闲鞋', '男靴', '工装鞋', '增高鞋', '帆布鞋',
+             '传统布鞋', '功能鞋', '定制鞋', '拖鞋', '人字拖鞋', '凉鞋',
+             '沙滩鞋']
+shoe_list_url = 'https://search.jd.com/Search?keyword={}&enc=utf-8&page={}'
 comment_url_api = 'https://club.jd.com/comment/productPageComments.action?productId={}&score=0&sortType=5&page={}&pageSize=10&isShadowSku=0'
 num_pat = re.compile('(\d*?)')
 
@@ -25,7 +29,8 @@ num_pat = re.compile('(\d*?)')
 class ShoesSpider(Spider):
     name = 'shoes'
     allowed_domains = ['jd.com']
-    start_urls = [shoe_list_url.format(page) for page in range(1, 101)]
+    start_urls = [shoe_list_url.format(cate, page) for cate in shoe_cates
+                  for page in range(1, 101)]
 
     def parse(self, response):
         item_urls = response.xpath('//li[@class="gl-item"]/div')
