@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-02-16 20:21
-# Last modified: 2017-02-17 21:32
+# Last modified: 2017-02-18 08:29
 # Filename: shoes.py
 # Description:
 # -*- coding: utf-8 -*-
@@ -27,7 +27,8 @@ shoe_cates = [
     '人字拖鞋', '内增高', '发光鞋', '运动鞋', '高跟鞋', '雨靴', '鞋 男',
     '乐福鞋', '内增高休闲鞋', '老人鞋', '男鞋', '平底单鞋', '浅口单鞋', '单鞋']
 shoe_list_url = 'https://search.jd.com/Search?keyword={}&enc=utf-8&page={}'
-comment_url_api = 'https://club.jd.com/comment/productPageComments.action?productId={}&score=0&sortType=5&page={}&pageSize=10&isShadowSku=0'
+comment_url_api = ('https://club.jd.com/comment/productPageComments.action?'
+    'productId={}&score=0&sortType=5&page={}&pageSize=10&isShadowSku=0')
 num_pat = re.compile('(\d*?)')
 
 
@@ -53,7 +54,7 @@ class ShoesSpider(Spider):
             yield Request(
                 comment_url_api.format(iid, 1),
                 callback=self.parse_comment,
-                meta={'page': 1, 'iid': iid})
+                meta={'page': 1, 'iid': iid, 'retry': 0})
 
     def parse_detail(self, response):
         iid = int(response.meta['iid'])
@@ -73,11 +74,16 @@ class ShoesSpider(Spider):
     def parse_comment(self, response):
         iid = response.meta['iid']
         page = int(response.meta['page'])
+        retry = int(response.meta['retry'])
         try:
             json_data = json.loads(response.text)
         except Exception as e:
-            json_data = {}
-            json_data['comments'] = []
+            if retry < 10:
+                yield Request(
+                    comment_url_api.format(iid, page),
+                    callback=self.parse_comment,
+                    meta={'page': page, 'iid': iid, 'retry': retry+1})
+            return
 
         if not json_data['comments']:
             return
@@ -97,4 +103,4 @@ class ShoesSpider(Spider):
         yield Request(
             comment_url_api.format(iid, page+1),
             callback=self.parse_comment,
-            meta={'page': page+1, 'iid': iid})
+            meta={'page': page+1, 'iid': iid, 'retry': 0})
