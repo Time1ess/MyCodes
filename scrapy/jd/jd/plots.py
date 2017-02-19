@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-02-19 15:35
-# Last modified: 2017-02-19 16:21
+# Last modified: 2017-02-19 17:47
 # Filename: plots.py
 # Description:
 from functools import partial
@@ -13,7 +13,7 @@ from random import shuffle
 import matplotlib.pyplot as plt
 import numpy as np
 
-from utils import colors as color_keys
+from utils import colors as color_keys, LinesIndicator
 
 
 base_colors = {key: 0 for key in color_keys}
@@ -107,17 +107,19 @@ def subplot_pie(inputs, plotnum, target, title='', thres=0.01):
     p = target.add_subplot(plotnum)
     p.pie(values, labels=indices, colors=colors, autopct='%3.1f%%',
           startangle=90)
-    # p.axis('equal')
-    # p.legend()
     p.set_title(title+'(有效用户数:{})'.format(sum(values)))
     p.title.set_position([0.5, 1.1])
 
 
-def plot_all(comments, details, info_key, info_title):
+def plot_all(comments, details, info_key, info_title, ccnt=None):
     f = plt.figure(dpi=100)
     maps = defaultdict(partial(defaultdict, int))
+    if ccnt is None:
+        ccnt = len(comments)
 
-    for comment in comments.values():
+    indicate = LinesIndicator(ccnt, title='Plot all:'+info_key)
+    for comment in comments:
+        indicate()
         iid = comment['iid']
         _key = comment[info_key]
         detail = details.get(iid, None)
@@ -132,15 +134,21 @@ def plot_all(comments, details, info_key, info_title):
         else:
             maps['所有'][_key] += 1
             maps[sex][_key] += 1
+    indicate(0)
 
     for idx, (key, value) in enumerate(maps.items()):
         subplot_pie(value, 221+idx, f, '{}鞋{}分布'.format(key, info_title))
 
 
-def plot_by(comments, details, by_key, by_title, info_key, info_title):
+def plot_by(comments, details, by_key, by_title, info_key,
+            info_title, ccnt=None):
     maps = defaultdict(partial(defaultdict, partial(defaultdict, int)))
+    if ccnt is None:
+        ccnt = len(comments)
 
-    for comment in comments.values():
+    indicate = LinesIndicator(ccnt, title='Plot by:'+by_key)
+    for comment in comments:
+        indicate()
         iid = comment['iid']
         _key = comment[info_key]
         _by_key = comment[by_key]
@@ -157,6 +165,7 @@ def plot_by(comments, details, by_key, by_title, info_key, info_title):
         else:
             maps['所有'][_by_key][_key] += 1
             maps[sex][_by_key][_key] += 1
+    indicate(0)
 
     for key, value in maps.items():
         subplot_bar(value, 111, plt.figure(dpi=100),

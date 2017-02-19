@@ -3,12 +3,15 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-02-18 15:39
-# Last modified: 2017-02-19 15:56
+# Last modified: 2017-02-19 17:48
 # Filename: clean_details.py
 # Description:
 import os
 
-from utils import male_words, female_words, cross_words
+from logging import info, debug
+
+from utils import male_words, female_words, cross_words, LinesIndicator
+from utils import read_lineno
 
 
 DETAIL_FILENAME = 'shoe_details.csv'
@@ -20,9 +23,14 @@ def extract(fname=DETAIL_FILENAME, prefix=PREFIX):
     """
     Construct data dict from data file.
     """
+    info('Extract from details file')
     data = {}
-    with open(os.path.join(prefix, fname), 'r') as f:
+    full_path = os.path.join(prefix, fname)
+    line_cnt = read_lineno(full_path)
+    indicate = LinesIndicator(line_cnt, title='Extract details')
+    with open(full_path, 'r') as f:
         for line in f:
+            indicate()
             vals = line.strip('\n').split(',')
             vals[-1] = vals[-1].split('|')
             for idx in range(len(vals[-1])):
@@ -36,17 +44,22 @@ def extract(fname=DETAIL_FILENAME, prefix=PREFIX):
                 valid = False
             if valid:
                 data[vals[0]] = {key: val for key, val in zip(keys, vals)}
+        indicate(0)
 
-    find_sex_orient(data)
-    return data
+    line_cnt = len(data)
+    find_sex_orient(data, line_cnt)
+    return data, line_cnt
 
 
-def find_sex_orient(data):
+def find_sex_orient(data, line_cnt):
+    info('Find sex orientation')
     male_shoes = 0
     female_shoes = 0
     neutral_shoes = 0
 
+    indicate = LinesIndicator(line_cnt, title='Find sex')
     for record in data.values():
+        indicate()
         male_count, female_count = 0, 0
         name = record['name'].lower()
 
@@ -64,6 +77,7 @@ def find_sex_orient(data):
         else:
             record['sex'] = '中性'
             neutral_shoes += 1
+    indicate(0)
 
 
 if __name__ == '__main__':
