@@ -3,11 +3,13 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-02-22 09:56
-# Last modified: 2017-02-22 11:04
+# Last modified: 2017-02-22 11:28
 # Filename: linear_multi.py
 # Description:
 import numpy as np
 import matplotlib.pyplot as plt
+
+from numpy.linalg import inv
 
 
 def feature_normalize(X):
@@ -37,6 +39,10 @@ def gradient_descent_multi(X, y, theta, alpha, iterations):
     return theta, J_history
 
 
+def normal_equation(X, y):
+    return inv(X.T.dot(X)).dot(X.T).dot(y)
+
+
 plt.Figure(dpi=80)
 
 
@@ -53,15 +59,20 @@ X, mu, sigma = feature_normalize(X)
 X = np.append(np.ones(m), X, axis=1)
 theta = np.random.random_sample((3, 1))
 
-iterations = 400
+iterations = 100
 alpha = 0.3
 
 
 theta, J_history = gradient_descent_multi(X, y, theta, alpha, iterations)
+print('Gradient Descent Theta:')
+print(theta)
+theta2 = normal_equation(X, y)
+print('Normal Equation Theta:')
+print(theta2)
 
 plt.plot(range(len(J_history)), J_history)
 plt.title('Gradient Descent Cost')
-plt.xlim((0, 100))
+plt.xlim((0, iterations))
 plt.xlabel('Iter times')
 plt.ylabel('Cost')
 plt.show()
