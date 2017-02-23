@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-02-22 13:57
-# Last modified: 2017-02-23 11:07
+# Last modified: 2017-02-23 14:58
 # Filename: logistic.py
 # Description:
 import numpy as np
@@ -16,7 +16,7 @@ def sigmoid(z):
     return g
 
 
-def cost(theta, X, y):
+def cost_func(theta, X, y):
     m = len(y)
 
     h = sigmoid(X.dot(theta))
@@ -24,7 +24,7 @@ def cost(theta, X, y):
     return J
 
 
-def gradient(theta, X, y):
+def gradient_func(theta, X, y):
     theta = theta.reshape((-1, 1))
     m, n = X.shape
 
@@ -49,8 +49,8 @@ data = np.loadtxt('ex2data1.txt', delimiter=',')
 X = data[:, 0:2].reshape((-1, 2))
 y = data[:, -1].reshape((-1, 1))
 
-pos = np.where(y != 0)
-neg = np.where(y == 0)
+pos = np.where(y != 0)[0]
+neg = np.where(y == 0)[0]
 plt.scatter(X[pos, 0], X[pos, 1], marker='o', c='b')
 plt.scatter(X[neg, 0], X[neg, 1], marker='x', c='r')
 
@@ -68,7 +68,7 @@ iter_times = 400
 alpha = 0.01
 
 options = {'full_output': True, 'maxiter': 400}
-theta, cost, *rest = opt.fmin_bfgs(cost, x0=theta, fprime=gradient,
+theta, cost, *rest = opt.fmin_bfgs(cost_func, x0=theta, fprime=gradient_func,
                                    args=(X, y), **options)
 
 plot_x = np.array([min(X[:, 1]) - 2, max(X[:, 1]) + 2])
