@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-02-24 10:27
-# Last modified: 2017-02-24 18:59
+# Last modified: 2017-02-25 10:25
 # Filename: neural.py
 # Description:
 from math import sqrt, floor, ceil
@@ -81,7 +81,7 @@ def feedforward(X, theta1, theta2):
     z3 = a2.dot(theta2.T)  # z3: 5000 x 10
     a3 = sigmoid(z3)  # a3: 5000 x 10
     h = a3
-    return h, a1, z2, a2, z3, a3
+    return h, a1, z2, a2, z3
 
 
 def cost_func(nn_params, input_layer_size, hidden_layer_size, num_labels,
@@ -96,7 +96,7 @@ def cost_func(nn_params, input_layer_size, hidden_layer_size, num_labels,
     encoder = OneHotEncoder(sparse=False)
     y_mat = encoder.fit_transform(y)
 
-    h, a1, z2, a2, z3, a3 = feedforward(X, theta1, theta2)
+    h, a1, z2, a2, z3 = feedforward(X, theta1, theta2)
 
     J = -1/m*(np.sum(y_mat * np.log(h))+np.sum((1-y_mat) * np.log(1-h)))
 
@@ -121,9 +121,9 @@ def back_propagation(nn_params, input_layer_size, hidden_layer_size,
     encoder = OneHotEncoder(sparse=False)
     y_mat = encoder.fit_transform(y)
 
-    h, a1, z2, a2, z3, a3 = feedforward(X, theta1, theta2)
+    h, a1, z2, a2, z3 = feedforward(X, theta1, theta2)
 
-    d3 = a3 - y_mat
+    d3 = h - y_mat
     d2 = d3.dot(theta2[:, 1:]) * sigmoid_gradient(z2)
     delta1 = d2.T.dot(a1)
     delta2 = d3.T.dot(a2)
