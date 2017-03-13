@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-02-16 20:21
-# Last modified: 2017-02-18 08:29
+# Last modified: 2017-03-13 19:20
 # Filename: shoes.py
 # Description:
 # -*- coding: utf-8 -*-
@@ -59,10 +59,10 @@ class ShoesSpider(Spider):
     def parse_detail(self, response):
         iid = int(response.meta['iid'])
         name = response.xpath('//div[@class="sku-name"]'
-                              '/text()').extract_first()
+                              '/text()').extract_first().strip('\n ')
         xpath_aside = response.xpath('//div[@class="aside"]')
         shop = xpath_aside.xpath('//div[@class="mt"]/'
-                                 'h3/a/@title').extract_first()
+                                 'h3/a/@title').extract_first().strip('\n ')
         scores = xpath_aside.xpath('//div[@class="mc"]/div/'
                                    'a//text()').extract()
         scores = [s for s in scores if s.strip('\n ')][::2]
