@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block body %}
+<form method="POST" action="./article">
+    <label>title:</label><input name="title" type="text">
+    <label>link:</label><input name="link" type="text" value="abc.xyz">
+    <label>poster:</label><input name="poster" type="text" value="david">
+    <input type="submit">
+</form>
+{% endblock %}

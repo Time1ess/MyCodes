@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block body %}
+<a href='/post/article'>New Article</a>
+<table>
+    <tr>
+        <th>id</th>
+        <th>title</th>
+        <th>link</th>
+        <th>poster</th>
+        <th>votes</th>
+        <th>downvotes</th>
+        <th>action</th>
+   </tr>
+    {% for article in articles %}
+    <tr>
+        <td>{{article['id']}}</td>
+        <td>{{article['title']}}</td>
+        <td>{{article['link']}}</td>
+        <td>{{article['poster']}}</td>
+        <td>{{article['votes']}}</td>
+        <td>{{article['downvotes']}}</td>
+        <td>
+            <a href="/articles/action?article={{article['id']}}&action=vote">Vote</a>
+            <a href="/articles/action?article={{article['id']}}&action=downvote">DownVote</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
