@@ -7,18 +7,29 @@
 # Filename: fab_file.py
 # Description:
 import os
+import itertools
 
 from fabric.api import cd, run, env, sudo, hide
 
 env.hosts = ['192.168.2.166']
 env.user = 'david'
 
+video_types = ['mkv', 'mp4', 'wmv', 'flv', 'webm', 'mov']
+music_types = ['mp3', 'wma', 'wav']
+
+types = [x for x in itertools.chain(video_types, music_types)]
+
+search_cmd = 'find . -type f -regex ".*\.\('+types[0]
+for t in types[1:]:
+    search_cmd += '\|' + t
+search_cmd += '\)"'
+
 
 def fetch_movie_info():
     with hide('everything'):
         with cd('~/Downloads'):
             videos = []
-            files = run('find . -type f -regex ".*\.\(mkv\|mp4\|wmv\|flv\|webm\|mov\)"')
+            files = run(search_cmd)
             files = [f.strip('\n\r\t ') for f in files.split('\n')]
             for f in files:
                 print(f[2:])

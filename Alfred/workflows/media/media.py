@@ -7,24 +7,37 @@
 # Filename: media.py
 # Description:
 import sys
-from workflow import Workflow
+import time
+import subprocess
 
-from core import clean_movies, similarity
+from workflow import Workflow
 
 
 def main(wf):
-    data = wf.cached_data('clean_movies', clean_movies, max_age=120)
     query = ''.join(sys.argv[1:])
-    sim_func = similarity(query)
-    items = []
-    for fname, path, keywords in data:
-        sim = sim_func(keywords)
-        item = {'title': fname, 'subtitle': '播放: '+fname,
-                'arg': path, 'valid': True}
-        items.append((sim, item))
-    items.sort(key=lambda x: -x[0])
-    for sim, item in items[:5]:
-        wf.add_item(**item)
+    if query == 'stop':
+        time.sleep(0.3)
+        code = subprocess.run(['pkill', 'mpv']).returncode
+        if code == 0:
+            wf.add_item(title='成功停止播放!', subtitle='')
+        elif code == 1:
+            wf.add_item(title='无正在播放任务!', subtitle='')
+        else:
+            wf.add_item(title='未知错误!', subtitle='')
+    else:
+        from core import clean_movies, similarity
+        data = wf.cached_data('clean_movies', clean_movies, max_age=60)
+    
+        sim_func = similarity(query)
+        items = []
+        for fname, path, keywords in data:
+            sim = sim_func(keywords)
+            item = {'title': fname, 'subtitle': '播放: '+fname,
+                    'arg': path, 'valid': True}
+            items.append((sim, item))
+        items.sort(key=lambda x: -x[0])
+        for sim, item in items[:5]:
+            wf.add_item(**item)
 
     wf.send_feedback()
 

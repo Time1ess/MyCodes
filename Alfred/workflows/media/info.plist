@@ -85,7 +85,12 @@
 				<key>script</key>
 				<string>query="{query}"
 
-/usr/local/bin/mpv "http://192.168.2.166:9070/$query" --vo opengl --really-quiet</string>
+if [[ "$query" == *mp3 ]]
+then
+	/usr/local/bin/mpv "http://192.168.2.166:9070/$query" --vo null --really-quiet
+else
+	/usr/local/bin/mpv "http://192.168.2.166:9070/$query" --vo opengl --really-quiet
+fi</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
 				<key>scriptfile</key>
@@ -108,7 +113,7 @@
 		<key>973A9B09-68AC-4936-8FB5-60CB599BACE0</key>
 		<dict>
 			<key>xpos</key>
-			<integer>340</integer>
+			<integer>200</integer>
 			<key>ypos</key>
 			<integer>200</integer>
 		</dict>
