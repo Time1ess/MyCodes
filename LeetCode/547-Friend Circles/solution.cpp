@@ -1,7 +1,7 @@
 // Author: David
 // Email: youchen.du@gmail.com
 // Created: 2017-04-03 09:46
-// Last modified: 2017-04-03 09:46
+// Last modified: 2017-04-03 17:31
 // Filename: solution.cpp
 // Description:
 class Solution {
@@ -37,9 +37,12 @@ public:
         int n = M.size();
         if(n == 0)
             return 0;
-        int p[n] = {0}, rank[n] = {0};
+        int p[n] = {0}, rank[n];
         for(int i = 0; i < n; i++)
+        {
             p[i] = i;
+            rank[i] = 1;
+        }
         int cnt = n;
         for(int x = 0; x < n; x++)
             for(int y = x + 1; y < n; y++)
