@@ -35,7 +35,7 @@ def main(wf):
             item = {'title': fname, 'subtitle': '播放: '+fname,
                     'arg': path, 'valid': True}
             items.append((sim, item))
-        items.sort(key=lambda x: -x[0])
+        items.sort(key=lambda x: (-x[0], x[1]['title']))
         for sim, item in items[:5]:
             wf.add_item(**item)
 
