@@ -20,17 +20,18 @@ def similarity(query):
         return same_elements / all_elements
     return _wrapper
 
-def clean_movies():
+
+def clean_medias():
     ret = subprocess.check_output(['/usr/local/bin/fab', '-f', 'fab_file.py',
-                                   'fetch_movie_info'])
+                                   'fetch_media_info'])
     data = ret.decode('utf-8').split('\n')[1:-4]
-    movies = []
+    medias = []
     for d in data:
         *path, fname = d.rsplit('/', 1)
         path = path[0] if path else ''
         keywords = set(jieba.cut(fname))
-        movies.append([fname, d, keywords])
-    return movies
+        medias.append([fname, d, keywords])
+    return medias
 
 
 if __name__ == '__main__':

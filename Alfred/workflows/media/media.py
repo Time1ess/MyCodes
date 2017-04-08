@@ -25,8 +25,8 @@ def main(wf):
         else:
             wf.add_item(title='未知错误!', subtitle='')
     else:
-        from core import clean_movies, similarity
-        data = wf.cached_data('clean_movies', clean_movies, max_age=60)
+        from core import clean_medias, similarity
+        data = wf.cached_data('clean_medias', clean_medias, max_age=60)
     
         sim_func = similarity(query)
         items = []
@@ -36,7 +36,7 @@ def main(wf):
                     'arg': path, 'valid': True}
             items.append((sim, item))
         items.sort(key=lambda x: (-x[0], x[1]['title']))
-        for sim, item in items[:5]:
+        for sim, item in items[:10]:
             wf.add_item(**item)
 
     wf.send_feedback()

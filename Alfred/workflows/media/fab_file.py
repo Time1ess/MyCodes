@@ -7,6 +7,7 @@
 # Filename: fab_file.py
 # Description:
 import os
+import sys
 import itertools
 
 from fabric.api import cd, run, env, sudo, hide
@@ -24,8 +25,13 @@ for t in types[1:]:
     search_cmd += '\|' + t
 search_cmd += '\)"'
 
+def remove_file(file_path):
+    with hide('everything'):
+    	with cd('~/Downloads'):
+    		run('rm "{}"'.format(file_path))
 
-def fetch_movie_info():
+
+def fetch_media_info():
     with hide('everything'):
         with cd('~/Downloads'):
             videos = []
