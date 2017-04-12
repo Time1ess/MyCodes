@@ -20,7 +20,7 @@ music_types = ['mp3', 'wma', 'wav']
 
 types = [x for x in itertools.chain(video_types, music_types)]
 
-search_cmd = 'find . -type f -regex ".*\.\('+types[0]
+search_cmd = 'find -L . -maxdepth 5 -type f -regex ".*\.\('+types[0]
 for t in types[1:]:
     search_cmd += '\|' + t
 search_cmd += '\)"'
