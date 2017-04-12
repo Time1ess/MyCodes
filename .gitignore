@@ -1,3 +1,7 @@
+*
+!*.*
+!*/
+*.dump
 *.zip
 *.rar
 *.tmp
@@ -13,7 +17,6 @@
 *.frq
 .metadata/
 .recommenders/
-DuoMeiTi/
 *.pyc
 *.jsp
 *.ini
