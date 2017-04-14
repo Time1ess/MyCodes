@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-04-01 09:01
-# Last modified: 2017-04-01 10:24
+# Last modified: 2017-04-14 21:10
 # Filename: media.py
 # Description:
 import sys
@@ -26,8 +26,8 @@ def main(wf):
             wf.add_item(title='未知错误!', subtitle='')
     else:
         from core import clean_medias, similarity
-        data = wf.cached_data('clean_medias', clean_medias, max_age=60)
-    
+        data = clean_medias()
+
         sim_func = similarity(query)
         items = []
         for fname, path, keywords in data:

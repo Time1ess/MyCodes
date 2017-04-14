@@ -1,4 +1,4 @@
 # MyCodes
 =======
 
-    This repo contains some of my codes.
+    This repo holds some of my codes.

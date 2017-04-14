@@ -45,6 +45,36 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>query="{query}"
+
+if [[ "$query" == *mp3 ]]
+then
+	/usr/local/bin/mpv "http://192.168.2.166:9070/$query" --vo null --really-quiet
+else
+	/usr/local/bin/mpv "http://192.168.2.166:9070/$query" --vo opengl --really-quiet
+fi</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>E387AEC4-5BFD-488F-9BE7-11407D06960C</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>alfredfiltersresults</key>
 				<false/>
 				<key>argumenttype</key>
@@ -93,36 +123,6 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>query="{query}"
-
-if [[ "$query" == *mp3 ]]
-then
-	/usr/local/bin/mpv "http://192.168.2.166:9070/$query" --vo null --really-quiet
-else
-	/usr/local/bin/mpv "http://192.168.2.166:9070/$query" --vo opengl --really-quiet
-fi</string>
-				<key>scriptargtype</key>
-				<integer>0</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>E387AEC4-5BFD-488F-9BE7-11407D06960C</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
 				<string>/usr/local/bin/fab -f fab_file.py remove_file:"{query}"</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
@@ -153,9 +153,9 @@ fi</string>
 		<key>973A9B09-68AC-4936-8FB5-60CB599BACE0</key>
 		<dict>
 			<key>xpos</key>
-			<integer>200</integer>
+			<integer>100</integer>
 			<key>ypos</key>
-			<integer>200</integer>
+			<integer>230</integer>
 		</dict>
 		<key>E387AEC4-5BFD-488F-9BE7-11407D06960C</key>
 		<dict>
