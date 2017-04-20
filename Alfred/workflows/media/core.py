@@ -13,8 +13,9 @@ jieba.initialize()
 
 
 def similarity(query):
-    q_keywords = set(jieba.cut(query))
+    q_keywords = set(jieba.cut(query.lower()))
     def _wrapper(keywords):
+        keywords = set([w.lower() for w in keywords])
         same_elements = len(q_keywords & keywords)
         all_elements = len(q_keywords)
         return same_elements / all_elements
@@ -35,4 +36,4 @@ def clean_medias():
 
 
 if __name__ == '__main__':
-    print(clean_movies())
+    print(clean_medias())
