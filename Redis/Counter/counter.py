@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-04-25 14:45
-# Last modified: 2017-04-25 15:22
+# Last modified: 2017-05-03 20:51
 # Filename: counter.py
 # Description:
 import time
@@ -53,7 +53,7 @@ def clean_counter(conn):
                 break
             hash_name = hash_names[0]
             prec = int(hash_name.partition(b':')[0])
-            bprect = int(prec // 60) or 1
+            bprec = int(prec // 60) or 1
             if passes % bprec:
                 continue
 
