@@ -3,10 +3,11 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-05-03 21:06
-# Last modified: 2017-05-03 21:32
+# Last modified: 2017-05-04 10:56
 # Filename: main.py
 # Description:
 import random
+import contextlib
 import time
 import uuid
 
@@ -62,6 +63,21 @@ def get_stats(conn, context, ktype):
     return data
 
 
+@contextlib.contextmanager
+def access_time(conn, context):
+    start = time.time()
+    yield
+
+    delta = time.time() - start
+    stats = update_stats(conn, context, 'AccessTime', delta)
+    average = stats[1] / stats[0]
+
+    pipe = conn.pipeline()
+    pipe.zadd('slowest:AccessTime', context, average)
+    pipe.zremrangebyrank('slowest:AccessTime', 0, -101)
+    pipe.execute()
+
+
 def main():
     # You may want to set hour_start from now[:4] to now[:6]
     # in update_stats to test the function
@@ -77,6 +93,7 @@ def main():
         stats.sort(key=lambda x: x[0])
         print(stats)
         time.sleep(1.5)
+
 
 if __name__ == '__main__':
     main()
