@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-05-26 11:04
-# Last modified: 2017-05-26 18:35
+# Last modified: 2017-05-26 19:05
 # Filename: main.py
 # Description:
 import re
@@ -139,3 +139,65 @@ def search_and_sort(conn, query, uid=None, ttl=300, sort='-updated',
     results = pipeline.execute()
 
     return results[0], results[1], uid
+
+
+def search_and_zsort(conn, query, uid=None, ttl=300, update=1, vote=0,
+                     start=0, num=20, desc=True):
+    if uid and not conn.expire(uid, ttl):
+        uid = None
+
+    if not uid:
+        uid = parse_and_search(conn, query, ttl=ttl)
+
+        scored_search = {
+            uid: 0,
+            'sort:update': update,
+            'sort:votes': vote
+        }
+        uid = zintersect(conn, scored_search, tll)
+
+    pipeline = conn.pipeline()
+    pipeline.zcard('idx:' + uid)
+    if desc:
+        pipeline.zrevrange('idx:' + uid, start, start + num - 1)
+    else:
+        pipeline.zrange('idx:' + uid, start, start + num - 1)
+    results = pipeline.execute()
+
+    return results[0], results[1], uid
+
+
+def _zset_common(conn, method, scores, ttl=30, **kwargs):
+    uid = str(uuid.uuid4())
+    execute = kwargs.pop('_execute', True)
+    pipeline = conn.pipeline() if execute else conn
+    for key in scores.keys():
+        scores['idx:' + key] = scores.pop(key)
+    getattr(pipeline, method)('idx:' + uid, scores, **kwargs)
+    pipeline.expire('idx:' + uid, ttl)
+    if execute:
+        pipeline.execute()
+    return uid
+
+
+def zintersect(conn, items, ttl=30, **kwargs):
+    return _zset_common(conn, 'zinterstore', dict(items), ttl, **kwargs)
+
+
+def zunion(conn, items, ttl=30, **kwargs):
+    return _zset_common(conn, 'zunionstore', dict(items), ttl, **kwargs)
+
+
+def string_to_score(string, ignore_case=False):
+    if ignore_case:
+        string = string.lower()
+
+    pieces = [ord(x) for x in string[:6])]
+    while len(pieces) < 6:
+        pieces.append(-1)
+
+    score = 0
+    for piece in pieces:
+        score = score * 257 + piece + 1
+
+    return score * 2 + (len(string) > 6)
