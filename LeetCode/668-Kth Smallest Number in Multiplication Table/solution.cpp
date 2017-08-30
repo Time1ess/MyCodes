@@ -1,16 +1,16 @@
 // Author: David
 // Email: youchen.du@gmail.com
 // Created: 2017-08-30 10:41
-// Last modified: 2017-08-30 10:41
+// Last modified: 2017-08-30 10:44
 // Filename: solution.cpp
 // Description:
 class Solution {
 public:
-    int count(int mid, int m, int n) // In m x n table, how many elems are smaller than mid
+    int count(int mid, int m, int n) // In m x n table, how many elems are smaller than or equal to mid
     {
         int c = 0;
         for(int i = 1; i <= m; i++)
-            c += min(mid / i, n);  // How many elems are smaller than mid at row i
+            c += min(mid / i, n);  // How many elems are smaller than or equal to mid at row i
         return c;
     }
     
