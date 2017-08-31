@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-08-27 17:03
-# Last modified: 2017-08-27 19:04
+# Last modified: 2017-08-31 15:22
 # Filename: main.py
 # Description:
 import sys
@@ -66,7 +66,7 @@ def optimize(theta, X, y, iters=1000, alpha=1e-4, with_history=False,
     last_errors = 1e9
     patience = init_patience
     for _ in range(iters):
-        errors = float(sum(cost_func(theta, X, y)))
+        errors = np.sum(cost_func(theta, X, y))
         if abs(last_errors - errors) < 1e-3:
             patience -= 1
             if patience == 0:
