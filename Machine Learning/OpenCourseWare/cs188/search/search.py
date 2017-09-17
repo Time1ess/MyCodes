@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-09-17 15:41
-# Last modified: 2017-09-17 16:31
+# Last modified: 2017-09-17 19:46
 # Filename: search.py
 # Description:
 # search.py
@@ -98,6 +98,7 @@ def depthFirstSearch(problem):
     def find_path(problem, src_state, actions, states):
         if problem.isGoalState(src_state):
             return True
+        states.add(src_state)
         for dst_state, direction, cost in problem.getSuccessors(src_state):
             if dst_state in states:
                 continue
@@ -119,6 +120,7 @@ def breadthFirstSearch(problem):
     queue = util.Queue()
     queue.push((problem.getStartState(), []))
     states = set()
+    states.add(problem.getStartState())
     while not queue.isEmpty():
         src_state, actions = queue.pop()
         if problem.isGoalState(src_state):
@@ -134,8 +136,23 @@ def breadthFirstSearch(problem):
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    pq = util.PriorityQueue()
+    pq.push((problem.getStartState(), 0, []), 0)
+    states = set()
+    while not pq.isEmpty():
+        src_state, src_cost, actions = pq.pop()
+        if src_state in states:
+            continue
+        states.add(src_state)
+        if problem.isGoalState(src_state):
+            return actions
+        for dst_state, direction, cost in problem.getSuccessors(src_state):
+            dst_actions = [a for a in actions]
+            dst_actions.append(direction)
+            dst_cost = src_cost + cost
+            pq.push((dst_state, dst_cost, dst_actions), dst_cost)
+    return []
 
 def nullHeuristic(state, problem=None):
     """
