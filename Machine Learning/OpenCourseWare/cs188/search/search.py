@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-09-17 15:41
-# Last modified: 2017-09-17 19:46
+# Last modified: 2017-09-18 16:07
 # Filename: search.py
 # Description:
 # search.py
@@ -164,7 +164,26 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    pq = util.PriorityQueue()
+    src_state = problem.getStartState()
+    g = 0
+    h = heuristic(src_state, problem)
+    pq.push((src_state, g, h, []), g+h)
+    states = set()
+    while not pq.isEmpty():
+        src_state, src_g, src_h, actions = pq.pop()
+        if src_state in states:
+            continue
+        states.add(src_state)
+        if problem.isGoalState(src_state):
+            return actions
+        for dst_state, direction, cost in problem.getSuccessors(src_state):
+            dst_actions = [a for a in actions]
+            dst_actions.append(direction)
+            dst_g = src_g + cost
+            dst_h = heuristic(dst_state, problem)
+            pq.push((dst_state, dst_g, dst_h, dst_actions), dst_g + dst_h)
+    return []
 
 
 # Abbreviations
