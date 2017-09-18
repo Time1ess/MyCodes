@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-09-18 15:42
-# Last modified: 2017-09-18 16:18
+# Last modified: 2017-09-18 21:08
 # Filename: searchAgents.py
 # Description:
 # searchAgents.py
@@ -373,8 +373,19 @@ def cornersHeuristic(state, problem):
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
-    "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    start, reached = state
+
+    def _dist(p1, p2):
+        return abs(p1[0] - p2[0]) + abs(p1[1] - p2[1])
+
+    h = 0
+    for i in range(4):
+        if reached[i]:
+            continue
+        dist = _dist(start, corners[i])
+        h = max(h, dist)
+
+    return h
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -467,8 +478,16 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    food_list = foodGrid.asList()
+    if not food_list:
+        return 0
+    # Plain Manhattan Got 3 / 4
+    # BFS ? It seems like this is not heuristic
+    dists = map(
+        lambda p2: mazeDistance(position, p2, problem.startingGameState),
+        food_list)
+    return max(dists)
+
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -497,9 +516,8 @@ class ClosestDotSearchAgent(SearchAgent):
         food = gameState.getFood()
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
+        return search.bfs(problem)
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -534,8 +552,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         """
         x,y = state
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.food[x][y] is True
 
 def mazeDistance(point1, point2, gameState):
     """
