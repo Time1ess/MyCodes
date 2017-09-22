@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-09-21 09:14
-# Last modified: 2017-09-22 09:34
+# Last modified: 2017-09-22 10:28
 # Filename: multiAgents.py
 # Description:
 # multiAgents.py
@@ -247,8 +247,28 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
           All ghosts should be modeled as choosing uniformly at random from their
           legal moves.
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        def average(values):
+            values = list(values)
+            return sum(values) / len(values)
+
+        def value(state, depth, agent):
+            if agent == state.getNumAgents():
+                if depth == self.depth:
+                    return self.evaluationFunction(state)
+                else:
+                    return value(state, depth+1, 0)
+            else:
+                actions = state.getLegalActions(agent)
+                if len(actions) == 0:
+                    return self.evaluationFunction(state)
+                successors = (value(state.generateSuccessor(agent, action),
+                                    depth, agent+1) for action in actions)
+                return (max if agent == 0 else average)(successors)
+
+        return max(
+            gameState.getLegalActions(0),
+            key=lambda x: value(gameState.generateSuccessor(0, x), 1, 1))
+
 
 def betterEvaluationFunction(currentGameState):
     """
