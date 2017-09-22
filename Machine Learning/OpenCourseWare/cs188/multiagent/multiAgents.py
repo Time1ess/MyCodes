@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-09-21 09:14
-# Last modified: 2017-09-21 15:29
+# Last modified: 2017-09-22 09:34
 # Filename: multiAgents.py
 # Description:
 # multiAgents.py
@@ -190,8 +190,50 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         """
           Returns the minimax action using self.depth and self.evaluationFunction
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        def value(state, depth, agent, alpha, beta):
+            if agent == state.getNumAgents():
+                if depth == self.depth:
+                    return self.evaluationFunction(state)
+                else:
+                    return value(state, depth+1, 0, alpha, beta)
+            else:
+                actions = state.getLegalActions(agent)
+                if len(actions) == 0:
+                    return self.evaluationFunction(state)
+                if agent == 0:  # Max-node
+                    v = -1e9
+                    for action in actions:
+                        v = max(v,
+                                value(state.generateSuccessor(agent, action),
+                                      depth, agent+1, alpha, beta))
+                        if v > beta:
+                        # This node will be skipped due to final value >= v
+                        # but parent node already can get at most beta
+                            return v
+                        alpha = max(alpha, v)
+                else:  # Min-node
+                    v = 1e9
+                    for action in actions:
+                        v = min(v, value(state.generateSuccessor(agent, action),
+                                         depth, agent+1, alpha, beta))
+                        if v < alpha:
+                        # This node will be skipped due to final value <= v 
+                        # but parent node already can get at least alpha
+                            return v
+                        beta = min(beta, v)
+                return v
+
+        actions = gameState.getLegalActions(0)
+        best_action = None
+        alpha, beta = -1e9, 1e9
+        for action in actions:
+            v = value(gameState.generateSuccessor(0, action),
+                      1, 1, alpha, beta)
+            if v > alpha or best_action is None:
+                alpha = v
+                best_action = action
+        return best_action
+
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
