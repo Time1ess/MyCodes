@@ -3,7 +3,7 @@
 # Author: David
 # Email: youchen.du@gmail.com
 # Created: 2017-09-23 11:08
-# Last modified: 2017-09-23 14:14
+# Last modified: 2017-09-23 14:44
 # Filename: analysis.py
 # Description:
 # analysis.py
@@ -70,6 +70,7 @@ def question3e():
 def question6():
     answerEpsilon = None
     answerLearningRate = None
+    return 'NOT POSSIBLE'
     return answerEpsilon, answerLearningRate
     # If not possible, return 'NOT POSSIBLE'
 
