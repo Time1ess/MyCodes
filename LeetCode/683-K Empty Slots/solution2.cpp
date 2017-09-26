@@ -1,7 +1,7 @@
 // Author: David
 // Email: youchen.du@gmail.com
-// Created: 2017-09-26 10:42
-// Last modified: 2017-09-26 10:42
+// Created: 2017-09-26 10:44
+// Last modified: 2017-09-26 10:44
 // Filename: solution2.cpp
 // Description:
 class Solution {
@@ -22,7 +22,7 @@ public:
             {
                 if(blooming[i] > maxday)
                     cnt++;
-                else if(blooming[i] < blooming[left])
+                else if(blooming[i] < blooming[left] || blooming[i] < blooming[right])
                 {
                     left = i - 1;
                     right = i + k;
