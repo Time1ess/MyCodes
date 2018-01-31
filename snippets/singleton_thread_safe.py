@@ -32,7 +32,7 @@ class SingletonThreadSafe(type):
         return target
 
     def __call__(cls, *args, **kwargs):
-        if 'lazy' in kwargs and kwargs['lazy'] is False:
+        if not kwargs.get('lazy', True):
             return super().__call__(cls, *args, **kwargs)
         return cls._lazy_instance()
 
