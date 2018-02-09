@@ -11,27 +11,21 @@ using namespace std;
 int main()
 {
     TreeNode *root = build_tree();
-    TreeNode *last = NULL;
     stack<TreeNode *> s;
-    s.push(root);
-    while(!s.empty())
+    while(!s.empty() || root)
     {
-        TreeNode *t = s.top();
-        if(t->left && t->left != last)
+        if(root)
         {
-            do
-            {
-                t = t->left;
-                s.push(t);
-            } while(t->left);
-            continue;
+            s.push(root);
+            root = root->left;
         }
         else
+        {
+            root = s.top();
             s.pop();
-        cout<<t->val<<endl;
-        last = t;
-        if(t->right)
-            s.push(t->right);
+            cout<<root->val<<endl;
+            root = root->right;
+        }
     }
     return 0;
 }

@@ -30,5 +30,6 @@ TreeNode* build_tree(const std::vector<std::string> &s)
 TreeNode* build_tree()
 {
     std::vector<std::string> s{"1","2","4","#","#","#","3","5"};
+    //std::vector<std::string> s{"1","2","#","#","3"};
     return build_tree(s);
 }
