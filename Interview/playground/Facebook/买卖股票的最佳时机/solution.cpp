@@ -9,13 +9,13 @@ public:
         int n = prices.size();
         if(n == 0)
             return 0;
-        vector<int> minimum(n, INT_MAX);
-        minimum[0] = prices[0];
-        for(int i = 1; i < n; i++)
-            minimum[i] = min(prices[i], minimum[i-1]);
+        int minimum = INT_MAX;
         int ans = 0;
         for(int i = 0; i < n; i++)
-            ans = max(ans, prices[i] - minimum[i]);
+        {
+            minimum = min(minimum, prices[i]);
+            ans = max(ans, prices[i] - minimum);
+        }
         return ans;
     }
-};
+};;
