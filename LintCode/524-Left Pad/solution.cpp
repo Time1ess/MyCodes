@@ -6,7 +6,7 @@ public:
      * @param padChar: the character to pad to the left side of the string
      * @return: A string
      */
-    string leftPad(string &originalStr, int size, char padChar=' ') {
+    static string leftPad(string &originalStr, int size, char padChar=' ') {
         // write your code here
         int str_len = originalStr.length();
         if(str_len >= size)
