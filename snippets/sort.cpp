@@ -84,7 +84,7 @@ void select_sort(vector<int> &a)
     }
 }
 
-void heap_sort(vector<int> &a)  // Max-heap
+void heap_sort2(vector<int> &a)  // Max-heap
 {
     int size = a.size();
     if(size == 0 || size == 1)
@@ -103,6 +103,32 @@ void heap_sort(vector<int> &a)  // Max-heap
         // Pop and swap with last elem
         swap(a[0], a[unsorted - 1]);
         // Unsorted--
+        unsorted--;
+    }
+}
+void adjust(vector<int> &a, int s, int e)
+{
+    for(int i = s; i < e; i = 2 * i + 1)
+    {
+        if(i + 1 < e && a[i] < a[i+1])
+            i++;
+        if(a[(i-1)/2] < a[i])
+            swap(a[(i-1)/2], a[i]);
+    }
+}
+
+void heap_sort(vector<int> &a)
+{
+    int size = a.size();
+    if(size == 0 || size == 1)
+        return;
+    int unsorted = a.size();
+    for(int i = unsorted / 2 - 1; i >= 0; i--)
+        adjust(a, i, unsorted);
+    while(unsorted > 1)
+    {
+        adjust(a, 1, unsorted);
+        swap(a[0], a[unsorted-1]);
         unsorted--;
     }
 }
