@@ -11,8 +11,8 @@
 #include <map>
 #include <climits>
 
-
 using namespace std;
+
 
 void solve(vector<int> &orders, vector<pair<string, vector<int>>> &boms, vector<int> &best,
            vector<int> current, int idx)
@@ -85,7 +85,6 @@ void solve(vector<int> &orders, map<string, vector<int>> &_boms)
         }
     cout<<endl;
 }
-
 
 
 int main()
