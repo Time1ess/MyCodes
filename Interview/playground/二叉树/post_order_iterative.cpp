@@ -17,23 +17,21 @@ int main()
     s.push(root);
     while(!s.empty())
     {
-        TreeNode *t = s.top();
-        if(t->left && t->left != last && t->right != last)
+        TreeNode *p = s.top();
+        if((!p->left && !p->right)
+                || (last && (last == p->left || last == p->right)))
         {
-            do{
-                t = t->left;
-                s.push(t);
-            } while(t->left);
-            continue;
+            ans.push_back(p);
+            s.pop();
+            last = p;
         }
-        if(t->right && t->right != last)
+        else
         {
-            s.push(t->right);
-            continue;
+            if(p->right)
+                s.push(p->right);
+            if(p->left)
+                s.push(p->left);
         }
-        s.pop();
-        last = t;
-        cout<<t->val<<endl;
     }
     return 0;
 }
