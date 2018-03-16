@@ -9,8 +9,7 @@ public:
         int x = 0;
         for(auto k: A)
             x ^= k;
-        while(x&(x-1))
-            x = x&(x-1);
+        x = (x&(x-1)) ^ x;
         int first = 0, second = 0;
         for(auto k: A)
             if(x & k)
