@@ -1,5 +1,6 @@
 class NoInheritanceMeta(type):
     raise_exception = True
+
     def __new__(cls, name, bases, attrs):
         if bases:
             if cls.raise_exception:
@@ -11,6 +12,7 @@ class NoInheritanceMeta(type):
 
 class WarningInheritanceMeta(NoInheritanceMeta):
     raise_exception = False
+
 
 class A(metaclass=NoInheritanceMeta):
     pass
