@@ -8,7 +8,7 @@ from agents import AGENTS
 
 import requests
 
-min_lng = 116.323278
+min_lng = 116.322535
 max_lng = 116.345753
 cen_lng = (min_lng + max_lng) / 2
 min_lat = 39.981906
@@ -23,7 +23,7 @@ params = {
     'max_lat': max_lat,
     'clng': cen_lng,
     'clat': cen_lat,
-    'zoom': 18,
+    'zoom': 17,
     'p': 1,  # Page
     'type': '6|7',  # 6: 2 rooms, 7: 3 rooms
     # 'leasetype': 2,  # 1: Day, 2: Year
@@ -34,8 +34,9 @@ headers = {
 api_url = 'http://www.ziroom.com/map/room/list'
 
 
-def fetch_data(params=params, headers=headers):
+def fetch_data(params=params, headers=headers, **kwargs):
     resp = None
+    params.update(kwargs)
     while resp is None:
         headers['User-Agent'] = choice(AGENTS)
         resp = requests.get(api_url, params=params, headers=headers)
@@ -61,7 +62,7 @@ class Room(object):
     full_fmt = '<Room: 价格:{:5d} 朝向:{:4s} 面积:{:5.2f} 距离:{:4d} '\
                '小区: {:10s} 楼层:{:>2d}/{:>2d} 阳台:{:1d} 厅室:{:1d} '\
                '卧室:{:1d} 链接: http:{:40s} 特点:{:20s} 状态:{:s}>'
-    short_fmt = '<Room: 价格:{:5d} 朝向:{:4s} 面积:{:5.2f} 楼层:{:>2s}/{:>2s}>'
+    short_fmt = '<Room: 价格:{:5d} 朝向:{:4s} 面积:{:5.2f} 楼层:{:>2d}/{:>2d}>'
 
     def __init__(self, room):
         self.id = int(room['id'])
@@ -78,6 +79,7 @@ class Room(object):
         self.bedrooms = room['house_bedroom']
         self.url = room['url']
         self.resblock = room['resblock_name']
+        self.resblock_id = room['resblock_id']
         self.longitude = room['longitude']
         self.latitude = room['latitude']
         self.dist = int(dist(self.latitude, self.longitude, tar_lat, tar_lng))
@@ -101,17 +103,23 @@ class Room(object):
 
 
 rooms = set()
-for i in range(3):
-    data = fetch_data()
+data = fetch_data()
+if data:
+    total_page = data['pages']
+    total = data['total']
+    rooms = rooms | set(Room(r) for r in data['rooms'])
+    for p in range(1, total_page + 1):
+        data = fetch_data(params, p=p)
+        if data:
+            rooms = rooms | set(Room(r) for r in data['rooms'])
+processed = set()
+for room in rooms:
+    if room.resblock_id in processed:
+        continue
+    data = fetch_data(params, resblock_id=room.resblock_id, p=1)
+    processed.add(room.resblock_id)
     if data:
-        total_page = data['pages']
-        total = data['total']
         rooms = rooms | set(Room(r) for r in data['rooms'])
-        for p in range(1, total_page + 1):
-            params['p'] = p
-            data = fetch_data(params)
-            if data:
-                rooms = rooms | set(Room(r) for r in data['rooms'])
 
 
 def custom_filter(room):
