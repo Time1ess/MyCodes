@@ -31,8 +31,7 @@ public:
         if(!root)
             return 0;
         int ans = 0;
-        int left = longestUnivalueNodes(root->left, ans, root->val);
-        int right = longestUnivalueNodes(root->right, ans, root->val);
-        return max(ans, left + right);
+        longestUnivalueNodes(root, ans, 0);
+        return ans;
     }
 };
