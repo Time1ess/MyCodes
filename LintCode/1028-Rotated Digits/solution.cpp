@@ -4,36 +4,17 @@ public:
      * @param N: a positive number
      * @return: how many numbers X from 1 to N are good
      */
-    int rotate(int digit) {
-        if(digit == 0 || digit == 1 || digit == 8)
-            return digit;
-        else if(digit == 2)
-            return 5;
-        else if(digit == 5)
-            return 2;
-        else if(digit == 6)
-            return 9;
-        else if(digit == 9)
-            return 6;
-        return -1;
-    }
     bool isGoodNumber(int x) {
-        vector<int> vx;
+        bool flag = false;
         while(x) {
-            vx.push_back(x%10);
+            int t = x % 10;
             x /= 10;
-        }
-        vector<int> rotated = vx;
-        for(int i = 0; i < rotated.size(); i++) {
-            if(rotate(rotated[i]) == -1)
+            if(t == 2 || t == 5 || t == 6 || t == 9)
+                flag = true;
+            else if(t == 3 || t == 4 || t == 7)
                 return false;
-            rotated[i] = rotate(rotated[i]);
         }
-        bool sameNumber = true;
-        for(int i = 0; i < rotated.size(); i++) {
-            sameNumber = sameNumber && vx[i] == rotated[i];
-        }
-        return !sameNumber;
+        return flag;
     }
     int rotatedDigits(int N) {
         // write your code here
