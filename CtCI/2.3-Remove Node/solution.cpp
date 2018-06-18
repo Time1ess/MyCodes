@@ -11,10 +11,9 @@ public:
         if(pNode->next == NULL)
             return false;
         pNode->val = pNode->next->val;
-        if(removeNode(pNode->next) == false) {
-            delete pNode->next;
-            pNode->next = NULL;
-        }
+        ListNode* tmp = pNode->next;
+        pNode->next = tmp->next;
+        delete tmp;
         return true;
     }
 };
