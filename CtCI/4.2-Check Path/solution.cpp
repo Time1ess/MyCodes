@@ -13,12 +13,11 @@ public:
         if(start->label == dest->label)
             return true;
         visited.insert(start->label);
-        bool hasPath = false;
         for(auto next: start->neighbors) {
-            if(visited.find(next->label) == visited.end())
-                hasPath = hasPath || HasPath(visited, next, dest);
+            if(visited.find(next->label) == visited.end() && HasPath(visited, next, dest))
+                return true;
         }
-        return hasPath;
+        return false;
     }
     bool checkPath(UndirectedGraphNode* a, UndirectedGraphNode* b) {
         if(!a || !b)
