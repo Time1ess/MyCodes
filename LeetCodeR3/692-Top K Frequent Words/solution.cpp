@@ -1,6 +1,6 @@
 struct Cmp {
     bool operator()(const pair<string, int>& a, const pair<string, int>& b) const {
-        return a.second < b.second || (a.second == b.second && a.first > b.first);
+        return a.second > b.second || (a.second == b.second && a.first < b.first);
     }
 };
 
@@ -14,6 +14,9 @@ public:
         priority_queue<pair<string, int>, vector<pair<string, int>>, Cmp> pq;
         for (auto p : cnts) {
             pq.push(p);
+            if (pq.size() > k) {
+                pq.pop();
+            }
         }
         vector<string> ans;
         while (k--) {
@@ -21,6 +24,7 @@ public:
             pq.pop();
             ans.push_back(top.first);
         }
+        reverse(ans.begin(), ans.end());
         return ans;
     }
 };
