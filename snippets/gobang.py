@@ -1,11 +1,6 @@
 import tkinter as tk
 
 
-class Piece(tuple):
-    def __hash__(self):
-        return hash(self[0] * 15 + self[1])
-
-
 class Gobang:
     PLAYER_WHITE = 0b0
     PLAYER_BLACK = 0b1
